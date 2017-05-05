@@ -1,0 +1,22 @@
+{
+  "name": "es6",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "babel-preset-env": "^1.4.0",
+    "babel-cli": "^6.24.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/babel-cli/bin/babel.js src -d lib && browserify lib/modules/artists.js -o bundle.js",
+    "browserify": "browserify /Users/rostheim/workspace/es6/lib/modules/artists.js -o bundle.js"
+
+  },
+  "author": "",
+  "license": "ISC"
+}
