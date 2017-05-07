@@ -9,38 +9,22 @@ const related = new relatedArtists()
 
 export  default function init() {
   artist.fetchArtists().then((data) => {
-    console.log(data);
-    createAppDom(data.artists);
+    const dom = artist.createArtistDom(data.artists);
+    createAppDom(dom, 'body')
   })
 }
 
-export function createAppDom(data) {
+export function createAppDom(dom, tag) {
   //TODO:create a each/loop helper and import
-  const dom = `
-  <ul id="artists">
-    ${data.map(artist => `
-      <li class="artist" id="${artist.id}">
-        ${artist.name}
-      </li>
-      `).join('')}
-  </ul>
-  `;
 
-  $('body').html(dom);
-
-  //Action on artists component
-  $('#artists').click((e) => {
-    renderRelatedArtists(e.target.id)
-  });
-
+    $(tag).html(dom);
 }
 
 
-
-export function renderRelatedArtists(id) {
-  related.fetchRelatedArtists(id).then((data) => {
-    console.log(data)
-  })
-}
+// export function renderRelatedArtists(id) {
+//   related.fetchRelatedArtists(id).then((data) => {
+//     console.log(data)
+//   })
+// }
 
 init();
