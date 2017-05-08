@@ -1,23 +1,17 @@
 'use strict'
 
 import Artist from './modules/artist';
-import relatedArtists from './modules/related-artists';
-import $ from '../node_modules/jquery/dist/jquery.min';
+import ArtistForm from './modules/artist-form';
+
 
 const artist = new Artist();
-const related = new relatedArtists()
+const form = new ArtistForm();
 
 export  default function init() {
-  artist.fetchArtists().then((data) => {
-    artist.createArtistDom(data.artists, 'click');
-  })
+  form.createArtistFormDom('click');
+  // artist.fetchArtists().then((data) => {
+  //   artist.createArtistDom(data.artists, 'click');
+  // });
 }
 
-
-// export function renderRelatedArtists(id) {
-//   related.fetchRelatedArtists(id).then((data) => {
-//     console.log(data)
-//   })
-// }
-
-init();
+$(document).ready(init);
