@@ -76,14 +76,12 @@ function addAjaxAction(options) {
   var action = options.action;
   var addDom = true;
   var type = options.type;
-  var methods = options.methods;
+  var methods = options.methods; // includes method names and optional params object to be passed to the method
   var replace = options.replace;
   //const params = options.params; //optional, passed from instantiation if a dynamic parameter is needed for the ajax call
   document.getElementById(id).addEventListener(action, function (e) {
     var targetId = e.target.id;
-    //const replaceDom = $(`#${id}`).children().length === 0 || replace;
 
-    //if(replaceDom) {
     if (methods && type) {
       type[methods[0].method](targetId).then(function (data) {
         if (addDom && methods[1]) {
@@ -95,7 +93,6 @@ function addAjaxAction(options) {
         }
       });
     }
-    //}
   });
 }
 
@@ -210,8 +207,7 @@ var ArtistForm = function () {
               action: 'click'
             }
           }],
-          addDom: true, // whether there will be dom added based on this action
-          replace: true
+          addDom: true // whether there will be dom added based on this action
         });
       }
     }
@@ -293,8 +289,7 @@ var Artist = function () {
               action: 'click'
             }
           }],
-          addDom: true, // whether there will be dom added based on this action
-          replace: false
+          addDom: true // whether there will be dom added based on this action
         });
       }
     }
@@ -343,7 +338,7 @@ var RelatedArtist = function () {
     key: 'createRelatedArtistsDom',
     value: function createRelatedArtistsDom(data, params) {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, data.map(function (artist) {
-        return '\n          <li class="related-artist" id=related-' + artist.id + '">\n            ' + artist.name + '\n          </li>\n          ';
+        return '\n          <li class="related-artist" id=' + artist.id + '>\n            ' + artist.name + '\n          </li>\n          ';
       }).join(''));
       (0, _createDom.createDOM)({ html: dom, tag: params.id });
     }

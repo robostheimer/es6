@@ -13,7 +13,7 @@ export default class RelatedArtist {
     const dom = escapeTemplate`
       <ul id="related-artists">
         ${data.map(artist => `
-          <li class="related-artist" id=related-${artist.id}">
+          <li class="related-artist" id=${artist.id}>
             ${artist.name}
           </li>
           `).join('')}
