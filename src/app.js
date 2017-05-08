@@ -9,15 +9,8 @@ const related = new relatedArtists()
 
 export  default function init() {
   artist.fetchArtists().then((data) => {
-    const dom = artist.createArtistDom(data.artists);
-    createAppDom(dom, 'body')
+    artist.createArtistDom(data.artists, 'click');
   })
-}
-
-export function createAppDom(dom, tag) {
-  //TODO:create a each/loop helper and import
-
-    $(tag).html(dom);
 }
 
 
