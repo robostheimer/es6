@@ -160,7 +160,7 @@ function each(options) {
 
 //TODO: work out the kinks with this helper method
 function parseText(item, txt, props) {
-  if (item && txt) {
+  if (item && txt && props) {
     var newStr = '';
     props.forEach(function (prop) {
       var index = props.indexOf(prop);
@@ -170,7 +170,7 @@ function parseText(item, txt, props) {
     });
     return txt;
   } else {
-    return txt;
+    return item;
   }
 }
 
@@ -189,9 +189,11 @@ function returnAllKeys(item) {
   var val = void 0;
 
   for (val in item) {
-    arr.push(val);
+    if (typeof item !== 'string') {
+      arr.push(val);
+    }
   }
-  return arr;
+  return arr.length > 0 ? arr : undefined;
 }
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -319,7 +321,7 @@ var Artist = function () {
           class: 'artist'
         }
       }));
-      console.log(data);
+
       (0, _createDom.createDOM)({ html: dom, tag: 'body' });
       if (action) {
         (0, _createDom.addAjaxAction)({
@@ -385,7 +387,6 @@ var RelatedArtist = function () {
   }, {
     key: 'createRelatedArtistsDom',
     value: function createRelatedArtistsDom(data, params) {
-      console.log(params);
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data,
         tag: 'li',

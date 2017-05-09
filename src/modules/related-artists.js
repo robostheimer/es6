@@ -11,7 +11,6 @@ export default class RelatedArtist {
   }
 
   createRelatedArtistsDom(data, params) {
-    console.log(params)
     const dom = escapeTemplate`
       <ul id="related-artists">
         <h4>Related Musicians</h4>

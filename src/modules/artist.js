@@ -33,7 +33,7 @@ export default class Artist {
         })}
       </ul>
     `;
-    console.log(data)
+
     createDOM({ html: dom, tag: 'body' });
     if(action) {
       addAjaxAction({

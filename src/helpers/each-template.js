@@ -21,7 +21,7 @@ export function each(options) {
 
 //TODO: work out the kinks with this helper method
 function parseText(item, txt, props) {
-  if(item && txt) {
+  if(item && txt && props) {
     let newStr = '';
     props.forEach((prop) => {
       let index = props.indexOf(prop)
@@ -31,7 +31,7 @@ function parseText(item, txt, props) {
     })
   return txt;
   } else {
-    return txt;
+    return item;
   }
 }
 
@@ -50,7 +50,9 @@ function returnAllKeys(item) {
   let val;
 
   for(val in item) {
-    arr.push(val);
+    if(typeof(item) !== 'string') {
+      arr.push(val);
+    }
   }
-  return arr;
+  return arr.length > 0 ? arr : undefined;
 }
