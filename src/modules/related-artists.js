@@ -2,6 +2,7 @@
 
 import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate } from '../helpers/create-dom';
+import { each } from '../helpers/each-template';
 
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
@@ -10,15 +11,20 @@ export default class RelatedArtist {
   }
 
   createRelatedArtistsDom(data, params) {
+    console.log(params)
     const dom = escapeTemplate`
       <ul id="related-artists">
-        ${data.map(artist => `
-          <li class="related-artist" id=${artist.id}>
-            ${artist.name}
-          </li>
-          `).join('')}
+        <h4>Related Musicians</h4>
+        ${each({
+          data: data,
+          tag: 'li',
+          props: ['name'],
+          attrs: {
+            class: 'related-artist'
+          }
+        })}
       </ul>
-    `;
+    `
     createDOM({ html: dom, tag: params.id });
 
   }
