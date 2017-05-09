@@ -26,7 +26,6 @@ export default class Artist {
         ${each({
           data: data,
           tag: 'li',
-          props: ['name', 'popularity'],
           txt: 'Is <b>{{name}}</b> the artist you were looking for',
           attrs: {
             class:'artist'

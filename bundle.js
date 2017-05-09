@@ -146,33 +146,32 @@ function each(options) {
   var data = options.data;
   var tag = options.tag;
   var attrs = options.attrs;
-  var props = options.props;
   var txt = options.txt;
 
   var dom = data.map(function (item) {
+    var props = returnAllKeys(item);
     var index = data.indexOf(item);
     attrs.id = item.id ? item.id : 'item' + index;
 
-    return '\n      <' + tag + ' ' + runAttrs(attrs) + '>\n        ' + (txt ? parseText(item, txt, props) : item[props[0]]) + '\n      </' + tag + '>\n      ';
+    return '\n      <' + tag + ' ' + runAttrs(attrs) + '>\n        ' + (txt ? parseText(item, txt, props) : 'txt parameter is undefined.') + '\n      </' + tag + '>\n      ';
   }).join('');
   return dom;
 }
 
 //TODO: work out the kinks with this helper method
 function parseText(item, txt, props) {
-  if (item && txt && props) {
-    var txtArr = txt.split('{{');
+  if (item && txt) {
     var newStr = '';
     props.forEach(function (prop) {
       var index = props.indexOf(prop);
       if (txt.match(prop)) {
-        var propRp = prop + '}}';
-        newStr += txtArr[index + 1].replace(propRp, item[prop]);
+        txt = txt.replace('{{' + prop + '}}', item[prop]);
       }
     });
-    return newStr;
+    return txt;
+  } else {
+    return txt;
   }
-  return txt;
 }
 
 function runAttrs(attrs) {
@@ -183,6 +182,16 @@ function runAttrs(attrs) {
     str += val + '="' + attrs[val] + '" ';
   }
   return str;
+}
+
+function returnAllKeys(item) {
+  var arr = [];
+  var val = void 0;
+
+  for (val in item) {
+    arr.push(val);
+  }
+  return arr;
 }
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -305,7 +314,6 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data,
         tag: 'li',
-        props: ['name', 'popularity'],
         txt: 'Is <b>{{name}}</b> the artist you were looking for',
         attrs: {
           class: 'artist'
@@ -381,7 +389,7 @@ var RelatedArtist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data,
         tag: 'li',
-        props: ['name'],
+        txt: '{{name}}',
         attrs: {
           class: 'related-artist'
         }

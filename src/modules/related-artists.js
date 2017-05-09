@@ -18,7 +18,7 @@ export default class RelatedArtist {
         ${each({
           data: data,
           tag: 'li',
-          props: ['name'],
+          txt: '{{name}}',
           attrs: {
             class: 'related-artist'
           }
