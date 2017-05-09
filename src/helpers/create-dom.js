@@ -37,6 +37,7 @@ export function addAjaxAction(options) {
   //const params = options.params; //optional, passed from instantiation if a dynamic parameter is needed for the ajax call
   document.getElementById(id).addEventListener(action, (e) => {
     const targetId = e.target.id;
+    console.log(targetId)
 
     if(methods && type) {
       type[methods[0].method](targetId).then((data) => {

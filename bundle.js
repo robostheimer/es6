@@ -81,6 +81,7 @@ function addAjaxAction(options) {
   //const params = options.params; //optional, passed from instantiation if a dynamic parameter is needed for the ajax call
   document.getElementById(id).addEventListener(action, function (e) {
     var targetId = e.target.id;
+    console.log(targetId);
 
     if (methods && type) {
       type[methods[0].method](targetId).then(function (data) {
@@ -316,7 +317,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data,
         tag: 'li',
-        txt: 'Is <b>{{name}}</b> the artist you were looking for',
+        txt: 'Is {{name}} the artist you were looking for',
         attrs: {
           class: 'artist'
         }
@@ -382,6 +383,7 @@ var RelatedArtist = function () {
 
     //TODO: memoize this method; see javascript ninja book
     value: function fetchRelatedArtists(id) {
+      console.log(id);
       return _jquery2.default.getJSON('https://api.spotify.com/v1/artists/' + id + '/related-artists');
     }
   }, {

@@ -26,7 +26,7 @@ export default class Artist {
         ${each({
           data: data,
           tag: 'li',
-          txt: 'Is <b>{{name}}</b> the artist you were looking for',
+          txt: 'Is {{name}} the artist you were looking for',
           attrs: {
             class:'artist'
           }
@@ -42,7 +42,7 @@ export default class Artist {
         type: related,
         methods: [
           {
-            method: 'fetchRelatedArtists'
+            method: 'fetchRelatedArtists',
           },
           {
             method: 'createRelatedArtistsDom',
@@ -55,6 +55,5 @@ export default class Artist {
         addDom: true // whether there will be dom added based on this action
       });
     }
-
   }
 }

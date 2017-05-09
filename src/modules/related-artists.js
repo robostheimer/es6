@@ -7,6 +7,7 @@ import { each } from '../helpers/each-template';
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
+    console.log(id);
     return $.getJSON(`https://api.spotify.com/v1/artists/${id}/related-artists`);
   }
 
@@ -25,6 +26,5 @@ export default class RelatedArtist {
       </ul>
     `
     createDOM({ html: dom, tag: params.id });
-
   }
 }
