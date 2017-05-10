@@ -28,7 +28,9 @@ export default class Artist {
           tag: 'li',
           txt: 'Is {{name}} the artist you were looking for',
           attrs: {
-            class:'artist'
+            class:'artist',
+            title: null,
+            id: null
           }
         })}
       </ul>

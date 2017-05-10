@@ -9,10 +9,9 @@ export function each(options) {
   const dom = data.map(item => {
     let props =  returnAllKeys(item);
     let index = data.indexOf(item);
-    attrs.id = item.id ? item.id : `item${index}`;
 
     return `
-      <${tag} ${runAttrs(attrs)}>
+      <${tag} ${runAttrs(attrs, item, props)}>
         ${txt ? parseText(item, txt, props): 'txt parameter is undefined.' }
       </${tag}>
       `}).join('');
@@ -35,12 +34,15 @@ function parseText(item, txt, props) {
   }
 }
 
-function runAttrs(attrs) {
+function runAttrs(attrs, item, props) {
   let str = '';
   let val;
-
   for(val in attrs) {
-    str += `${val}="${attrs[val]}" `;
+    if(attrs[val]) {
+      str += `${val}="${attrs[val]}" `;
+    }
+
+    str += `${val}="${item[val] || item['name'] || ""}" `;
   }
   return str;
 }

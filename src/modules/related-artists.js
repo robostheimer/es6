@@ -3,16 +3,18 @@
 import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
+import { iff } from '../helpers/if-template';
 
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
-    console.log(id);
     return $.getJSON(`https://api.spotify.com/v1/artists/${id}/related-artists`);
   }
 
   createRelatedArtistsDom(data, params) {
-    const dom = escapeTemplate`
+    console.log(params)
+    const dom = iff(data.length > 0,
+    escapeTemplate`
       <ul id="related-artists">
         <h4>Related Musicians</h4>
         ${each({
@@ -20,11 +22,14 @@ export default class RelatedArtist {
           tag: 'li',
           txt: '{{name}}',
           attrs: {
-            class: 'related-artist'
+            class: 'related-artist',
+            id: null
           }
         })}
       </ul>
-    `
+      `,
+      `<p><strong>There are no artists related to ${params.title}</strong</p>`);
     createDOM({ html: dom, tag: params.id });
+
   }
 }
