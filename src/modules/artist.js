@@ -12,7 +12,14 @@ export default class Artist {
   fetchArtists() {
     const name = $('#find-artist').val();
     if(name) {
-      return $.getJSON(`https://api.spotify.com/v1/search?q=${name}&type=artist`)
+      const request = new Request(`https://api.spotify.com/v1/search?q=${name}&type=artist`, {
+    	   method: 'GET',
+       });
+      //console.log(fetch(`https://api.spotify.com/v1/search?q=${name}&type=artist`))
+      return fetch(request)
+        .then((response) => {
+          return response.json();
+        })
     }
   }
 

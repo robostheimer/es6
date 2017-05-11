@@ -315,7 +315,13 @@ var Artist = function () {
     value: function fetchArtists() {
       var name = (0, _jquery2.default)('#find-artist').val();
       if (name) {
-        return _jquery2.default.getJSON('https://api.spotify.com/v1/search?q=' + name + '&type=artist');
+        var request = new Request('https://api.spotify.com/v1/search?q=' + name + '&type=artist', {
+          method: 'GET'
+        });
+        //console.log(fetch(`https://api.spotify.com/v1/search?q=${name}&type=artist`))
+        return fetch(request).then(function (response) {
+          return response.json();
+        });
       }
     }
 
@@ -400,7 +406,15 @@ var RelatedArtist = function () {
 
     //TODO: memoize this method; see javascript ninja book
     value: function fetchRelatedArtists(id) {
-      return _jquery2.default.getJSON('https://api.spotify.com/v1/artists/' + id + '/related-artists');
+      if (id) {
+        var request = new Request('https://api.spotify.com/v1/artists/' + id + '/related-artists', {
+          method: 'GET'
+        });
+
+        return fetch(request).then(function (response) {
+          return response.json();
+        });
+      }
     }
   }, {
     key: 'createRelatedArtistsDom',

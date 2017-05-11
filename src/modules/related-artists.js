@@ -8,7 +8,16 @@ import { iff } from '../helpers/if-template';
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
-    return $.getJSON(`https://api.spotify.com/v1/artists/${id}/related-artists`);
+    if(id) {
+      const request = new Request(`https://api.spotify.com/v1/artists/${id}/related-artists`, {
+        method: 'GET'
+      });
+      
+      return fetch(request)
+      .then((response) => {
+        return response.json();
+      });
+    }
   }
 
   createRelatedArtistsDom(data, params) {
