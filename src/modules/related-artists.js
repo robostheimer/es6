@@ -4,6 +4,7 @@ import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
+import { memoize } from '../helpers/memoize';
 
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
@@ -12,7 +13,7 @@ export default class RelatedArtist {
       const request = new Request(`https://api.spotify.com/v1/artists/${id}/related-artists`, {
         method: 'GET'
       });
-      
+
       return fetch(request)
       .then((response) => {
         return response.json();
@@ -21,7 +22,6 @@ export default class RelatedArtist {
   }
 
   createRelatedArtistsDom(data, params) {
-    console.log(params)
     const dom = iff(data.length > 0,
     escapeTemplate`
       <ul id="related-artists">
