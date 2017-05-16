@@ -12,20 +12,16 @@ export default class Artist {
   //TODO: memoize this method javascript ninja book
 
   fetchArtists() {
-    if(!fetchArtists.memoize(name)) {
-      const name = $('#find-artist').val();
-      if(name) {
-        const request = new Request(`https://api.spotify.com/v1/search?q=${name}&type=artist`, {
-      	   method: 'GET',
-         });
+    const name = $('#find-artist').val();
+    const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`''
 
-        return fetch(request)
-          .then((response) => {
-            return response.json();
-          })
-      }
-    } else {
-
+    if(name) {
+      var data =  memoize({name: name,
+        fn() {
+          return fetch(url)
+        }
+      });
+      return data;
     }
   }
 
