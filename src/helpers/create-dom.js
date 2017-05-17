@@ -34,7 +34,6 @@ export function addAjaxAction(options) {
   const type = options.type;
   const methods = options.methods; // includes method names and optional params object to be passed to the method
   const replace = options.replace;
-  //const params = options.params; //optional, passed from instantiation if a dynamic parameter is needed for the ajax call
   document.getElementById(id).addEventListener(action, (e) => {
     const targetId = e.target.id;
     const title = e.target.title;

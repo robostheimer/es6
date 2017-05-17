@@ -5,21 +5,24 @@ import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
 import { memoize } from '../helpers/memoize';
+import { memoizeJSON, memoized } from '../helpers/memoize';
 
 export default class RelatedArtist {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
-    if(id) {
-      const request = new Request(`https://api.spotify.com/v1/artists/${id}/related-artists`, {
-        method: 'GET'
-      });
+    if(id && !memoized(id)) {
 
-      return fetch(request)
-      .then((response) => {
-        return response.json();
+      const url = `https://api.spotify.com/v1/artists/${id}/related-artists`;
+
+      var data = memoizeJSON({key: id,
+        fn() {
+          return fetch(url)
+        }
       });
+      return data;
     }
   }
+
 
   createRelatedArtistsDom(data, params) {
     const dom = iff(data.length > 0,

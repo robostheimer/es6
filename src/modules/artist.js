@@ -4,7 +4,7 @@ import $ from '../../node_modules/jquery/dist/jquery.min';
 import relatedArtists from './related-artists';
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
-import { memoize } from '../helpers/memoize';
+import { memoizeJSON, memoized } from '../helpers/memoize';
 
 const related = new relatedArtists();
 
@@ -16,7 +16,7 @@ export default class Artist {
     const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`
 
     if(name) {
-      var data =  memoize({name: name,
+      var data =  memoizeJSON({key: name,
         fn() {
           return fetch(url)
         }
@@ -28,14 +28,19 @@ export default class Artist {
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
   createArtistDom(data, params) {
-    const action = params.action
-    //TODO:create a each/loop helper and import
+    $('#artists').remove();
+    const action = params.action;
     const dom = escapeTemplate`
-      <ul id="artists">
+      <ul id="artists" class="cards">
         ${each({
           data: data,
           tag: 'li',
-          txt: 'Is {{name}} the artist you were looking for',
+          txt: `<div>
+                  <strong>{{name}}</strong>
+                </div>
+                <div># of Followers: {{followers.total}}</div>
+                <div>genres: {{genres}}</div>
+                <div>{{href}}</div>`,
           attrs: {
             class:'artist',
             title: null,

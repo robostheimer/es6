@@ -2,22 +2,21 @@
 const cache = {};
 
 export function memoized(key) {
-  let data = data || {};
-  return data[key] !== undefined ? data[key] : data[key] = this.apply(this, arguments);
+  return cache[key] !== undefined;
 }
 
-export function memoize() {
+export function memoizeJSON() {
   let args = arguments;
-  let name = args[0].name;
+  let key = args[0].key;
   let fn = args[0].fn;
 
-  if(!cache[name]) {
-    cache[name] = fn(). then((data) => {
+  if(!cache[key]) {
+    cache[key] = fn().then((data) => {
       return data.json();
-    })
+    });
   }
 
-  return cache[name];
+  return cache[key];
 
 }
 

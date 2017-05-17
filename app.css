@@ -1,0 +1,115 @@
+/* app.css */
+
+body{
+  margin: 15px;
+}
+button {
+  background: #428bca;
+  color: white;
+  padding: 7px;
+  border-radius: 10px;
+  margin: 15px 0  15px;
+  border: 1px solid #999;
+}
+
+input {
+  border: 1px solid #ccc;
+  padding: 7px;
+  border-radius: 3px;
+  margin-right: 10px;
+  width: calc(100% - 250px);
+}
+
+ul {
+  padding:0;
+
+}
+
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-size: cover;
+  background-color: rgba(69, 139, 202, 1);
+  background-blend-mode: luminosity;
+  color: white;
+  min-height: 200px;
+}
+
+.card a {
+  color: white;
+  font-weight: bold;
+}
+
+iframe {
+  margin-top: 15px;
+}
+
+.cards {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.related {
+  justify-content: center;
+  align-items:flex-end;
+}
+
+.card {
+  border: 1px solid #999;
+  margin-bottom: 15px;
+  width: 300px;
+  margin-right: 15px;
+  display: flex;
+  flex-basis: 20%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+.song, .related , .artist {
+  width: 150px;
+  min-height: 150px;
+}
+
+.artist {
+  min-height: 200px;
+  width: 200px;
+  margin: 10px;
+  padding: 15px;
+}
+.related li, /*.cards div*/ {
+  width: 100px;
+  margin: 7px;
+}
+
+.cards div {
+  margin-left: 0;
+}
+.card img {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  margin: 7px;
+
+}
+
+.related img {
+  margin: 0;
+}
+
+.card .info {
+    padding: 15px;
+    width: 100%;
+    background-color: rgba(69, 139, 202, .75);
+    background-blend-mode: darken;
+
+}
+
+.player_button {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.player_button button {
+  margin-left: 15px;
+}

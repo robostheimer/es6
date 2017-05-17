@@ -1,5 +1,5 @@
 'use strict'
-
+import { deepFind } from './deep-find'
 export function each(options) {
   const data = options.data;
   const tag = options.tag;
@@ -21,18 +21,27 @@ export function each(options) {
 //TODO: work out the kinks with this helper method
 function parseText(item, txt, props) {
   if(item && txt && props) {
-    let newStr = '';
-    props.forEach((prop) => {
-      let index = props.indexOf(prop)
-      if(txt.match(prop)) {
-        txt = txt.replace(`{{${prop}}}`, item[prop]);
+    let txtPropsArr = txt.match(/{{(.*?)}}/g);
+
+    let property;
+
+    txtPropsArr.forEach((tp) => {
+      let txtRepl = tp.slice(tp.indexOf('{{')+2, tp.indexOf('}}'));
+      tp.indexOf('.') > -1 ? property = deepFind(item, txtRepl) : property = item[txtRepl];
+      //if property is undefined replace w empty string
+      if(property) {
+        txt = txt.replace(tp, property);
+      } else {
+        txt = txt.replace(tp, '');
       }
     })
-  return txt;
+
+    return txt;
   } else {
     return item;
   }
 }
+
 
 function runAttrs(attrs, item, props) {
   let str = '';
@@ -47,6 +56,10 @@ function runAttrs(attrs, item, props) {
   return str;
 }
 
+// function flattenObject(object) {
+//   console.log(object);
+// }
+
 function returnAllKeys(item) {
   let arr = [];
   let val;
@@ -56,5 +69,6 @@ function returnAllKeys(item) {
       arr.push(val);
     }
   }
+
   return arr.length > 0 ? arr : undefined;
 }
