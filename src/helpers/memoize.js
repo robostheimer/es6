@@ -19,14 +19,3 @@ export function memoizeJSON() {
   return cache[key];
 
 }
-
-
-
-// var memoize = function(f) {  
-//    var cache = {};   
-//     return function() {     
-//       var arg_str = JSON.stringify(arguments);     
-//       cache[arg_str] = cache[arg_str] || f.apply(f, arguments);     r
-//       eturn cache[arg_str];  
-//     };
-//   };

@@ -1,7 +1,6 @@
 'use strict'
 
 export function deepFind(obj, path) {
-  debugger;
   let paths = path.split('.'),
     current = obj,
     i;
