@@ -10,7 +10,7 @@ export default class ArtistForm {
   createArtistFormDom(action) {
     const dom = escapeTemplate`
       <form>
-        <input type="text" name="find-artist" id="find-artist" placeholder="Search for you favorite musician"/>
+        <input type="text" id="find-artist" placeholder="Search for you favorite musician"/>
       </form>
       <button id="search">Search</button
     `;

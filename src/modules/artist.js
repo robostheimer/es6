@@ -38,9 +38,7 @@ export default class Artist {
           txt: `<div>
                   <strong>{{name}}</strong>
                 </div>
-                <div># of Followers: {{followers.total}}</div>
-                <div>genres: {{genres}}</div>
-                <div>{{href}}</div>`,
+                `,
           attrs: {
             class:'artist',
             title: null,
