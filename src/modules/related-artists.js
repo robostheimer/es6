@@ -27,7 +27,7 @@ export default class RelatedArtist {
   createRelatedArtistsDom(data, params) {
     const dom = iff(data.length > 0,
     escapeTemplate`
-      <ul id="related-artists">
+      <ul id="related-artists" class="cards related">
         <h4>Related Musicians</h4>
         ${each({
           data: data,
@@ -41,7 +41,6 @@ export default class RelatedArtist {
       </ul>
       `,
       `<p><strong>There are no artists related to ${params.title}</strong</p>`);
-    createDOM({ html: dom, tag: params.id });
-
+    createDOM({ html: dom, tag: 'body' });
   }
 }

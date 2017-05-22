@@ -44,7 +44,8 @@ export default class Artist {
           attrs: {
             class:'artist',
             title: null,
-            id: null
+            id: null,
+            style: 'background-image:url({{images[0].url}})',
           }
         })}
       </ul>

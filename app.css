@@ -2,6 +2,7 @@
 
 body{
   margin: 15px;
+  width: calc(100% - 15px);
 }
 button {
   background: #428bca;
@@ -36,6 +37,11 @@ li {
   min-height: 200px;
 }
 
+
+li.artist {
+  cursor: pointer;
+}
+
 .card a {
   color: white;
   font-weight: bold;
@@ -47,7 +53,7 @@ iframe {
 
 .cards {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row;
 }
 
 .related {
@@ -64,6 +70,8 @@ iframe {
   flex-basis: 20%;
   box-sizing: border-box;
   border: 1px solid #ccc;
+  cursor: pointer;
+  flex-direction: column;
 }
 .song, .related , .artist {
   width: 150px;
@@ -76,6 +84,19 @@ iframe {
   margin: 10px;
   padding: 15px;
 }
+
+#related-artists {
+  display: flex;
+}
+
+.related-artist {
+  min-height: 100px;
+  min-width: 150px;
+  margin: 10px;
+  padding: 15px;
+
+}
+
 .related li, /*.cards div*/ {
   width: 100px;
   margin: 7px;

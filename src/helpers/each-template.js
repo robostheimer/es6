@@ -1,5 +1,6 @@
 'use strict'
 import { deepFind } from './deep-find'
+
 export function each(options) {
   const data = options.data;
   const tag = options.tag;
@@ -7,28 +8,29 @@ export function each(options) {
   let txt = options.txt;
 
   const dom = data.map(item => {
-    let props =  returnAllKeys(item);
+    let props =  _returnAllKeys(item);
     let index = data.indexOf(item);
 
     return `
-      <${tag} ${runAttrs(attrs, item, props)}>
-        ${txt ? parseText(item, txt, props): 'txt parameter is undefined.' }
+      <${tag} ${_runAttrs(attrs, item, props)}>
+        ${txt ? _parseText(item, txt, props): 'txt parameter is undefined.' }
       </${tag}>
       `}).join('');
   return dom;
 }
 
-//TODO: work out the kinks with this helper method
-function parseText(item, txt, props) {
+function _parseText(item, txt, props) {
   if(item && txt && props) {
     let txtPropsArr = txt.match(/{{(.*?)}}/g);
-
     let property;
 
     txtPropsArr.forEach((tp) => {
       let txtRepl = tp.slice(tp.indexOf('{{')+2, tp.indexOf('}}'));
+      // if(_checkForIndex(txtRepl))
+      // {
+      //   txtRepl = _formatProperty(txtRepl)
+      // }
       tp.indexOf('.') > -1 ? property = deepFind(item, txtRepl) : property = item[txtRepl];
-      //if property is undefined replace w empty string
       if(property) {
         txt = txt.replace(tp, property);
       } else {
@@ -42,12 +44,30 @@ function parseText(item, txt, props) {
   }
 }
 
+function _checkForIndex(str) {
+  if(str.indexOf('[') > -1) {
+    return true;
+  }
+  return false;
+}
 
-function runAttrs(attrs, item, props) {
+function _formatProperty(str) {
+  if(str.indexOf('.') > -1)
+  {
+    return str;
+  }
+}
+
+
+function _runAttrs(attrs, item, props) {
   let str = '';
   let val;
   for(val in attrs) {
     if(attrs[val]) {
+      if(attrs[val].match(/{{(.*?)}}/g))
+      {
+        str += `${val} = "${_parseText(item, attrs[val], props)}"`;
+      }
       str += `${val}="${attrs[val]}" `;
     }
 
@@ -60,7 +80,7 @@ function runAttrs(attrs, item, props) {
 //   console.log(object);
 // }
 
-function returnAllKeys(item) {
+function _returnAllKeys(item) {
   let arr = [];
   let val;
 
