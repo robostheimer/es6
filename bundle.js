@@ -79,7 +79,7 @@ function addAjaxAction(options) {
   var methods = options.methods; // includes method names and optional params object to be passed to the method
   var replace = options.replace;
   document.getElementById(id).addEventListener(action, function (e) {
-    var targetId = e.target.id;
+    var targetId = _findId(e.target, id);
     var title = e.target.title;
     if (methods && type) {
       type[methods[0].method](targetId).then(function (data) {
@@ -135,6 +135,13 @@ function escapeTemplate(literalSections) {
 
   return result;
 }
+
+function _findId(target) {
+  if (target.id) {
+    return target.id;
+  }
+  return (0, _jquery2.default)(target.closest('[id]')).attr('id');
+}
 },{"../../node_modules/jquery/dist/jquery.min":10,"./each-template":4}],3:[function(require,module,exports){
 'use strict';
 
@@ -143,17 +150,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.deepFind = deepFind;
 function deepFind(obj, path) {
+
   var paths = path.split('.'),
       current = obj,
       i = void 0;
   for (i = 0; i < paths.length; i++) {
-    if (current[paths[i]] == undefined) {
-      return undefined;
+    // checks if the property has an index associated with it; i.e.
+    // if the script is looking for a specific index of an array that
+    // is part of the JSON payload
+    if (paths[i].indexOf('[') > -1) {
+      var pathsSplit = paths[i].split('[');
+      var newProp = pathsSplit[0];
+      var index = pathsSplit[1].replace(']', '');
+      var temp = current[newProp] ? current[newProp][index] : '';
+      temp ? current = temp : current = current;
     } else {
       current = current[paths[i]];
     }
   }
-
   return current;
 }
 },{}],4:[function(require,module,exports){
@@ -173,25 +187,26 @@ function each(options) {
   var txt = options.txt;
 
   var dom = data.map(function (item) {
-    var props = returnAllKeys(item);
+    var props = _returnAllKeys(item);
     var index = data.indexOf(item);
 
-    return '\n      <' + tag + ' ' + runAttrs(attrs, item, props) + '>\n        ' + (txt ? parseText(item, txt, props) : 'txt parameter is undefined.') + '\n      </' + tag + '>\n      ';
+    return '\n      <' + tag + ' ' + _runAttrs(attrs, item, props) + '>\n        ' + (txt ? _parseText(item, txt, props) : 'txt parameter is undefined.') + '\n      </' + tag + '>\n      ';
   }).join('');
   return dom;
 }
 
-//TODO: work out the kinks with this helper method
-function parseText(item, txt, props) {
+function _parseText(item, txt, props) {
   if (item && txt && props) {
     var txtPropsArr = txt.match(/{{(.*?)}}/g);
-
     var property = void 0;
 
     txtPropsArr.forEach(function (tp) {
       var txtRepl = tp.slice(tp.indexOf('{{') + 2, tp.indexOf('}}'));
+      // if(_checkForIndex(txtRepl))
+      // {
+      //   txtRepl = _formatProperty(txtRepl)
+      // }
       tp.indexOf('.') > -1 ? property = (0, _deepFind.deepFind)(item, txtRepl) : property = item[txtRepl];
-      //if property is undefined replace w empty string
       if (property) {
         txt = txt.replace(tp, property);
       } else {
@@ -205,11 +220,27 @@ function parseText(item, txt, props) {
   }
 }
 
-function runAttrs(attrs, item, props) {
+function _checkForIndex(str) {
+  if (str.indexOf('[') > -1) {
+    return true;
+  }
+  return false;
+}
+
+function _formatProperty(str) {
+  if (str.indexOf('.') > -1) {
+    return str;
+  }
+}
+
+function _runAttrs(attrs, item, props) {
   var str = '';
   var val = void 0;
   for (val in attrs) {
     if (attrs[val]) {
+      if (attrs[val].match(/{{(.*?)}}/g)) {
+        str += val + ' = "' + _parseText(item, attrs[val], props) + '"';
+      }
       str += val + '="' + attrs[val] + '" ';
     }
 
@@ -222,7 +253,7 @@ function runAttrs(attrs, item, props) {
 //   console.log(object);
 // }
 
-function returnAllKeys(item) {
+function _returnAllKeys(item) {
   var arr = [];
   var val = void 0;
 
@@ -242,7 +273,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.iff = iff;
 function iff(condition, option1, option2) {
-  console.log(condition, condition ? option1 : option2);
   return condition ? option1 : option2;
 }
 },{}],6:[function(require,module,exports){
@@ -403,11 +433,12 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data,
         tag: 'li',
-        txt: '<div>\n                  <strong>{{name}}</strong>\n                </div>\n                <div># of Followers: {{followers.total}}</div>\n                <div>genres: {{genres}}</div>\n                <div>{{href}}</div>',
+        txt: '<div>\n                  <strong>{{name}}</strong>\n                </div>\n                ',
         attrs: {
           class: 'artist',
           title: null,
-          id: null
+          id: null,
+          style: 'background-image:url({{images[0].url}})'
         }
       }));
 
@@ -445,7 +476,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <ul id="related-artists">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      '], ['\n      <ul id="related-artists">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      <ul id="related-artists" class="cards related">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      '], ['\n      <ul id="related-artists" class="cards related">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      ']);
 
 var _jquery = require('../../node_modules/jquery/dist/jquery.min');
 
@@ -499,7 +530,7 @@ var RelatedArtist = function () {
           id: null
         }
       })), '<p><strong>There are no artists related to ' + params.title + '</strong</p>');
-      (0, _createDom.createDOM)({ html: dom, tag: params.id });
+      (0, _createDom.createDOM)({ html: dom, tag: 'body' });
     }
   }]);
 
