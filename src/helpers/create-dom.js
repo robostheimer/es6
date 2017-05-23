@@ -36,6 +36,7 @@ export function addAjaxAction(options) {
   const replace = options.replace;
   document.getElementById(id).addEventListener(action, (e) => {
     const targetId = _findId(e.target, id);
+
     const title = e.target.title;
     if(methods && type) {
       type[methods[0].method](targetId).then((data) => {
