@@ -7,7 +7,7 @@ import { iff } from '../helpers/if-template';
 import { memoize } from '../helpers/memoize';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 
-export default class RelatedArtist {
+export default class RelatedArtists {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
     if(id && !memoized(id)) {
@@ -25,22 +25,23 @@ export default class RelatedArtist {
 
 
   createRelatedArtistsDom(data, params) {
-    const dom = iff(data.length > 0,
+    const dom = iff(data.artists.length > 0,
     escapeTemplate`
       <ul id="related-artists" class="cards related">
         <h4>Related Musicians</h4>
         ${each({
-          data: data,
-          tag: 'li',
-          txt: '{{name}}',
+          data: data.artists,
+          tag: 'a',
+          txt: '<li>{{name}}</li>',
           attrs: {
             class: 'related-artist',
-            id: null
+            id: null,
+            href: '#artist_{{name}}'
           }
         })}
       </ul>
       `,
-      `<p><strong>There are no artists related to ${params.title}</strong</p>`);
+      `<p><strong>There are no artists related</strong</p>`);
     createDOM({ html: dom, tag: 'body' });
   }
 }

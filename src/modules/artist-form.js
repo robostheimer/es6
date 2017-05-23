@@ -8,14 +8,22 @@ const artist = new Artist();
 
 export default class ArtistForm {
   createArtistFormDom(action) {
-    const dom = escapeTemplate`
-      <form>
+    const formDom = escapeTemplate`
+      <form id="search">
         <input type="text" id="find-artist" placeholder="Search for you favorite musician"/>
       </form>
-      <button id="search">Search</button
     `;
 
-    createDOM({ html: dom, tag: 'body'});
+    createDOM({ html: formDom, tag: 'body'});
+
+    const linkDom = escapeTemplate`
+      <button>
+        Seach
+      </button>
+    `;
+
+    createDOM({ html: linkDom, tag: 'search'});
+
     if(action) {
       addAjaxAction({
         action: action,
@@ -27,9 +35,6 @@ export default class ArtistForm {
           },
           {
             method: 'createArtistDom',
-            params: {
-              action: 'click'
-            }
           }
         ],
         addDom: true // whether there will be dom added based on this action
