@@ -2,12 +2,12 @@
 
 import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate, addAjaxAction } from '../helpers/create-dom';
-import Artist from './artist';
+import Router from '../router';
 
-const artist = new Artist();
+const router = new Router();
 
 export default class ArtistForm {
-  createArtistFormDom(action) {
+  createArtistFormDom() {
     const formDom = escapeTemplate`
       <form id="search">
         <input type="text" id="find-artist" placeholder="Search for you favorite musician"/>
@@ -17,28 +17,30 @@ export default class ArtistForm {
     createDOM({ html: formDom, tag: 'body'});
 
     const linkDom = escapeTemplate`
-      <button>
-        Seach
+      <button id="search">
+        Search
       </button>
     `;
 
     createDOM({ html: linkDom, tag: 'search'});
+    //adds click event to button
+    document.getElementById('search').addEventListener('click', (e) => {
+      e.preventDefault();
+      this._makeHash();
+    });
 
-    if(action) {
-      addAjaxAction({
-        action: action,
-        id: 'search',
-        type: artist,
-        methods: [
-          {
-            method: 'fetchArtists'
-          },
-          {
-            method: 'createArtistDom',
-          }
-        ],
-        addDom: true // whether there will be dom added based on this action
-      });
-    }
+    //adds onEnter to the input
+    document.getElementById('find-artist').addEventListener('keypress', (e) => {
+      if(e.keyCode === 13) {
+        e.preventDefault();
+        this._makeHash()
+      }
+    });
+  }
+
+  _makeHash() {
+    const val = document.getElementById('find-artist').value;
+
+    router.makeHash('artist', val);
   }
 }

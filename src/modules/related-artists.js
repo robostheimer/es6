@@ -36,7 +36,7 @@ export default class RelatedArtists {
           attrs: {
             class: 'related-artist',
             id: null,
-            href: '#artist_{{}}'
+            href: '#artist_{{id}}'
           }
         })}
       </ul>

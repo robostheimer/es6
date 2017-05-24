@@ -53,25 +53,5 @@ export default class Artist {
     `;
 
     createDOM({ html: dom, tag: 'body' });
-    // if(action) {
-    //   addAjaxAction({
-    //     action: action,
-    //     id: 'artists',
-    //     type: related,
-    //     methods: [
-    //       {
-    //         method: 'fetchRelatedArtists',
-    //       },
-    //       {
-    //         method: 'createRelatedArtistsDom',
-    //         params: {
-    //           action: 'click',
-    //           artists: data
-    //         }
-    //       }
-    //     ],
-    //     addDom: true // whether there will be dom added based on this action
-    //   });
-    // }
   }
 }

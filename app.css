@@ -30,9 +30,6 @@ li {
   margin: 0;
   padding: 0;
   list-style: none;
-  background-size: cover;
-  background-color: rgba(69, 139, 202, 1);
-  background-blend-mode: luminosity;
   color: white;
   min-height: 200px;
 }
@@ -42,9 +39,13 @@ li.artist {
   cursor: pointer;
 }
 
-.card a {
+ a.artist,
+ a.related-artist {
   color: white;
   font-weight: bold;
+  background-blend-mode: luminosity;
+  background-color: rgba(69, 139, 202, 1);
+  background-size: cover;
 }
 
 iframe {

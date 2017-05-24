@@ -15,14 +15,17 @@ export  default function init() {
   let hash = window.location.hash.replace('#', ''),
     args = createHashArgs(hash);
 
+  if(hash) {
+    router.makeHash(args.route, args.id);
+  }
 
-  router.makeHash(args.route, args.id);
 
   $(window).on('hashchange', function() {
     let hash = window.location.hash.replace('#', ''),
       args = createHashArgs(hash);
-
-    router.makeHash(args.route, args.id);
+    if(hash) {
+      router.makeHash(args.route, args.id);
+    }
   });
 }
 
@@ -31,15 +34,11 @@ function createHashArgs(hash) {
     route,
     id;
 
-    if(!hash) {
-      id = 'wilco';
-      route ='artist';
-    } else {
-      hashArr = hash.split('_')
-      route = hashArr[0];
-      id = hashArr[1];
-    }
-    return {id: id, route: route}
+  hashArr = hash.split('_')
+  route = hashArr[0];
+  id = hashArr[1];
+
+  return {id: id, route: route}
 }
 
 
