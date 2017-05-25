@@ -1,19 +1,17 @@
 'use strict'
 
-import $ from '../../node_modules/jquery/dist/jquery.min';
+//import $ from '../../node_modules/jquery/dist/jquery.min';
 import each from './each-template';
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
 export  function createDOM(options) {
-  const tag = options.tag === 'body' ? options.tag : `#${options.tag}`;
+  const tag = document.querySelector(options.tag) ? document.querySelector(options.tag) : document.getElementById(options.tag);
   const html = options.html;
+
   //TODO Figure out a better way to deal with this; shouldn't have to remove DOM
   // should be dealt with on the class level; i.e. the class should be smart enough
   // to know whether to show this or not
-  if (tag !== 'body') {
-    $(tag).children().html('');
-  }
-  $(tag).append(html);
+  tag.innerHTML+= html;
 }
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes

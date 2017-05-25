@@ -1,6 +1,5 @@
 'use strict'
 
-import $ from '../../node_modules/jquery/dist/jquery.min';
 import relatedArtists from './related-artists';
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
@@ -34,19 +33,18 @@ export default class Artist {
       <ul id="artists" class="cards">
         ${each({
           data: data.artists.items,
-          tag: 'a',
-          txt: `<li>
+          tag: 'li',
+          txt: `<a href="#related_{{id}}">
                   <div>
                     <strong>{{name}}</strong>
                   </div>
-                </li>
+                </a>
                 `,
           attrs: {
             class:'artist',
             title: null,
             id: null,
             style: 'background-image:url({{images[0].url}})',
-            href: '#related_{{id}}'
           }
         })}
       </ul>

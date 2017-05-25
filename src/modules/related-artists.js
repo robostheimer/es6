@@ -1,6 +1,5 @@
 'use strict'
 
-import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';

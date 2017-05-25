@@ -35,17 +35,15 @@ li {
 }
 
 
-li.artist {
-  cursor: pointer;
-}
 
- a.artist,
- a.related-artist {
+ li.artist,
+ li.related-artist {
   color: white;
   font-weight: bold;
   background-blend-mode: luminosity;
   background-color: rgba(69, 139, 202, 1);
   background-size: cover;
+  cursor: pointer
 }
 
 iframe {

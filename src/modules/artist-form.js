@@ -1,6 +1,5 @@
 'use strict'
 
-import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate, addAjaxAction } from '../helpers/create-dom';
 import Router from '../router';
 
