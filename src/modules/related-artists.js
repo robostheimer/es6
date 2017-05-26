@@ -22,20 +22,18 @@ export default class RelatedArtists {
     }
   }
 
-
   createRelatedArtistsDom(data, params) {
     const dom = iff(data.artists.length > 0,
     escapeTemplate`
-      <ul id="related-artists" class="cards related">
-        <h4>Related Musicians</h4>
+      <h4>Related Musicians</h4>
+      <ul id="related-artists" class="cards">
         ${each({
           data: data.artists,
-          tag: 'a',
-          txt: '<li>{{name}}</li>',
+          tag: 'li',
+          txt: '<a href="#artist_{{name}}">{{name}}</a>',
           attrs: {
             class: 'related-artist',
-            id: null,
-            href: '#artist_{{id}}'
+            id: null
           }
         })}
       </ul>

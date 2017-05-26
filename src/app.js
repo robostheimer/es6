@@ -10,7 +10,7 @@ const form = new ArtistForm();
 const router = new Router();
 
 export  default function init() {
-  form.createArtistFormDom('click');
+  form.createArtistFormDom();
   router.logHash();
   let hash = window.location.hash.replace('#', ''),
     args = createHashArgs(hash);
@@ -27,6 +27,28 @@ export  default function init() {
       router.makeHash(args.route, args.id);
     }
   });
+
+  document.getElementById('search').addEventListener('click', (event) => {
+    if(event.preventDefault) {
+      debugger;
+      event.preventDefault();
+    }
+    _makeHash();
+  });
+
+  //adds onEnter to the input
+  // document.getElementById('find-artist').addEventListener('keypress', (event) => {
+  //   if(event.keyCode === 13) {
+  //     event.preventDefault();
+  //     this._makeHash()
+  //   }
+  // });
+
+  function _makeHash() {
+    const val = document.getElementById('find-artist').value;
+
+    router.makeHash('artist', val);
+  }
 }
 
 function createHashArgs(hash) {

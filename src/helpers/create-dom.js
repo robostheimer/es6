@@ -5,6 +5,7 @@ import each from './each-template';
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
 export  function createDOM(options) {
+  //debugger;
   const tag = document.querySelector(options.tag) ? document.querySelector(options.tag) : document.getElementById(options.tag);
   const html = options.html;
 

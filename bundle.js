@@ -25,7 +25,7 @@ var form = new _artistForm2.default();
 var router = new _router2.default();
 
 function init() {
-  form.createArtistFormDom('click');
+  form.createArtistFormDom();
   router.logHash();
   var hash = window.location.hash.replace('#', ''),
       args = createHashArgs(hash);
@@ -41,6 +41,28 @@ function init() {
       router.makeHash(args.route, args.id);
     }
   });
+
+  document.getElementById('search').addEventListener('click', function (event) {
+    if (event.preventDefault) {
+      debugger;
+      event.preventDefault();
+    }
+    _makeHash();
+  });
+
+  //adds onEnter to the input
+  // document.getElementById('find-artist').addEventListener('keypress', (event) => {
+  //   if(event.keyCode === 13) {
+  //     event.preventDefault();
+  //     this._makeHash()
+  //   }
+  // });
+
+  function _makeHash() {
+    var val = document.getElementById('find-artist').value;
+
+    router.makeHash('artist', val);
+  }
 }
 
 function createHashArgs(hash) {
@@ -76,6 +98,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
 function createDOM(options) {
+  //debugger;
   var tag = document.querySelector(options.tag) ? document.querySelector(options.tag) : document.getElementById(options.tag);
   var html = options.html;
 
@@ -331,6 +354,8 @@ function memoizeJSON() {
 },{}],7:[function(require,module,exports){
 'use strict';
 
+//import $ from '../../node_modules/jquery/dist/jquery.min';
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -362,8 +387,6 @@ var ArtistForm = function () {
   _createClass(ArtistForm, [{
     key: 'createArtistFormDom',
     value: function createArtistFormDom() {
-      var _this = this;
-
       var formDom = (0, _createDom.escapeTemplate)(_templateObject);
 
       (0, _createDom.createDOM)({ html: formDom, tag: 'body' });
@@ -371,19 +394,7 @@ var ArtistForm = function () {
       var linkDom = (0, _createDom.escapeTemplate)(_templateObject2);
 
       (0, _createDom.createDOM)({ html: linkDom, tag: 'search' });
-      //adds click event to button
-      document.getElementById('search').addEventListener('click', function (e) {
-        e.preventDefault();
-        _this._makeHash();
-      });
-
-      //adds onEnter to the input
-      document.getElementById('find-artist').addEventListener('keypress', function (e) {
-        if (e.keyCode === 13) {
-          e.preventDefault();
-          _this._makeHash();
-        }
-      });
+      //adds click event to button;
     }
   }, {
     key: '_makeHash',
@@ -489,7 +500,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <ul id="related-artists" class="cards related">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      '], ['\n      <ul id="related-artists" class="cards related">\n        <h4>Related Musicians</h4>\n        ', '\n      </ul>\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      <h4>Related Musicians</h4>\n      <ul id="related-artists" class="cards">\n        ', '\n      </ul>\n      '], ['\n      <h4>Related Musicians</h4>\n      <ul id="related-artists" class="cards">\n        ', '\n      </ul>\n      ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -530,12 +541,11 @@ var RelatedArtists = function () {
     value: function createRelatedArtistsDom(data, params) {
       var dom = (0, _ifTemplate.iff)(data.artists.length > 0, (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data.artists,
-        tag: 'a',
-        txt: '<li>{{name}}</li>',
+        tag: 'li',
+        txt: '<a href="#artist_{{name}}">{{name}}</a>',
         attrs: {
           class: 'related-artist',
-          id: null,
-          href: '#artist_{{id}}'
+          id: null
         }
       })), '<p><strong>There are no artists related</strong</p>');
       (0, _createDom.createDOM)({ html: dom, tag: 'body' });

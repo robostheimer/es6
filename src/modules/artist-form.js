@@ -1,5 +1,6 @@
 'use strict'
 
+//import $ from '../../node_modules/jquery/dist/jquery.min';
 import { createDOM, escapeTemplate, addAjaxAction } from '../helpers/create-dom';
 import Router from '../router';
 
@@ -22,19 +23,24 @@ export default class ArtistForm {
     `;
 
     createDOM({ html: linkDom, tag: 'search'});
-    //adds click event to button
-    document.getElementById('search').addEventListener('click', (e) => {
-      e.preventDefault();
+    //adds click event to button;
+
+    //This seems to only be available for one time.  Why?
+    document.getElementById('search').addEventListener('click', (event) => {
+      if(event.preventDefault) {
+        debugger;
+        event.preventDefault();
+      }
       this._makeHash();
     });
 
     //adds onEnter to the input
-    document.getElementById('find-artist').addEventListener('keypress', (e) => {
-      if(e.keyCode === 13) {
-        e.preventDefault();
-        this._makeHash()
-      }
-    });
+    // document.getElementById('find-artist').addEventListener('keypress', (event) => {
+    //   if(event.keyCode === 13) {
+    //     event.preventDefault();
+    //     this._makeHash()
+    //   }
+    // });
   }
 
   _makeHash() {
