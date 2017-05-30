@@ -6,20 +6,23 @@ import { iff } from '../helpers/if-template';
 import { memoize } from '../helpers/memoize';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 
+const auth_header =  new Headers({
+  'Authorization': `Bearer ${sessionStorage.access_token}`
+})
+
 export default class RelatedArtists {
   //TODO: memoize this method; see javascript ninja book
   fetchRelatedArtists(id) {
-    if(id && !memoized(id)) {
+    const url = `https://api.spotify.com/v1/artists/${id}/related-artists`;
 
-      const url = `https://api.spotify.com/v1/artists/${id}/related-artists`;
-
-      var data = memoizeJSON({key: id,
-        fn() {
-          return fetch(url)
-        }
-      });
-      return data;
-    }
+    var data = memoizeJSON({key: id,
+      fn() {
+        return fetch(url, {
+          headers: auth_header
+        });
+      }
+    });
+    return data;
   }
 
   createRelatedArtistsDom(data, params) {
@@ -39,6 +42,6 @@ export default class RelatedArtists {
       </ul>
       `,
       `<p><strong>There are no artists related</strong</p>`);
-    createDOM({ html: dom, tag: 'body' });
+    createDOM({ html: dom, tag: 'container' });
   }
 }
