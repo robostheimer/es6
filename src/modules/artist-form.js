@@ -31,6 +31,12 @@ export default class ArtistForm {
 
     createDOM({ html: containerDOM, tag: 'body' });
 
+    // const playerContainerDOM = escapeTemplate `
+    //   <section id="player-container"></section>
+    // `
+    //
+    // createDOM({ html: playerContainerDOM, tag: 'body' });
+
     //adds click event to button;
     document.getElementById('search_artists').addEventListener('click', (event) => {
       if(event.preventDefault) {

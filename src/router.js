@@ -48,12 +48,12 @@ export default class Router {
   }
 
   makeHash(route, id) {
+    document.getElementById('container').innerHTML = '';
     window.location.hash = `${route}_${id}`;
     this.hashToData(route, id);
   }
 
   hashToData(route, id) {
-
     const className =  routeMap[route].className;
     const prop = routeMap[route];
 
@@ -62,10 +62,13 @@ export default class Router {
         return className[prop.dom](data);
       }
       //reloads in case of auth error to get user back into auth flow
-      else if(data.error.status === '401') {
+      else if(data.error.status === 401) {
+        debugger;
         window.location.reload();
+        sessionStorage.clear();
       } else {
-        return 'There was an error processing your request. Please try again.'
+        return 'There was an error processing your request. Please try again.';
+        window.location.reload();
       }
 
     })

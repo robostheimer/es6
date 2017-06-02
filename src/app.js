@@ -40,7 +40,6 @@ export  default function init() {
 
 function startApp() {
   form.createArtistFormDom();
-  //form.addEvent('search_artist', 'click');
 
   router.logHash();
   let hash = window.location.hash.replace('#', ''),

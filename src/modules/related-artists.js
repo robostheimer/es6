@@ -36,7 +36,8 @@ export default class RelatedArtists {
           txt: '<a href="#artist_{{name}}">{{name}}</a>',
           attrs: {
             class: 'related-artist',
-            id: null
+            id: null,
+            style: 'background-image:url({{images[0].url}})'
           }
         })}
       </ul>

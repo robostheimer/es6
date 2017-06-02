@@ -147,7 +147,7 @@ export default class Artist {
                 </p>
                 `,
           attrs: {
-            class:'artist card',
+            class:'artist',
             title: null,
             id: null,
             style: 'background-image:url({{album.images[0].url}})',
@@ -171,7 +171,7 @@ export default class Artist {
                 </div>
                 `,
           attrs: {
-            class:'album card',
+            class:'artist',
             title: null,
             id: null,
             style: 'background-image:url({{images[0].url}})',
@@ -184,6 +184,7 @@ export default class Artist {
   }
 
   createRecsDOM(data) {
+    console.log(data)
     const dom = escapeTemplate`
     <h2>Playlist Inspired by: TEST</h2>
       <ul id="radio" class="cards">
@@ -199,7 +200,7 @@ export default class Artist {
                 <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
           attrs: {
-            class:'playlist card',
+            class:'artist',
             title: null,
             id: null,
             style: 'background-image:url({{album.images[0].url}})',

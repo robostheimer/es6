@@ -53,7 +53,6 @@ function init() {
 
 function startApp() {
   form.createArtistFormDom();
-  //form.addEvent('search_artist', 'click');
 
   router.logHash();
   var hash = window.location.hash.replace('#', ''),
@@ -431,6 +430,12 @@ var ArtistForm = function () {
 
       (0, _createDom.createDOM)({ html: containerDOM, tag: 'body' });
 
+      // const playerContainerDOM = escapeTemplate `
+      //   <section id="player-container"></section>
+      // `
+      //
+      // createDOM({ html: playerContainerDOM, tag: 'body' });
+
       //adds click event to button;
       document.getElementById('search_artists').addEventListener('click', function (event) {
         if (event.preventDefault) {
@@ -500,6 +505,8 @@ var auth_header = new Headers({
   'Authorization': 'Bearer ' + sessionStorage.access_token
 });
 
+//TODO: Need to add album and track class/components to support linking.
+
 var Artist = function () {
   function Artist() {
     _classCallCheck(this, Artist);
@@ -507,9 +514,6 @@ var Artist = function () {
 
   _createClass(Artist, [{
     key: 'fetchArtists',
-
-    //TODO: memoize this method javascript ninja book
-
     value: function fetchArtists(name) {
       var url = 'https://api.spotify.com/v1/search?q=' + name + '&type=artist';
       if (name) {
@@ -520,7 +524,7 @@ var Artist = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'aritst_' + name);
+        (0, _addToStorage.addToStorage)('hash', 'artist_' + name);
         return data;
       }
     }
@@ -607,7 +611,7 @@ var Artist = function () {
         tag: 'li',
         txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  from: <a href="#album_{{album.id}}">{{album.name}}</a>\n                </p>\n                ',
         attrs: {
-          class: 'artist',
+          class: 'artist card',
           title: null,
           id: null,
           style: 'background-image:url({{album.images[0].url}})'
@@ -624,7 +628,7 @@ var Artist = function () {
         tag: 'li',
         txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                ',
         attrs: {
-          class: 'artist',
+          class: 'album card',
           title: null,
           id: null,
           style: 'background-image:url({{images[0].url}})'
@@ -636,13 +640,12 @@ var Artist = function () {
   }, {
     key: 'createRecsDOM',
     value: function createRecsDOM(data) {
-      console.log(data);
       var dom = (0, _createDom.escapeTemplate)(_templateObject4, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
         txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#album_{{album.id}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
         attrs: {
-          class: 'artist',
+          class: 'playlist card',
           title: null,
           id: null,
           style: 'background-image:url({{album.images[0].url}})'
@@ -713,7 +716,8 @@ var RelatedArtists = function () {
         txt: '<a href="#artist_{{name}}">{{name}}</a>',
         attrs: {
           class: 'related-artist',
-          id: null
+          id: null,
+          style: 'background-image:url({{images[0].url}})'
         }
       })), '<p><strong>There are no artists related</strong</p>');
       (0, _createDom.createDOM)({ html: dom, tag: 'container' });
@@ -795,13 +799,13 @@ var Router = function () {
   }, {
     key: 'makeHash',
     value: function makeHash(route, id) {
+      document.getElementById('container').innerHTML = '';
       window.location.hash = route + '_' + id;
       this.hashToData(route, id);
     }
   }, {
     key: 'hashToData',
     value: function hashToData(route, id) {
-
       var className = routeMap[route].className;
       var prop = routeMap[route];
 
@@ -810,10 +814,13 @@ var Router = function () {
           return className[prop.dom](data);
         }
         //reloads in case of auth error to get user back into auth flow
-        else if (data.error.status === '401') {
+        else if (data.error.status === 401) {
+            debugger;
             window.location.reload();
+            sessionStorage.clear();
           } else {
             return 'There was an error processing your request. Please try again.';
+            window.location.reload();
           }
       });
     }
