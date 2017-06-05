@@ -63,7 +63,6 @@ export default class Router {
       }
       //reloads in case of auth error to get user back into auth flow
       else if(data.error.status === 401) {
-        debugger;
         window.location.reload();
         sessionStorage.clear();
       } else {
