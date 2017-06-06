@@ -592,7 +592,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data.artists.items,
         tag: 'li',
-        txt: '<div>\n                  <strong>{{name}}</strong>\n                </div>\n                <ul class="options">\n                  <li>\n                    <a href="#related_{{id}}">\n                      Related Musicians\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#top_{{id}}">\n                      Top Tracks\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#albums_{{id}}">\n                      Albums\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#recommendations_{{id}}">\n                      Create Radio Station\n                    </a>\n                  <li>\n                  <li>\n                    <a>\n                      Other musicians from {{location}}\n                    </a>\n                  </li>\n                </ul>\n                ',
+        txt: '<div>\n                  <h4>{{name}}</h4>\n                </div>\n                <ul class="options">\n                  <li>\n                    <a href="#related_{{id}}">\n                      Related Musicians\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#top_{{id}}">\n                      Top Tracks\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#albums_{{id}}">\n                      Albums\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#recommendations_{{id}}">\n                      Create Radio Station\n                    </a>\n                  <li>\n                  <li>\n                    <a>\n                      Other musicians from {{location}}\n                    </a>\n                  </li>\n                </ul>\n                ',
         attrs: {
           class: 'artist',
           title: null,
@@ -678,6 +678,8 @@ var _ifTemplate = require('../helpers/if-template');
 
 var _memoize = require('../helpers/memoize');
 
+var _addToStorage = require('../helpers/add-to-storage');
+
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -705,6 +707,7 @@ var RelatedArtists = function () {
           });
         }
       });
+      (0, _addToStorage.addToStorage)('hash', 'related_' + id);
       return data;
     }
   }, {
@@ -728,7 +731,7 @@ var RelatedArtists = function () {
 }();
 
 exports.default = RelatedArtists;
-},{"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/if-template":6,"../helpers/memoize":7}],11:[function(require,module,exports){
+},{"../helpers/add-to-storage":2,"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/if-template":6,"../helpers/memoize":7}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

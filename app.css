@@ -57,6 +57,10 @@ li.album {
   min-height: 150px;
 }
 
+.options li {
+  margin-bottom: 7px;
+}
+
 iframe {
   margin-top: 15px;
 }
@@ -102,11 +106,22 @@ iframe {
 }
 
 a, p {
-  color: rgba(69, 139, 202, 1);
+  color: rgba(69, 139, 202, .8);
   background: white;
   padding: 3px;
-  margin: 2px;
+  margin-top: 7px;
+  background-blend-mode: luminosity;
 }
+
+li h4 {
+  color: white;
+  background: rgba(69, 139, 202, .8);
+  padding: 3px;
+  margin-bottom: 10px;
+  background-blend-mode: luminosity;
+
+}
+
 
 .related-artist {
   min-height: 100px;

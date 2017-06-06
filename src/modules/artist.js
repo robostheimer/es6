@@ -89,7 +89,7 @@ export default class Artist {
           data: data.artists.items,
           tag: 'li',
           txt: `<div>
-                  <strong>{{name}}</strong>
+                  <h4>{{name}}</h4>
                 </div>
                 <ul class="options">
                   <li>

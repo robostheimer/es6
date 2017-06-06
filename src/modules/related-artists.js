@@ -5,6 +5,8 @@ import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
 import { memoize } from '../helpers/memoize';
 import { memoizeJSON, memoized } from '../helpers/memoize';
+import { addToStorage } from '../helpers/add-to-storage';
+
 
 const auth_header =  new Headers({
   'Authorization': `Bearer ${sessionStorage.access_token}`
@@ -22,6 +24,7 @@ export default class RelatedArtists {
         });
       }
     });
+    addToStorage('hash', `related_${id}`);
     return data;
   }
 
