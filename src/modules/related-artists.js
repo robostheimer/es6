@@ -17,7 +17,7 @@ export default class RelatedArtists {
   fetchRelatedArtists(id) {
     const url = `https://api.spotify.com/v1/artists/${id}/related-artists`;
 
-    var data = memoizeJSON({key: id,
+    const data = memoizeJSON({key: id,
       fn() {
         return fetch(url, {
           headers: auth_header

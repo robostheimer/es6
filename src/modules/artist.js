@@ -1,12 +1,14 @@
 'use strict'
 
 import relatedArtists from './related-artists';
+import savePlaylistButton from './save-playlist-button';
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 
 const related = new relatedArtists();
+//const saveButton = new savePlaylistButton();
 const SCOPE = 'playlist-modify-private playlist-modify-public';
 const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 const auth_header =  new Headers({
@@ -18,7 +20,7 @@ export default class Artist {
   fetchArtists(name) {
     const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`;
     if(name) {
-      var data =  memoizeJSON({key: name,
+      const data =  memoizeJSON({key: name,
         fn() {
           return fetch(url, {
             headers: auth_header
@@ -184,6 +186,8 @@ export default class Artist {
   }
 
   createRecsDOM(data) {
+    //saveButton.createSaveButtonDOM();
+
     const dom = escapeTemplate`
     <h2>Playlist Inspired by: TEST</h2>
       <ul id="radio" class="cards">
