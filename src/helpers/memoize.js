@@ -11,7 +11,7 @@ export function memoizeJSON() {
   let fn = args[0].fn;
 
   if(!cache[key]) {
-    cache[key] = fn().then((data) => {
+    cache[key] = fn().then((data) => {;
       return data.json();
     });
   }

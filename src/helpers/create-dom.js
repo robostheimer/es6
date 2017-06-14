@@ -7,10 +7,12 @@ import each from './each-template';
 export  function createDOM(options) {
   const tag = options.tag === 'body' ? options.tag : `#${options.tag}`;
   const html = options.html;
+  const clear = options.clear;
+
   //TODO Figure out a better way to deal with this; shouldn't have to remove DOM
   // should be dealt with on the class level; i.e. the class should be smart enough
   // to know whether to show this or not
-  if (tag !== 'body') {
+  if (tag !== 'body' && clear) {
     $(tag).children().html('');
   }
 

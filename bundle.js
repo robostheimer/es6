@@ -119,10 +119,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function createDOM(options) {
   var tag = options.tag === 'body' ? options.tag : '#' + options.tag;
   var html = options.html;
+  var clear = options.clear;
+
   //TODO Figure out a better way to deal with this; shouldn't have to remove DOM
   // should be dealt with on the class level; i.e. the class should be smart enough
   // to know whether to show this or not
-  if (tag !== 'body') {
+  if (tag !== 'body' && clear) {
     (0, _jquery2.default)(tag).children().html('');
   }
 
@@ -371,6 +373,7 @@ function memoizeJSON() {
 
   if (!cache[key]) {
     cache[key] = fn().then(function (data) {
+      ;
       return data.json();
     });
   }
@@ -478,7 +481,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _templateObject = _taggedTemplateLiteral(['\n      <ul id="artists" class="cards">\n        ', '\n      </ul>\n    '], ['\n      <ul id="artists" class="cards">\n        ', '\n      </ul>\n    ']),
     _templateObject2 = _taggedTemplateLiteral(['\n      <h2>Top Tracks for ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      '], ['\n      <h2>Top Tracks for ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      ']),
     _templateObject3 = _taggedTemplateLiteral(['\n    <h2>Albums by: ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      '], ['\n    <h2>Albums by: ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      ']),
-    _templateObject4 = _taggedTemplateLiteral(['\n    <h2>Playlist Inspired by: TEST</h2>\n      <ul id="radio" class="cards">\n        ', '\n      </ul>\n      '], ['\n    <h2>Playlist Inspired by: TEST</h2>\n      <ul id="radio" class="cards">\n        ', '\n      </ul>\n      ']);
+    _templateObject4 = _taggedTemplateLiteral(['\n    <h2>Playlist Inspired by: ', '</h2>\n      <ul id="radio" class="cards">\n        ', '\n      </ul>\n      '], ['\n    <h2>Playlist Inspired by: ', '</h2>\n      <ul id="radio" class="cards">\n        ', '\n      </ul>\n      ']);
 
 var _relatedArtists = require('./related-artists');
 
@@ -503,7 +506,7 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var related = new _relatedArtists2.default();
-//const saveButton = new savePlaylistButton();
+var saveButton = new _savePlaylistButton2.default();
 var SCOPE = 'playlist-modify-private playlist-modify-public';
 var CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 var auth_header = new Headers({
@@ -622,7 +625,7 @@ var Artist = function () {
           style: 'background-image:url({{album.images[0].url}})'
         }
       }));
-
+      saveButton.createSaveButtonDOM(data.tracks, 'topSongs');
       (0, _createDom.createDOM)({ html: dom, tag: 'container' });
     }
   }, {
@@ -645,9 +648,7 @@ var Artist = function () {
   }, {
     key: 'createRecsDOM',
     value: function createRecsDOM(data) {
-      //saveButton.createSaveButtonDOM();
-
-      var dom = (0, _createDom.escapeTemplate)(_templateObject4, (0, _eachTemplate.each)({
+      var dom = (0, _createDom.escapeTemplate)(_templateObject4, data.tracks[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
         txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#album_{{album.id}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
@@ -658,6 +659,7 @@ var Artist = function () {
           style: 'background-image:url({{album.images[0].url}})'
         }
       }));
+      saveButton.createSaveButtonDOM(data.tracks, 'radio');
       (0, _createDom.createDOM)({ html: dom, tag: 'container' });
     }
   }]);
@@ -747,7 +749,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <h4>Related Musicians</h4>\n      <ul id="related-artists" class="cards">\n        ', '\n      </ul>\n      '], ['\n      <h4>Related Musicians</h4>\n      <ul id="related-artists" class="cards">\n        ', '\n      </ul>\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      <button id="', '" >\n        Save Playlist\n      </button>\n    '], ['\n      <button id="', '" >\n        Save Playlist\n      </button>\n    ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -765,16 +767,82 @@ var auth_header = new Headers({
   'Authorization': 'Bearer ' + sessionStorage.access_token
 });
 
-var RelatedArtists = function () {
-  function RelatedArtists() {
-    _classCallCheck(this, RelatedArtists);
+var post_header = new Headers({
+  'Content-Type': 'application/json'
+});
+
+var SavedPlaylistButton = function () {
+  function SavedPlaylistButton() {
+    _classCallCheck(this, SavedPlaylistButton);
   }
 
-  _createClass(RelatedArtists, [{
+  _createClass(SavedPlaylistButton, [{
     key: 'fetchSpotifyProfile',
 
     //TODO: memoize this method; see javascript ninja book
-    value: function fetchSpotifyProfile(id) {
+    value: function fetchSpotifyProfile(name, tracks) {
+      var url = 'https://api.spotify.com/v1/me';
+
+      return fetch(url, {
+        method: 'GET',
+        headers: auth_header
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        var username = data.id;
+        var user_url = 'https://api.spotify.com/v1/users/' + username + '/playlists';
+        fetch(user_url, {
+          headers: auth_header,
+          method: 'POST',
+          body: JSON.stringify({
+            name: name + ' from ES6 app',
+            public: false
+          })
+        }).then(function (json) {
+          return json.json();
+        }).then(function (json) {
+          var playlist_url = user_url + '/' + json.id + '/tracks?position=0&uris=' + tracks;
+          return fetch(playlist_url, {
+            method: 'POST',
+            headers: auth_header
+          });
+        });
+      });
+      // console.log(json);
+      // const username = json.id
+      // const playlist_url = 'https://api.spotify.com/v1/users/'+username+'/playlists';
+      // fetch(playlist_url, {
+      //   headers: auth_header,
+      //   method: 'POST',
+      //   data: JSON.stringify({
+      //     'name': 'TEST Playlist',
+      //     'public': false
+      //   }),
+      // })
+      //})
+      //   const create_url = `https://api.spotify.com/v1/users/${data.username}/playlists/${data.id}/tracks?position=0&uris=4wd09wCccmxUB7XVJp0RNn`;
+      //   $.fetch(url, {
+      //     method: 'POST',
+      //     headers: auth_header,
+      //     success: function() {
+      //       alert('This '+model.artist+' '+model.type+' playlist was added to your Spotify Account!')
+      //     }
+      // })
+
+      // const data = memoizeJSON({ key: 'profile',
+      //   fn() {
+      //     return fetch(url, {
+      //       method: 'GET',
+      //       headers: auth_header
+      //     });
+      //   }
+      // });
+      //
+      // return data;
+    }
+  }, {
+    key: 'createSpotifyPlaylist',
+    value: function createSpotifyPlaylist(id) {
       var url = 'https://api.spotify.com/v1/me';
 
       var data = (0, _memoize.memoizeJSON)({ key: id,
@@ -784,29 +852,43 @@ var RelatedArtists = function () {
           });
         }
       });
+      console.log(data);
       return data;
     }
   }, {
-    key: 'createRelatedArtistsDom',
-    value: function createRelatedArtistsDom(data, params) {
-      var dom = (0, _ifTemplate.iff)(data.artists.length > 0, (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
-        data: data.artists,
-        tag: 'li',
-        txt: '<a href="#artist_{{name}}">{{name}}</a>',
-        attrs: {
-          class: 'related-artist',
-          id: null,
-          style: 'background-image:url({{images[0].url}})'
+    key: 'createSaveButtonDOM',
+    value: function createSaveButtonDOM(data, type) {
+      var _this = this;
+
+      var tracks = [];
+      var typeMap = {
+        topSongs: 'Top Songs by ' + data[0].artists[0].name,
+        radio: 'Songs inspired by ' + data[0].artists[0].name
+      };
+
+      data.forEach(function (track) {
+        tracks.push('spotify%3Atrack%3A' + track.id);
+      });
+
+      var buttonDOM = (0, _createDom.escapeTemplate)(_templateObject, tracks.toString());
+
+      (0, _createDom.createDOM)({ html: buttonDOM, tag: 'container' });
+
+      //adds click event to button;
+      document.getElementById(tracks.toString()).addEventListener('click', function (event) {
+        if (event.preventDefault) {
+          event.preventDefault();
         }
-      })), '<p><strong>There are no artists related</strong</p>');
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+        console.log(event.target.id);
+        _this.fetchSpotifyProfile(typeMap[type], event.target.id);
+      });
     }
   }]);
 
-  return RelatedArtists;
+  return SavedPlaylistButton;
 }();
 
-exports.default = RelatedArtists;
+exports.default = SavedPlaylistButton;
 },{"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/if-template":6,"../helpers/memoize":7}],12:[function(require,module,exports){
 "use strict";
 

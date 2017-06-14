@@ -8,7 +8,7 @@ import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 
 const related = new relatedArtists();
-//const saveButton = new savePlaylistButton();
+const saveButton = new savePlaylistButton();
 const SCOPE = 'playlist-modify-private playlist-modify-public';
 const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 const auth_header =  new Headers({
@@ -134,6 +134,7 @@ export default class Artist {
     createDOM({ html: dom, tag: 'container' });
   }
 
+
   createTopTracksDOM(data) {
     const dom = escapeTemplate`
       <h2>Top Tracks for ${data.tracks[0].artists[0].name}</h2>
@@ -157,7 +158,7 @@ export default class Artist {
         })}
       </ul>
       `;
-
+    saveButton.createSaveButtonDOM(data.tracks, 'topSongs');
     createDOM({ html: dom, tag: 'container' });
   }
 
@@ -186,10 +187,8 @@ export default class Artist {
   }
 
   createRecsDOM(data) {
-    //saveButton.createSaveButtonDOM();
-
     const dom = escapeTemplate`
-    <h2>Playlist Inspired by: TEST</h2>
+    <h2>Playlist Inspired by: ${data.tracks[0].artists[0].name}</h2>
       <ul id="radio" class="cards">
         ${each({
           data: data.tracks,
@@ -211,6 +210,7 @@ export default class Artist {
         })}
       </ul>
       `;
+      saveButton.createSaveButtonDOM(data.tracks, 'radio');
       createDOM({ html: dom, tag: 'container' });
   }
 }
