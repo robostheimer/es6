@@ -9,4 +9,4 @@ The templating so far includes:
 
 I will be updating this repo periodically. Right now I am using Spotify's api to create a small web app. Once I get a good infrastructure going, I plan to create a fully-fledged music discovery app out using the templating system I built and ES6.
 
-Stay tuned!
+Check out the app at http://es6-spotify-app.s3-website-us-west-2.amazonaws.com/
