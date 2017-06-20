@@ -13,6 +13,7 @@ export default class ArtistForm {
       <form id="search">
         <input type="text" id="find-artist" placeholder="Search for you favorite musician"/>
       </form>
+      <div id="spotify-player"></div>
     `;
 
     createDOM({ html: formDom, tag: 'body' });

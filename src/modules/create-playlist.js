@@ -14,7 +14,7 @@ const post_header = new Headers({
   'Content-Type': 'application/json'
 })
 
-export default class SavedPlaylistButton {
+export default class CreatePlaylist {
   //TODO: memoize this method; see javascript ninja book
   fetchSpotifyProfile(name, tracks) {
     const url = 'https://api.spotify.com/v1/me'
@@ -41,11 +41,15 @@ export default class SavedPlaylistButton {
             return json.json();
         })
         .then((json) => {
-          const playlist_url = `${user_url}/${json.id}/tracks?position=0&uris=${tracks}`;
+          const id = json.id;
+          const playlist_url = `${user_url}/${id}/tracks?position=0&uris=${tracks}`;
           return fetch(playlist_url, {
             method: 'POST',
             headers: auth_header,
+          }).then(() => {
+            createSpotifyPlayerDOM(id, username);
           })
+
         })
       })
   }
@@ -77,8 +81,11 @@ export default class SavedPlaylistButton {
 
     const buttonDOM = escapeTemplate`
       <button id="${tracks.toString()}" >
-        Save Playlist
+        Save Playlist to your Spotify Account
       </button>
+      <div>
+        <em>Saving the playlist will add a spotify player to this app</em>
+      </div>
     `;
 
     createDOM({ html: buttonDOM, tag: 'container' });
@@ -90,6 +97,16 @@ export default class SavedPlaylistButton {
       }
 
       this.fetchSpotifyProfile(typeMap[type], event.target.id);
+      document.getElementById(tracks.toString()).disabled = true;
     });
   }
+}
+
+//Creates spotify iframe player in app
+function createSpotifyPlayerDOM(id, username) {
+  const url = `https://open.spotify.com/embed?uri=spotify:user:${username}:playlist:${id}`
+  const playerDOM = escapeTemplate`
+    <iframe src=${url} width="300" height="100" frameborder="0" allowtransparency="true"></iframe>
+  `;
+  createDOM({ html: playerDOM, tag: 'spotify-player', clear: true });
 }

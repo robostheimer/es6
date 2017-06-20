@@ -1,14 +1,14 @@
 'use strict'
 
 import relatedArtists from './related-artists';
-import savePlaylistButton from './save-playlist-button';
+import  CreatePlaylist from './create-playlist';
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 
 const related = new relatedArtists();
-const saveButton = new savePlaylistButton();
+const createPlaylist = new CreatePlaylist();
 const SCOPE = 'playlist-modify-private playlist-modify-public';
 const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 const auth_header =  new Headers({
@@ -158,7 +158,7 @@ export default class Artist {
         })}
       </ul>
       `;
-    saveButton.createSaveButtonDOM(data.tracks, 'topSongs');
+    createPlaylist.createSaveButtonDOM(data.tracks, 'topSongs');
     createDOM({ html: dom, tag: 'container' });
   }
 
@@ -210,7 +210,7 @@ export default class Artist {
         })}
       </ul>
       `;
-      saveButton.createSaveButtonDOM(data.tracks, 'radio');
+      createPlaylist.createSaveButtonDOM(data.tracks, 'radio');
       createDOM({ html: dom, tag: 'container' });
   }
 }

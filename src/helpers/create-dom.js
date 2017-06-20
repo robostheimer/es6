@@ -12,8 +12,9 @@ export  function createDOM(options) {
   //TODO Figure out a better way to deal with this; shouldn't have to remove DOM
   // should be dealt with on the class level; i.e. the class should be smart enough
   // to know whether to show this or not
-  if (tag !== 'body' && clear) {
-    $(tag).children().html('');
+
+  if(clear) {
+    $(tag).html('');
   }
 
   $(tag).append(html);
@@ -24,6 +25,7 @@ export  function createDOM(options) {
   // tag.innerHTML+=(html);
 
 }
+
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes
 // Typical use case would be to ceate a component and then add an ajax action to that component
