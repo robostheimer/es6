@@ -2,10 +2,12 @@
 
 import Artist from './modules/artist';
 import RelatedArtists from './modules/related-artists';
+import Album from './modules/albums';
 
 const hash = window.location.hash.replace('#', '');
 const artist = new Artist();
 const related = new RelatedArtists();
+const album = new Album();
 
 
 const routeMap = {
@@ -28,10 +30,16 @@ const routeMap = {
     dom: 'createTopTracksDOM'
   },
   albums: {
-    className: artist,
+    className: album,
     hash: 'albums',
-    fetch: 'fetchAlbums',
+    fetch: 'fetchAllAlbums',
     dom: 'createAlbumsDOM'
+  },
+  album: {
+    className: album,
+    hash: 'album',
+    fetch: 'fetchAlbum',
+    dom: 'createAlbumDOM'
   },
   recommendations: {
     className: artist,
