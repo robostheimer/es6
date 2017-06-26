@@ -52,7 +52,7 @@ function startApp() {
     let hash = window.location.hash.replace('#', ''),
       args = createHashArgs(hash);
     if(hash) {
-      router.makeHash(args.route, args.id);
+      router.makeHash(args.route, args.id, args.name);
     }
   });
 }
@@ -60,13 +60,15 @@ function startApp() {
 function createHashArgs(hash) {
   let hashArr,
     route,
-    id;
+    id,
+    name;
 
-  hashArr = hash.split('_')
-  route = hashArr[0];
-  id = hashArr[1];
+  hashArr = hash.split('_'),
+  route = hashArr[0],
+  id = hashArr[1],
+  name = hashArr[2];
 
-  return {id: id, route: route}
+  return {id: id, route: route, name: name};
 }
 
 

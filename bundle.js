@@ -66,7 +66,7 @@ function startApp() {
     var hash = window.location.hash.replace('#', ''),
         args = createHashArgs(hash);
     if (hash) {
-      router.makeHash(args.route, args.id);
+      router.makeHash(args.route, args.id, args.name);
     }
   });
 }
@@ -74,13 +74,12 @@ function startApp() {
 function createHashArgs(hash) {
   var hashArr = void 0,
       route = void 0,
-      id = void 0;
+      id = void 0,
+      name = void 0;
 
-  hashArr = hash.split('_');
-  route = hashArr[0];
-  id = hashArr[1];
+  hashArr = hash.split('_'), route = hashArr[0], id = hashArr[1], name = hashArr[2];
 
-  return { id: id, route: route };
+  return { id: id, route: route, name: name };
 }
 
 $(document).ready(init);
@@ -390,7 +389,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <h2>Tracklist for ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      '], ['\n      <h2>Tracklist for ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      ']),
+var _templateObject = _taggedTemplateLiteral(['\n      <h2>Tracklist for ', ' by ', '</h2>\n      <ul id="top-tracks">\n        ', '\n      </ul>\n      '], ['\n      <h2>Tracklist for ', ' by ', '</h2>\n      <ul id="top-tracks">\n        ', '\n      </ul>\n      ']),
     _templateObject2 = _taggedTemplateLiteral(['\n    <h2>Albums by: ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      '], ['\n    <h2>Albums by: ', '</h2>\n      <ul id="top-tracks" class="cards">\n        ', '\n      </ul>\n      ']);
 
 var _createDom = require('../helpers/create-dom');
@@ -401,6 +400,12 @@ var _memoize = require('../helpers/memoize');
 
 var _addToStorage = require('../helpers/add-to-storage');
 
+var _createPlaylist = require('./create-playlist');
+
+var _createPlaylist2 = _interopRequireDefault(_createPlaylist);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -410,28 +415,32 @@ var CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 var auth_header = new Headers({
   'Authorization': 'Bearer ' + sessionStorage.access_token
 });
+var createPlaylist = new _createPlaylist2.default();
 
-//TODO: Need to add album and track class/components to support linking.
+//TODO: Some problems with memoization -- NEED TO FIX
 
-var Artist = function () {
-  function Artist() {
-    _classCallCheck(this, Artist);
+var Album = function () {
+  function Album() {
+    _classCallCheck(this, Album);
   }
 
-  _createClass(Artist, [{
+  _createClass(Album, [{
     key: 'fetchAlbum',
-    value: function fetchAlbum(id) {
-      debugger;
+    value: function fetchAlbum(id, name) {
       var url = 'https://api.spotify.com/v1/albums/' + id + '/tracks';
       if (id) {
-        var data = (0, _memoize.memoizeJSON)({ key: name,
+        var data = (0, _memoize.memoizeJSON)({ key: 'album_' + id,
           fn: function fn() {
             return fetch(url, {
               headers: auth_header
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'album_' + id);
+        if (name) {
+          (0, _addToStorage.addToStorage)('hash', 'album_' + id + '_' + name);
+        } else {
+          window.location.hash = '#' + sessionStorage.hash; // TODO: funnel this through the Router
+        }
         return data;
       }
     }
@@ -440,7 +449,7 @@ var Artist = function () {
     value: function fetchAllAlbums(artist_id) {
       var url = 'https://api.spotify.com/v1/artists/' + artist_id + '/albums';
       if (artist_id) {
-        var data = (0, _memoize.memoizeJSON)({ key: name,
+        var data = (0, _memoize.memoizeJSON)({ key: 'albums_' + artist_id,
           fn: function fn() {
             return fetch(url, {
               headers: auth_header
@@ -454,18 +463,18 @@ var Artist = function () {
   }, {
     key: 'createAlbumDOM',
     value: function createAlbumDOM(data) {
-      var dom = (0, _createDom.escapeTemplate)(_templateObject, data.items[0].name.split('-')[1], (0, _eachTemplate.each)({
-        data: data.items,
+      var dom = (0, _createDom.escapeTemplate)(_templateObject, data.name, data.data.items[0].artists[0].name, (0, _eachTemplate.each)({
+        data: data.data.items,
         tag: 'li',
-        txt: '<div>\n                  <strong>{{name}}</a></strong>\n                </div>\n                ',
+        txt: '<div>\n                  <strong>{{name}}</strong>\n                </div>\n                ',
         attrs: {
-          class: 'artist',
+          class: 'track',
           title: null,
           id: null
         }
       }));
-
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      createPlaylist.createSaveButtonDOM(data.data.items, 'songsFromAlbum', data.name);
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }, {
     key: 'createAlbumsDOM',
@@ -473,7 +482,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject2, data.items[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.items,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="#album_{{id}}">{{name}}</a></strong>\n                </div>\n                ',
+        txt: '<div>\n                  <strong><a href="#album_{{id}}_{{name}}">{{name}}</a></strong>\n                </div>\n                ',
         attrs: {
           class: 'artist',
           title: null,
@@ -482,15 +491,15 @@ var Artist = function () {
         }
       }));
 
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }]);
 
-  return Artist;
+  return Album;
 }();
 
-exports.default = Artist;
-},{"../helpers/add-to-storage":2,"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/memoize":7}],9:[function(require,module,exports){
+exports.default = Album;
+},{"../helpers/add-to-storage":2,"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/memoize":7,"./create-playlist":11}],9:[function(require,module,exports){
 'use strict';
 
 //import $ from '../../node_modules/jquery/dist/jquery.min';
@@ -868,13 +877,14 @@ var CreatePlaylist = function () {
     }
   }, {
     key: 'createSaveButtonDOM',
-    value: function createSaveButtonDOM(data, type) {
+    value: function createSaveButtonDOM(data, type, name) {
       var _this = this;
 
       var tracks = [];
       var typeMap = {
         topSongs: 'Top Songs by ' + data[0].artists[0].name,
-        radio: 'Songs inspired by ' + data[0].artists[0].name
+        radio: 'Songs inspired by ' + data[0].artists[0].name,
+        songsFromAlbum: name + ' by ' + data[0].artists[0].name
       };
 
       data.forEach(function (track) {
@@ -883,7 +893,7 @@ var CreatePlaylist = function () {
 
       var buttonDOM = (0, _createDom.escapeTemplate)(_templateObject, tracks.toString());
 
-      (0, _createDom.createDOM)({ html: buttonDOM, tag: 'container' });
+      (0, _createDom.createDOM)({ html: buttonDOM, tag: 'spotify-player', clear: true });
 
       //adds click event to button;
       document.getElementById(tracks.toString()).addEventListener('click', function (event) {
@@ -1062,20 +1072,29 @@ var Router = function () {
     }
   }, {
     key: 'makeHash',
-    value: function makeHash(route, id) {
+    value: function makeHash(route, id, name) {
       document.getElementById('container').innerHTML = '';
-      window.location.hash = route + '_' + id;
-      this.hashToData(route, id);
+      if (name) {
+        window.location.hash = route + '_' + id + '_' + name;
+      } else {
+        window.location.hash = route + '_' + id;
+      }
+
+      this.hashToData(route, id, name);
     }
   }, {
     key: 'hashToData',
-    value: function hashToData(route, id) {
+    value: function hashToData(route, id, name) {
       var className = routeMap[route].className;
       var prop = routeMap[route];
 
-      return className[prop.fetch](id).then(function (data) {
+      return className[prop.fetch](id, name).then(function (data) {
         if (!data.error) {
-          return className[prop.dom](data);
+          if (name) {
+            return className[prop.dom]({ data: data, name: name });
+          } else {
+            return className[prop.dom](data);
+          }
         }
         //reloads in case of auth error to get user back into auth flow
         else if (data.error.status === 401) {

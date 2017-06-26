@@ -55,19 +55,28 @@ export default class Router {
     console.log(hash);
   }
 
-  makeHash(route, id) {
+  makeHash(route, id, name) {
     document.getElementById('container').innerHTML = '';
-    window.location.hash = `${route}_${id}`;
-    this.hashToData(route, id);
+    if(name) {
+      window.location.hash = `${route}_${id}_${name}`;
+    } else {
+      window.location.hash = `${route}_${id}`;
+    }
+
+    this.hashToData(route, id, name);
   }
 
-  hashToData(route, id) {
+  hashToData(route, id, name) {
     const className =  routeMap[route].className;
     const prop = routeMap[route];
 
-    return className[prop.fetch](id).then((data) => {
+    return className[prop.fetch](id, name).then((data) => {
       if(!data.error) {
-        return className[prop.dom](data);
+        if(name) {
+          return className[prop.dom]({ data, name });
+        } else {
+          return className[prop.dom](data);
+        }
       }
       //reloads in case of auth error to get user back into auth flow
       else if(data.error.status === 401) {

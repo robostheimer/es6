@@ -4,28 +4,33 @@ import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom'
 import { each } from '../helpers/each-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
+import  CreatePlaylist from './create-playlist';
 
 
 const SCOPE = 'playlist-modify-private playlist-modify-public';
 const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
 const auth_header =  new Headers({
   'Authorization': `Bearer ${sessionStorage.access_token}`
-})
+});
+const createPlaylist = new CreatePlaylist();
 
 //TODO: Some problems with memoization -- NEED TO FIX
-export default class Artist {
-  fetchAlbum(id) {
-    debugger;
+export default class Album {
+  fetchAlbum(id, name) {
     const url = `https://api.spotify.com/v1/albums/${id}/tracks`;
     if(id) {
-      var data =  memoizeJSON({key: name,
+      var data =  memoizeJSON({key: `album_${id}`,
         fn() {
           return fetch(url, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `album_${id}`);
+      if(name) {
+          addToStorage('hash', `album_${id}_${name}`);
+      } else {
+        window.location.hash = `#${sessionStorage.hash}`; // TODO: funnel this through the Router
+      }
       return data;
     }
   }
@@ -33,7 +38,7 @@ export default class Artist {
   fetchAllAlbums(artist_id) {
     const url = `https://api.spotify.com/v1/artists/${artist_id}/albums`;
     if(artist_id) {
-      var data =  memoizeJSON({key: name,
+      var data =  memoizeJSON({key: `albums_${artist_id}`,
         fn() {
           return fetch(url, {
             headers: auth_header
@@ -47,25 +52,25 @@ export default class Artist {
 
   createAlbumDOM(data) {
     const dom = escapeTemplate`
-      <h2>Tracklist for ${data.items[0].name.split('-')[1]}</h2>
-      <ul id="top-tracks" class="cards">
+      <h2>Tracklist for ${data.name} by ${data.data.items[0].artists[0].name}</h2>
+      <ul id="top-tracks">
         ${each({
-          data: data.items,
+          data: data.data.items,
           tag: 'li',
           txt: `<div>
-                  <strong>{{name}}</a></strong>
+                  <strong>{{name}}</strong>
                 </div>
                 `,
           attrs: {
-            class:'artist',
+            class:'track',
             title: null,
             id: null,
           }
         })}
       </ul>
       `;
-
-    createDOM({ html: dom, tag: 'container' });
+    createPlaylist.createSaveButtonDOM(data.data.items, 'songsFromAlbum', data.name);
+    createDOM({ html: dom, tag: 'container', clear: true });
   }
 
   createAlbumsDOM(data) {
@@ -76,7 +81,7 @@ export default class Artist {
           data: data.items,
           tag: 'li',
           txt: `<div>
-                  <strong><a href="#album_{{id}}">{{name}}</a></strong>
+                  <strong><a href="#album_{{id}}_{{name}}">{{name}}</a></strong>
                 </div>
                 `,
           attrs: {
@@ -89,6 +94,6 @@ export default class Artist {
       </ul>
       `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: 'container', clear: true });
   }
 }

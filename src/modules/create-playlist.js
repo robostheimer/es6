@@ -68,11 +68,12 @@ export default class CreatePlaylist {
     return data;
   }
 
-  createSaveButtonDOM(data, type) {
+  createSaveButtonDOM(data, type, name) {
     const tracks = [];
     const typeMap = {
       topSongs: `Top Songs by ${data[0].artists[0].name}`,
-      radio: `Songs inspired by ${data[0].artists[0].name}`
+      radio: `Songs inspired by ${data[0].artists[0].name}`,
+      songsFromAlbum: `${name} by ${data[0].artists[0].name}`
     }
 
     data.forEach((track) => {
@@ -88,7 +89,7 @@ export default class CreatePlaylist {
       </div>
     `;
 
-    createDOM({ html: buttonDOM, tag: 'container' });
+    createDOM({ html: buttonDOM, tag: 'spotify-player', clear: true });
 
     //adds click event to button;
     document.getElementById(tracks.toString()).addEventListener('click', (event) => {

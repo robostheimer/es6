@@ -33,7 +33,10 @@ li {
   color: white;
 }
 
-
+.track {
+  color: #999;
+  display: block;
+}
 
  li.artist,
  li.related-artist
