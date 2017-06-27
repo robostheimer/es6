@@ -466,7 +466,7 @@ var Album = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, data.name, data.data.items[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.data.items,
         tag: 'li',
-        txt: '<div>\n                  <strong>{{name}}</strong>\n                </div>\n                ',
+        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                ',
         attrs: {
           class: 'track',
           title: null,
@@ -736,7 +736,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject2, data.tracks[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  from: <a href="#album_{{album.id}}">{{album.name}}</a>\n                </p>\n                ',
+        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  from: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>\n                </p>\n                ',
         attrs: {
           class: 'artist card',
           title: null,
@@ -770,7 +770,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject4, data.tracks[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#album_{{album.id}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
+        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
         attrs: {
           class: 'playlist card',
           title: null,

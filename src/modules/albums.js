@@ -58,7 +58,7 @@ export default class Album {
           data: data.data.items,
           tag: 'li',
           txt: `<div>
-                  <strong>{{name}}</strong>
+                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 `,
           attrs: {

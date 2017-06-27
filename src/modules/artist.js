@@ -146,7 +146,7 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  from: <a href="#album_{{album.id}}">{{album.name}}</a>
+                  from: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>
                 </p>
                 `,
           attrs: {
@@ -197,7 +197,7 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  Album: <a href="#album_{{album.id}}">{{album.name}}</a>
+                  Album: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>
                 </p>
                 <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
