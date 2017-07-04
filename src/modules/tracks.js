@@ -81,7 +81,7 @@ export default class Artist {
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
   createArtistDom(data) {//, params) {
-    $('#artists').remove();
+    $('#/artists').remove();
     //const action = params.action;
     const dom = escapeTemplate`
       <ul id="artists" class="cards">
@@ -93,22 +93,22 @@ export default class Artist {
                 </div>
                 <ul class="options">
                   <li>
-                    <a href="#related_{{id}}">
+                    <a href="#/related_{{id}}">
                       Related Musicians
                     </a>
                   </li>
                   <li>
-                    <a href="#top_{{id}}">
+                    <a href="#/top_{{id}}">
                       Top Tracks
                     </a>
                   </li>
                   <li>
-                    <a href="#albums_{{id}}">
+                    <a href="#/albums_{{id}}">
                       Albums
                     </a>
                   </li>
                   <li>
-                    <a href="#recommendations_{{id}}">
+                    <a href="#/recommendations_{{id}}">
                       Create Radio Station
                     </a>
                   <li>
@@ -143,7 +143,7 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  from: <a href="#album_{{album.id}}">{{album.name}}</a>
+                  from: <a href="#/album_{{album.id}}">{{album.name}}</a>
                 </p>
                 `,
           attrs: {
@@ -195,9 +195,9 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  Album: <a href="#album_{{album.id}}">{{album.name}}</a>
+                  Album: <a href="#/album_{{album.id}}">{{album.name}}</a>
                 </p>
-                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>
+                <p>By: <a href="#/artist_{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
           attrs: {
             class:'artist',

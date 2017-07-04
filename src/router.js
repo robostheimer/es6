@@ -58,9 +58,9 @@ export default class Router {
   makeHash(route, id, name) {
     document.getElementById('container').innerHTML = '';
     if(name) {
-      window.location.hash = `${route}_${id}_${name}`;
+      window.location.hash = `#/${route}/${id}/${name}`;
     } else {
-      window.location.hash = `${route}_${id}`;
+      window.location.hash = `#/${route}/${id}`;
     }
 
     this.hashToData(route, id, name);

@@ -41,7 +41,7 @@ function startApp() {
   form.createArtistFormDom();
 
   router.logHash();
-  let hash = window.location.hash.replace('#', ''),
+  let hash = window.location.hash.replace('#/', ''),
     args = createHashArgs(hash);
 
   if(hash) {
@@ -49,7 +49,7 @@ function startApp() {
   }
 
   $(window).on('hashchange', function() {
-    let hash = window.location.hash.replace('#', ''),
+    let hash = window.location.hash.replace('#/', ''),
       args = createHashArgs(hash);
     if(hash) {
       router.makeHash(args.route, args.id, args.name);
@@ -63,7 +63,12 @@ function createHashArgs(hash) {
     id,
     name;
 
-  hashArr = hash.split('_'),
+  // hashArr = hash.split('_'),
+  // route = hashArr[0],
+  // id = hashArr[1],
+  // name = hashArr[2];
+
+  hashArr = hash.split('/'),
   route = hashArr[0],
   id = hashArr[1],
   name = hashArr[2];

@@ -29,7 +29,7 @@ export default class Album {
       if(name) {
           addToStorage('hash', `album_${id}_${name}`);
       } else {
-        window.location.hash = `#${sessionStorage.hash}`; // TODO: funnel this through the Router
+        window.location.hash = `#/${sessionStorage.hash}`; // TODO: funnel this through the Router
       }
       return data;
     }
@@ -45,7 +45,7 @@ export default class Album {
           });
         }
       });
-      addToStorage('hash', `albums_${artist_id}`);
+      addToStorage('hash', `/albums/${artist_id}`);
       return data;
     }
   }
@@ -81,7 +81,7 @@ export default class Album {
           data: data.items,
           tag: 'li',
           txt: `<div>
-                  <strong><a href="#album_{{id}}_{{name}}">{{name}}</a></strong>
+                  <strong><a href="#/album/{{id}}/{{name}}">{{name}}</a></strong>
                 </div>
                 `,
           attrs: {

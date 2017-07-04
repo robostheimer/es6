@@ -24,7 +24,7 @@ export default class RelatedArtists {
         });
       }
     });
-    addToStorage('hash', `related_${id}`);
+    addToStorage('hash', `/related/${id}`);
     return data;
   }
 
@@ -36,7 +36,7 @@ export default class RelatedArtists {
         ${each({
           data: data.artists,
           tag: 'li',
-          txt: '<a href="#artist_{{name}}">{{name}}</a>',
+          txt: '<a href="#/artist/{{name}}">{{name}}</a>',
           attrs: {
             class: 'related-artist',
             id: null,

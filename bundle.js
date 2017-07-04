@@ -55,7 +55,7 @@ function startApp() {
   form.createArtistFormDom();
 
   router.logHash();
-  var hash = window.location.hash.replace('#', ''),
+  var hash = window.location.hash.replace('#/', ''),
       args = createHashArgs(hash);
 
   if (hash) {
@@ -63,7 +63,7 @@ function startApp() {
   }
 
   $(window).on('hashchange', function () {
-    var hash = window.location.hash.replace('#', ''),
+    var hash = window.location.hash.replace('#/', ''),
         args = createHashArgs(hash);
     if (hash) {
       router.makeHash(args.route, args.id, args.name);
@@ -77,7 +77,12 @@ function createHashArgs(hash) {
       id = void 0,
       name = void 0;
 
-  hashArr = hash.split('_'), route = hashArr[0], id = hashArr[1], name = hashArr[2];
+  // hashArr = hash.split('_'),
+  // route = hashArr[0],
+  // id = hashArr[1],
+  // name = hashArr[2];
+
+  hashArr = hash.split('/'), route = hashArr[0], id = hashArr[1], name = hashArr[2];
 
   return { id: id, route: route, name: name };
 }
@@ -439,7 +444,7 @@ var Album = function () {
         if (name) {
           (0, _addToStorage.addToStorage)('hash', 'album_' + id + '_' + name);
         } else {
-          window.location.hash = '#' + sessionStorage.hash; // TODO: funnel this through the Router
+          window.location.hash = '#/' + sessionStorage.hash; // TODO: funnel this through the Router
         }
         return data;
       }
@@ -456,7 +461,7 @@ var Album = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'albums_' + artist_id);
+        (0, _addToStorage.addToStorage)('hash', '/albums/' + artist_id);
         return data;
       }
     }
@@ -482,7 +487,7 @@ var Album = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject2, data.items[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.items,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="#album_{{id}}_{{name}}">{{name}}</a></strong>\n                </div>\n                ',
+        txt: '<div>\n                  <strong><a href="#/album/{{id}}/{{name}}">{{name}}</a></strong>\n                </div>\n                ',
         attrs: {
           class: 'artist',
           title: null,
@@ -580,7 +585,7 @@ var ArtistForm = function () {
       var val = document.getElementById('find-artist').value;
 
       router.makeHash('artist', val);
-      (0, _addToStorage.addToStorage)('hash', 'artist_' + val);
+      (0, _addToStorage.addToStorage)('hash', '/artist/' + val);
     }
   }]);
 
@@ -651,7 +656,7 @@ var Artist = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'artist_' + name);
+        (0, _addToStorage.addToStorage)('hash', '/artist/' + name);
         return data;
       }
     }
@@ -668,7 +673,7 @@ var Artist = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'top_' + id);
+        (0, _addToStorage.addToStorage)('hash', '/top/' + id);
         return data;
       }
     }
@@ -685,7 +690,7 @@ var Artist = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'albums_' + id);
+        (0, _addToStorage.addToStorage)('hash', '/albums/' + id);
         return data;
       }
     }
@@ -702,7 +707,7 @@ var Artist = function () {
             });
           }
         });
-        (0, _addToStorage.addToStorage)('hash', 'recommendations_' + id);
+        (0, _addToStorage.addToStorage)('hash', '/recommendations/' + id);
         return data;
       }
     }
@@ -719,7 +724,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data.artists.items,
         tag: 'li',
-        txt: '<div>\n                  <h4>{{name}}</h4>\n                </div>\n                <ul class="options">\n                  <li>\n                    <a href="#related_{{id}}">\n                      Related Musicians\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#top_{{id}}">\n                      Top Tracks\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#albums_{{id}}">\n                      Albums\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#recommendations_{{id}}">\n                      Create Radio Station\n                    </a>\n                  <li>\n                  <li>\n                    <a>\n                      Other musicians from {{location}}\n                    </a>\n                  </li>\n                </ul>\n                ',
+        txt: '<div>\n                  <h4>{{name}}</h4>\n                </div>\n                <ul class="options">\n                  <li>\n                    <a href="#/related/{{id}}">\n                      Related Musicians\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/top/{{id}}">\n                      Top Tracks\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/albums/{{id}}">\n                      Albums\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/recommendations/{{id}}">\n                      Create Radio Station\n                    </a>\n                  <li>\n                  <li>\n                    <a>\n                      Other musicians from {{location}}\n                    </a>\n                  </li>\n                </ul>\n                ',
         attrs: {
           class: 'artist',
           title: null,
@@ -736,7 +741,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject2, data.tracks[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  from: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>\n                </p>\n                ',
+        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  from: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>\n                </p>\n                ',
         attrs: {
           class: 'artist card',
           title: null,
@@ -770,7 +775,7 @@ var Artist = function () {
       var dom = (0, _createDom.escapeTemplate)(_templateObject4, data.tracks[0].artists[0].name, (0, _eachTemplate.each)({
         data: data.tracks,
         tag: 'li',
-        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
+        txt: '<div>\n                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>\n                </div>\n                <p>\n                  Album: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>\n                </p>\n                <p>By: <a href="#/artist/{{artists[0].name}}">{{artists[0].name}}</a>\n                ',
         attrs: {
           class: 'playlist card',
           title: null,
@@ -967,7 +972,7 @@ var RelatedArtists = function () {
           });
         }
       });
-      (0, _addToStorage.addToStorage)('hash', 'related_' + id);
+      (0, _addToStorage.addToStorage)('hash', '/related/' + id);
       return data;
     }
   }, {
@@ -976,7 +981,7 @@ var RelatedArtists = function () {
       var dom = (0, _ifTemplate.iff)(data.artists.length > 0, (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
         data: data.artists,
         tag: 'li',
-        txt: '<a href="#artist_{{name}}">{{name}}</a>',
+        txt: '<a href="#/artist/{{name}}">{{name}}</a>',
         attrs: {
           class: 'related-artist',
           id: null,
@@ -1075,9 +1080,9 @@ var Router = function () {
     value: function makeHash(route, id, name) {
       document.getElementById('container').innerHTML = '';
       if (name) {
-        window.location.hash = route + '_' + id + '_' + name;
+        window.location.hash = '#/' + route + '/' + id + '/' + name;
       } else {
-        window.location.hash = route + '_' + id;
+        window.location.hash = '#/' + route + '/' + id;
       }
 
       this.hashToData(route, id, name);

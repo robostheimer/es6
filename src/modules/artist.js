@@ -27,7 +27,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `artist_${name}`);
+      addToStorage('hash', `/artist/${name}`);
       return data;
     }
   }
@@ -43,7 +43,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `top_${id}`);
+      addToStorage('hash', `/top/${id}`);
       return data;
     }
   }
@@ -59,7 +59,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `albums_${id}`);
+      addToStorage('hash', `/albums/${id}`);
       return data;
     }
   }
@@ -75,7 +75,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `recommendations_${id}`);
+      addToStorage('hash', `/recommendations/${id}`);
       return data;
     }
   }
@@ -95,22 +95,22 @@ export default class Artist {
                 </div>
                 <ul class="options">
                   <li>
-                    <a href="#related_{{id}}">
+                    <a href="#/related/{{id}}">
                       Related Musicians
                     </a>
                   </li>
                   <li>
-                    <a href="#top_{{id}}">
+                    <a href="#/top/{{id}}">
                       Top Tracks
                     </a>
                   </li>
                   <li>
-                    <a href="#albums_{{id}}">
+                    <a href="#/albums/{{id}}">
                       Albums
                     </a>
                   </li>
                   <li>
-                    <a href="#recommendations_{{id}}">
+                    <a href="#/recommendations/{{id}}">
                       Create Radio Station
                     </a>
                   <li>
@@ -146,7 +146,7 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  from: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>
+                  from: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>
                 </p>
                 `,
           attrs: {
@@ -197,9 +197,9 @@ export default class Artist {
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  Album: <a href="#album_{{album.id}}_{{album.name}}">{{album.name}}</a>
+                  Album: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>
                 </p>
-                <p>By: <a href="#artist_{{artists[0].name}}">{{artists[0].name}}</a>
+                <p>By: <a href="#/artist/{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
           attrs: {
             class:'playlist card',
