@@ -3,11 +3,13 @@
 import Artist from './modules/artist';
 import RelatedArtists from './modules/related-artists';
 import Album from './modules/albums';
+import ArtistInfo from './modules/artist-info';
 
 const hash = window.location.hash.replace('#', '');
 const artist = new Artist();
 const related = new RelatedArtists();
 const album = new Album();
+const artistInfo = new ArtistInfo()
 
 
 const routeMap = {
@@ -16,6 +18,15 @@ const routeMap = {
     hash: 'artist',
     fetch: 'fetchArtists',
     dom: 'createArtistDom',
+    subRoutes: [
+      {
+        hash: 'info',
+        className: artistInfo,
+        parentClass: 'artist',
+        fetch: 'fetchArtistInfo',
+        dom: 'createInfoDOM',
+      }
+    ]
   },
   related: {
     className: related,
@@ -55,20 +66,37 @@ export default class Router {
     console.log(hash);
   }
 
-  makeHash(route, id, name) {
+  makeHash(...args) {
+    let params = args[0],
+      route = params.route,
+      name = params.name,
+      id = params.id,
+      routeForData,
+      hash;
+
     document.getElementById('container').innerHTML = '';
     if(name) {
-      window.location.hash = `#/${route}/${id}/${name}`;
+      hash = `/${route}/${id}/${name}`;
+      window.location.hash = hash;
     } else {
-      window.location.hash = `#/${route}/${id}`;
+      hash = `/${route}/${id}`;
+      window.location.hash = hash;
     }
-
-    this.hashToData(route, id, name);
+    routeMap[route]['subRoutes'] ? routeForData = this._checkSubRoute(routeMap[route], hash ) : routeForData = routeMap[route];
+    this.hashToData(routeForData, id, name);
   }
 
   hashToData(route, id, name) {
-    const className =  routeMap[route].className;
-    const prop = routeMap[route];
+    let className,
+      prop;
+
+    if(route.isSubRoute) {
+      className = route.route.className;
+      prop = route.route;
+    } else {
+      className =  routeMap[route.hash].className;
+      prop = routeMap[route.hash];
+    }
 
     return className[prop.fetch](id, name).then((data) => {
       if(!data.error) {
@@ -88,5 +116,18 @@ export default class Router {
       }
 
     })
+  }
+
+  _checkSubRoute(route, hash) {
+    // TODO: Check if the hash matches any of the subRoutes
+    // If so make the route, the subRoute
+    const subRoute = route['subRoutes'].filter((sroute) => {
+      return hash.indexOf(sroute.hash) > -1;
+    });
+
+    if(subRoute.length > 0) {
+      return { route: subRoute[0], hash: subRoute[0].hash, isSubRoute: true };
+    }
+    return { route: route, hash: route.hash, isSubRoute: false };
   }
 }

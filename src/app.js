@@ -41,18 +41,17 @@ function startApp() {
   form.createArtistFormDom();
 
   router.logHash();
-  let hash = window.location.hash.replace('#/', ''),
-    args = createHashArgs(hash);
-
+  let hash = window.location.hash.replace('#/', '').replace('#', '');
+  let args = createHashArgs(hash);
   if(hash) {
-    router.makeHash(args.route, args.id);
+    router.makeHash(args);
   }
 
   $(window).on('hashchange', function() {
     let hash = window.location.hash.replace('#/', ''),
       args = createHashArgs(hash);
     if(hash) {
-      router.makeHash(args.route, args.id, args.name);
+      router.makeHash(args);
     }
   });
 }
@@ -74,6 +73,7 @@ function createHashArgs(hash) {
   name = hashArr[2];
 
   return {id: id, route: route, name: name};
+  //return hashArr;
 }
 
 

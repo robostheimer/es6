@@ -3,7 +3,6 @@
 import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
-import { memoize } from '../helpers/memoize';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 

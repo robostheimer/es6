@@ -9,9 +9,8 @@ export function memoizeJSON() {
   let args = arguments;
   let key = args[0].key;
   let fn = args[0].fn;
-
   if(!cache[key]) {
-    cache[key] = fn().then((data) => {;
+    cache[key] = fn().then((data) => {
       return data.json();
     });
   }

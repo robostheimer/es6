@@ -58,7 +58,7 @@ export default class ArtistForm {
   _makeHash() {
     const val = document.getElementById('find-artist').value;
 
-    router.makeHash('artist', val);
+    router.makeHash({ route: 'artist', id: val });
     addToStorage('hash', `/artist/${val}`)
   }
 }

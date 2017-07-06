@@ -91,7 +91,7 @@ export default class Artist {
           data: data.artists.items,
           tag: 'li',
           txt: `<div>
-                  <h4>{{name}}</h4>
+                  <h4><a href="#/artist/info/{{name}}">{{name}}</a></h4>
                 </div>
                 <ul class="options">
                   <li>
@@ -134,6 +134,10 @@ export default class Artist {
     createDOM({ html: dom, tag: 'container' });
   }
 
+
+  createInfoDOM() {
+
+  }
 
   createTopTracksDOM(data) {
     const dom = escapeTemplate`
