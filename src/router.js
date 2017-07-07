@@ -74,7 +74,6 @@ export default class Router {
       routeForData,
       hash;
 
-    document.getElementById('container').innerHTML = '';
     if(name) {
       hash = `/${route}/${id}/${name}`;
       window.location.hash = hash;

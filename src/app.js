@@ -47,7 +47,8 @@ function startApp() {
     router.makeHash(args);
   }
 
-  $(window).on('hashchange', function() {
+  $(window).on('hashchange', function(e) {
+    debugger;
     let hash = window.location.hash.replace('#/', ''),
       args = createHashArgs(hash);
     if(hash) {
@@ -72,7 +73,7 @@ function createHashArgs(hash) {
   id = hashArr[1],
   name = hashArr[2];
 
-  return {id: id, route: route, name: name};
+  return { id: id, route: route, name: name };
   //return hashArr;
 }
 

@@ -45,6 +45,6 @@ export default class RelatedArtists {
       </ul>
       `,
       `<p><strong>There are no artists related</strong</p>`);
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: 'container' , clear: true });
   }
 }

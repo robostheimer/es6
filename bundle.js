@@ -61,7 +61,8 @@ function startApp() {
     router.makeHash(args);
   }
 
-  $(window).on('hashchange', function () {
+  $(window).on('hashchange', function (e) {
+    debugger;
     var hash = window.location.hash.replace('#/', ''),
         args = createHashArgs(hash);
     if (hash) {
@@ -600,6 +601,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _templateObject = _taggedTemplateLiteral(['\n      <h4>Info about ', '</h4>\n      \n      '], ['\n      <h4>Info about ', '</h4>\n      \n      ']);
+
 var _createDom = require('../helpers/create-dom');
 
 var _eachTemplate = require('../helpers/each-template');
@@ -609,6 +612,8 @@ var _ifTemplate = require('../helpers/if-template');
 var _memoize = require('../helpers/memoize');
 
 var _addToStorage = require('../helpers/add-to-storage');
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -642,25 +647,9 @@ var ArtistInfo = function () {
   }, {
     key: 'createInfoDOM',
     value: function createInfoDOM(data) {
-      console.log(data.data.artist);
-      // const dom = iff(data.artists.length > 0,
-      // escapeTemplate`
-      //   <h4>Related Musicians</h4>
-      //   <ul id="related-artists" class="cards">
-      //     ${each({
-      //       data: data.artists,
-      //       tag: 'li',
-      //       txt: '<a href="#/artist/{{name}}">{{name}}</a>',
-      //       attrs: {
-      //         class: 'related-artist',
-      //         id: null,
-      //         style: 'background-image:url({{images[0].url}})'
-      //       }
-      //     })}
-      //   </ul>
-      //   `,
-      //   `<p><strong>There are no artists related</strong</p>`);
-      // createDOM({ html: dom, tag: 'container' });
+      console.log(data.data.artist.name);
+      var dom = (0, _ifTemplate.iff)(data.data.artist, (0, _createDom.escapeTemplate)(_templateObject, data.data.artist.name), '<p><strong>There are no artists related</strong</p>');
+      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
     }
   }]);
 
@@ -808,11 +797,8 @@ var Artist = function () {
         }
       }));
 
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
-  }, {
-    key: 'createInfoDOM',
-    value: function createInfoDOM() {}
   }, {
     key: 'createTopTracksDOM',
     value: function createTopTracksDOM(data) {
@@ -828,7 +814,7 @@ var Artist = function () {
         }
       }));
       createPlaylist.createSaveButtonDOM(data.tracks, 'topSongs');
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }, {
     key: 'createAlbumsDOM',
@@ -845,7 +831,7 @@ var Artist = function () {
         }
       }));
 
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }, {
     key: 'createRecsDOM',
@@ -862,7 +848,7 @@ var Artist = function () {
         }
       }));
       createPlaylist.createSaveButtonDOM(data.tracks, 'radio');
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }]);
 
@@ -1066,7 +1052,7 @@ var RelatedArtists = function () {
           style: 'background-image:url({{images[0].url}})'
         }
       })), '<p><strong>There are no artists related</strong</p>');
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: dom, tag: 'container', clear: true });
     }
   }]);
 
@@ -1175,7 +1161,6 @@ var Router = function () {
           routeForData = void 0,
           hash = void 0;
 
-      document.getElementById('container').innerHTML = '';
       if (name) {
         hash = '/' + route + '/' + id + '/' + name;
         window.location.hash = hash;

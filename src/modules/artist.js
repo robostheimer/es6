@@ -131,13 +131,9 @@ export default class Artist {
       </ul>
     `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: 'container', clear: true });
   }
 
-
-  createInfoDOM() {
-
-  }
 
   createTopTracksDOM(data) {
     const dom = escapeTemplate`
@@ -163,7 +159,7 @@ export default class Artist {
       </ul>
       `;
     createPlaylist.createSaveButtonDOM(data.tracks, 'topSongs');
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: 'container', clear: true });
   }
 
   createAlbumsDOM(data) {
@@ -187,7 +183,7 @@ export default class Artist {
       </ul>
       `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: 'container', clear: true });
   }
 
   createRecsDOM(data) {
@@ -215,6 +211,6 @@ export default class Artist {
       </ul>
       `;
       createPlaylist.createSaveButtonDOM(data.tracks, 'radio');
-      createDOM({ html: dom, tag: 'container' });
+      createDOM({ html: dom, tag: 'container', clear: true });
   }
 }

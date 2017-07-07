@@ -29,24 +29,13 @@ export default class ArtistInfo {
   }
 
   createInfoDOM(data) {
-    console.log(data.data.artist);
-    // const dom = iff(data.artists.length > 0,
-    // escapeTemplate`
-    //   <h4>Related Musicians</h4>
-    //   <ul id="related-artists" class="cards">
-    //     ${each({
-    //       data: data.artists,
-    //       tag: 'li',
-    //       txt: '<a href="#/artist/{{name}}">{{name}}</a>',
-    //       attrs: {
-    //         class: 'related-artist',
-    //         id: null,
-    //         style: 'background-image:url({{images[0].url}})'
-    //       }
-    //     })}
-    //   </ul>
-    //   `,
-    //   `<p><strong>There are no artists related</strong</p>`);
-    // createDOM({ html: dom, tag: 'container' });
+    console.log(data.data.artist.name);
+    const dom = iff(data.data.artist,
+    escapeTemplate`
+      <h4>Info about ${data.data.artist.name}</h4>
+      
+      `,
+      `<p><strong>There are no artists related</strong</p>`);
+    createDOM({ html: dom, tag: 'container' });
   }
 }
