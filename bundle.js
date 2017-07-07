@@ -28,12 +28,12 @@ var scope = 'playlist-modify-private playlist-modify-public';
 
 function init() {
   //checks for Spotify Authorization
-  if (window.location.hash.split('=')[0] === '#access_token' && !sessionStorage.access_token) {
-    sessionStorage.setItem('access_token', window.location.hash.split('=')[1]);
-    window.location.hash = sessionStorage.hash;
+  if (router.getHash().split('=')[0] === '#access_token' && !sessionStorage.access_token) {
+    sessionStorage.setItem('access_token', router.getHash().split('=')[1]);
+    router.setHash(sessionStorage.hash);
     window.location.reload();
   } else if (!sessionStorage.access_token) {
-    sessionStorage.setItem('hash', window.location.hash);
+    sessionStorage.setItem('hash', router.getHash());
     var http = void 0;
 
     if (window.location.hostname === 'localhost') {
@@ -46,7 +46,10 @@ function init() {
 
     window.open(authorization_url, '_self');
   } else {
-    window.location.hash = sessionStorage.hash;
+    if (sessionStorage.hash.indexOf('/') === 0) {} else {
+      sessionStorage.setItem('hash', '/' + sessionStorage.hash);
+    }
+    router.setHash(sessionStorage.hash);
     startApp();
   }
 }
@@ -54,38 +57,19 @@ function init() {
 function startApp() {
   form.createArtistFormDom();
 
-  router.logHash();
-  var hash = window.location.hash.replace('#/', '').replace('#', '');
-  var args = createHashArgs(hash);
+  var hash = router.getHash();
+
   if (hash) {
-    router.makeHash(args);
+    router.getParamsFromHash(hash);
   }
 
   $(window).on('hashchange', function (e) {
-    debugger;
-    var hash = window.location.hash.replace('#/', ''),
-        args = createHashArgs(hash);
+    var hash = router.getHash();
+
     if (hash) {
-      router.makeHash(args);
+      router.getParamsFromHash(hash);
     }
   });
-}
-
-function createHashArgs(hash) {
-  var hashArr = void 0,
-      route = void 0,
-      id = void 0,
-      name = void 0;
-
-  // hashArr = hash.split('_'),
-  // route = hashArr[0],
-  // id = hashArr[1],
-  // name = hashArr[2];
-
-  hashArr = hash.split('/'), route = hashArr[0], id = hashArr[1], name = hashArr[2];
-
-  return { id: id, route: route, name: name };
-  //return hashArr;
 }
 
 $(document).ready(init);
@@ -441,7 +425,7 @@ var Album = function () {
           }
         });
         if (name) {
-          (0, _addToStorage.addToStorage)('hash', 'album_' + id + '_' + name);
+          (0, _addToStorage.addToStorage)('hash', '/album_' + id + '_' + name);
         } else {
           window.location.hash = '#/' + sessionStorage.hash; // TODO: funnel this through the Router
         }
@@ -556,34 +540,28 @@ var ArtistForm = function () {
 
       (0, _createDom.createDOM)({ html: containerDOM, tag: 'body' });
 
-      // const playerContainerDOM = escapeTemplate `
-      //   <section id="player-container"></section>
-      // `
-      //
-      // createDOM({ html: playerContainerDOM, tag: 'body' });
-
       //adds click event to button;
       document.getElementById('search_artists').addEventListener('click', function (event) {
         if (event.preventDefault) {
           event.preventDefault();
         }
-        _this._makeHash();
+        _this._getPramsFromHash();
       });
 
       //adds onEnter to the input
       document.getElementById('find-artist').addEventListener('keypress', function (event) {
         if (event.keyCode === 13) {
           event.preventDefault();
-          _this._makeHash();
+          _this._getParamsFromHash();
         }
       });
     }
   }, {
-    key: '_makeHash',
-    value: function _makeHash() {
+    key: '_getParamsFromHash',
+    value: function _getParamsFromHash() {
       var val = document.getElementById('find-artist').value;
-
-      router.makeHash({ route: 'artist', id: val });
+      router.setHash('/artist/' + val);
+      router.getParamsFromHash(router.getHash());
       (0, _addToStorage.addToStorage)('hash', '/artist/' + val);
     }
   }]);
@@ -601,7 +579,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <h4>Info about ', '</h4>\n      \n      '], ['\n      <h4>Info about ', '</h4>\n      \n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      <h4>Info about ', '</h4>\n\n      '], ['\n      <h4>Info about ', '</h4>\n\n      ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -631,6 +609,7 @@ var ArtistInfo = function () {
 
     //TODO: memoize this method; see javascript ninja book
     value: function fetchArtistInfo() {
+      debugger;
       var artistname = arguments.length <= 1 ? undefined : arguments[1];
       var url = 'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + artistname + '&api_key=1f91c93293d618de5c30f8cfe2e9f5e9&format=json';
       var data = (0, _memoize.memoizeJSON)({ key: artistname + '_info',
@@ -1152,24 +1131,29 @@ var Router = function () {
       console.log(hash);
     }
   }, {
-    key: 'makeHash',
-    value: function makeHash() {
-      var params = arguments.length <= 0 ? undefined : arguments[0],
-          route = params.route,
-          name = params.name,
-          id = params.id,
-          routeForData = void 0,
-          hash = void 0;
+    key: 'setHash',
+    value: function setHash(str) {
+      var regex = new RegExp(/\/#\//g);
 
-      if (name) {
-        hash = '/' + route + '/' + id + '/' + name;
-        window.location.hash = hash;
-      } else {
-        hash = '/' + route + '/' + id;
-        window.location.hash = hash;
+      window.location.hash = str.replace(regex, '/');
+    }
+  }, {
+    key: 'getHash',
+    value: function getHash(str) {
+      return window.location.hash;
+    }
+  }, {
+    key: 'getParamsFromHash',
+    value: function getParamsFromHash(str) {
+      var hash = str.replace(/#\//g, '').replace('#', ''),
+          hashObj = this._createHashArgs(hash);
+
+      var routeForData = void 0;
+      if (hashObj.route) {
+        routeMap[hashObj.route]['subRoutes'] ? routeForData = this._checkSubRoute(routeMap[hashObj.route], hash) : routeForData = routeMap[hashObj.route];
+
+        this.hashToData(routeForData, hashObj.id, hashObj.name);
       }
-      routeMap[route]['subRoutes'] ? routeForData = this._checkSubRoute(routeMap[route], hash) : routeForData = routeMap[route];
-      this.hashToData(routeForData, id, name);
     }
   }, {
     key: 'hashToData',
@@ -1206,8 +1190,6 @@ var Router = function () {
   }, {
     key: '_checkSubRoute',
     value: function _checkSubRoute(route, hash) {
-      // TODO: Check if the hash matches any of the subRoutes
-      // If so make the route, the subRoute
       var subRoute = route['subRoutes'].filter(function (sroute) {
         return hash.indexOf(sroute.hash) > -1;
       });
@@ -1216,6 +1198,18 @@ var Router = function () {
         return { route: subRoute[0], hash: subRoute[0].hash, isSubRoute: true };
       }
       return { route: route, hash: route.hash, isSubRoute: false };
+    }
+  }, {
+    key: '_createHashArgs',
+    value: function _createHashArgs(hash) {
+      var hashArr = void 0,
+          route = void 0,
+          id = void 0,
+          name = void 0;
+
+      hashArr = hash.split('/'), route = hashArr[0], id = hashArr[1], name = hashArr[2];
+
+      return { id: id, route: route, name: name };
     }
   }]);
 

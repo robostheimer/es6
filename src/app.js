@@ -12,13 +12,13 @@ const scope = 'playlist-modify-private playlist-modify-public';
 
 export  default function init() {
   //checks for Spotify Authorization
-  if (window.location.hash.split('=')[0] === '#access_token' && !sessionStorage.access_token) {
-    sessionStorage.setItem('access_token', window.location.hash.split('=')[1]);
-    window.location.hash = sessionStorage.hash;
+  if (router.getHash().split('=')[0] === '#access_token' && !sessionStorage.access_token) {
+    sessionStorage.setItem('access_token', router.getHash().split('=')[1]);
+    router.setHash(sessionStorage.hash);
     window.location.reload();
 
   } else if(!sessionStorage.access_token) {
-    sessionStorage.setItem('hash', window.location.hash);
+    sessionStorage.setItem('hash', router.getHash()) ;
     let http;
 
     if(window.location.hostname === 'localhost')
@@ -32,7 +32,11 @@ export  default function init() {
 
     window.open(authorization_url, '_self');
   } else {
-    window.location.hash = sessionStorage.hash;
+    if(sessionStorage.hash.indexOf('/') === 0) {
+    } else {
+      sessionStorage.setItem('hash', `/${sessionStorage.hash}`);
+    }
+    router.setHash(sessionStorage.hash);
     startApp();
   }
 }
@@ -40,42 +44,22 @@ export  default function init() {
 function startApp() {
   form.createArtistFormDom();
 
-  router.logHash();
-  let hash = window.location.hash.replace('#/', '').replace('#', '');
-  let args = createHashArgs(hash);
+  const hash = router.getHash()
+
   if(hash) {
-    router.makeHash(args);
+    router.getParamsFromHash(hash);
   }
 
   $(window).on('hashchange', function(e) {
-    debugger;
-    let hash = window.location.hash.replace('#/', ''),
-      args = createHashArgs(hash);
+    const hash = router.getHash()
+
     if(hash) {
-      router.makeHash(args);
+      router.getParamsFromHash(hash);
     }
   });
 }
 
-function createHashArgs(hash) {
-  let hashArr,
-    route,
-    id,
-    name;
 
-  // hashArr = hash.split('_'),
-  // route = hashArr[0],
-  // id = hashArr[1],
-  // name = hashArr[2];
-
-  hashArr = hash.split('/'),
-  route = hashArr[0],
-  id = hashArr[1],
-  name = hashArr[2];
-
-  return { id: id, route: route, name: name };
-  //return hashArr;
-}
 
 
 $(document).ready(init);

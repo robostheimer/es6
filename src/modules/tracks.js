@@ -25,7 +25,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `artist_${name}`);
+      addToStorage('hash', `/artist_${name}`);
       return data;
     }
   }
@@ -50,7 +50,7 @@ export default class Artist {
     const request = `https://api.spotify.com/v1/artists/${id}/albums`;
 
     if(id) {
-      var data =  memoizeJSON({key: `albums_${id}`,
+      var data =  memoizeJSON({key: `/albums_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
@@ -73,7 +73,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `recommendations_${id}`);
+      addToStorage('hash', `/recommendations_${id}`);
       return data;
     }
   }

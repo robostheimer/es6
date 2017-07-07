@@ -32,33 +32,27 @@ export default class ArtistForm {
 
     createDOM({ html: containerDOM, tag: 'body' });
 
-    // const playerContainerDOM = escapeTemplate `
-    //   <section id="player-container"></section>
-    // `
-    //
-    // createDOM({ html: playerContainerDOM, tag: 'body' });
-
     //adds click event to button;
     document.getElementById('search_artists').addEventListener('click', (event) => {
       if(event.preventDefault) {
         event.preventDefault();
       }
-      this._makeHash();
+      this._getPramsFromHash();
     });
 
     //adds onEnter to the input
     document.getElementById('find-artist').addEventListener('keypress', (event) => {
       if(event.keyCode === 13) {
         event.preventDefault();
-        this._makeHash()
+        this._getParamsFromHash()
       }
     });
   }
 
-  _makeHash() {
+  _getParamsFromHash() {
     const val = document.getElementById('find-artist').value;
-
-    router.makeHash({ route: 'artist', id: val });
+    router.setHash(`/artist/${val}`);
+    router.getParamsFromHash(router.getHash());
     addToStorage('hash', `/artist/${val}`)
   }
 }

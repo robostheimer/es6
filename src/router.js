@@ -66,23 +66,28 @@ export default class Router {
     console.log(hash);
   }
 
-  makeHash(...args) {
-    let params = args[0],
-      route = params.route,
-      name = params.name,
-      id = params.id,
-      routeForData,
-      hash;
+  setHash(str) {
+    const regex = new RegExp(/\/#\//g);
 
-    if(name) {
-      hash = `/${route}/${id}/${name}`;
-      window.location.hash = hash;
-    } else {
-      hash = `/${route}/${id}`;
-      window.location.hash = hash;
+    window.location.hash = str.replace(regex, '/');
+  }
+
+  getHash(str) {
+    return window.location.hash;
+  }
+
+  getParamsFromHash(str) {
+    const hash = str.replace(/#\//g, '').replace('#', ''),
+     hashObj = this._createHashArgs(hash);
+
+    let routeForData;
+    if(hashObj.route) {
+      routeMap[hashObj.route]['subRoutes']
+        ? routeForData = this._checkSubRoute(routeMap[hashObj.route], hash)
+        : routeForData = routeMap[hashObj.route];
+
+      this.hashToData(routeForData, hashObj.id, hashObj.name);
     }
-    routeMap[route]['subRoutes'] ? routeForData = this._checkSubRoute(routeMap[route], hash ) : routeForData = routeMap[route];
-    this.hashToData(routeForData, id, name);
   }
 
   hashToData(route, id, name) {
@@ -118,8 +123,6 @@ export default class Router {
   }
 
   _checkSubRoute(route, hash) {
-    // TODO: Check if the hash matches any of the subRoutes
-    // If so make the route, the subRoute
     const subRoute = route['subRoutes'].filter((sroute) => {
       return hash.indexOf(sroute.hash) > -1;
     });
@@ -128,5 +131,19 @@ export default class Router {
       return { route: subRoute[0], hash: subRoute[0].hash, isSubRoute: true };
     }
     return { route: route, hash: route.hash, isSubRoute: false };
+  }
+
+  _createHashArgs(hash) {
+    let hashArr,
+      route,
+      id,
+      name;
+
+    hashArr = hash.split('/'),
+    route = hashArr[0],
+    id = hashArr[1],
+    name = hashArr[2];
+
+    return { id: id, route: route, name: name };
   }
 }

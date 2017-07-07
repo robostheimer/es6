@@ -25,7 +25,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `artist_${name}`);
+      addToStorage('hash', `/artist_${name}`);
       return data;
     }
   }
@@ -57,7 +57,7 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `albums_${id}`);
+      addToStorage('hash', `/albums_${id}`);
       return data;
     }
   }

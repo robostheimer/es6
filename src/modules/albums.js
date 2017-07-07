@@ -27,7 +27,7 @@ export default class Album {
         }
       });
       if(name) {
-          addToStorage('hash', `album_${id}_${name}`);
+          addToStorage('hash', `/album_${id}_${name}`);
       } else {
         window.location.hash = `#/${sessionStorage.hash}`; // TODO: funnel this through the Router
       }
