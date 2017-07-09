@@ -23,6 +23,7 @@ const routeMap = {
         hash: 'info',
         className: artistInfo,
         parentClass: 'artist',
+        //parentClassProp: 'artist'
         fetch: 'fetchArtistInfo',
         dom: 'createInfoDOM',
       }
@@ -92,16 +93,28 @@ export default class Router {
 
   hashToData(route, id, name) {
     let className,
-      prop;
+      prop,
+      parentClass,
+      parentClassProp;
 
     if(route.isSubRoute) {
       className = route.route.className;
       prop = route.route;
-    } else {
-      className =  routeMap[route.hash].className;
-      prop = routeMap[route.hash];
-    }
+      parentClass = routeMap[route.route.parentClass].className;
+      parentClassProp = routeMap[route.route.parentClass]
 
+      return this._fetchData(parentClass, parentClassProp, name).then(() =>  {
+        return this._fetchData(className, prop, id, name);
+      });
+    } else {
+      className = routeMap[route.hash].className;
+      prop = routeMap[route.hash];
+
+      return this._fetchData(className, prop, id, name);
+    }
+  }
+
+  _fetchData(className, prop, id, name) {
     return className[prop.fetch](id, name).then((data) => {
       if(!data.error) {
         if(name) {
@@ -118,7 +131,6 @@ export default class Router {
         return 'There was an error processing your request. Please try again.';
         window.location.reload();
       }
-
     })
   }
 

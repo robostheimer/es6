@@ -83,12 +83,20 @@ export default class Artist {
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
   createArtistDom(data) {//, params) {
-    $('#artists').remove();
+    let resolvedData;
+
+    if(data.data) {
+      resolvedData = data.data;
+    } else {
+      resolvedData = data;
+    }
+
+    //$('#artists').remove();
     //const action = params.action;
     const dom = escapeTemplate`
       <ul id="artists" class="cards">
         ${each({
-          data: data.artists.items,
+          data: resolvedData.artists.items,
           tag: 'li',
           txt: `<div>
                   <h4><a href="#/artist/info/{{name}}">{{name}}</a></h4>

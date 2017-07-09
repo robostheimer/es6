@@ -579,7 +579,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <h4>Info about ', '</h4>\n\n      '], ['\n      <h4>Info about ', '</h4>\n\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n    <section id="modalDom">\n      <header>\n        <h4>Info about ', '</h4>\n      </header>\n      <div id="modal-container"></div>\n    </section>\n    '], ['\n    <section id="modalDom">\n      <header>\n        <h4>Info about ', '</h4>\n      </header>\n      <div id="modal-container"></div>\n    </section>\n    ']),
+    _templateObject2 = _taggedTemplateLiteral(['\n      <img src="', '" alt="', '"/>\n      <p>', '</p>\n\n      '], ['\n      <img src="', '" alt="', '"/>\n      <p>', '</p>\n\n      ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -591,6 +592,12 @@ var _memoize = require('../helpers/memoize');
 
 var _addToStorage = require('../helpers/add-to-storage');
 
+var _artist = require('./artist');
+
+var _artist2 = _interopRequireDefault(_artist);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -598,6 +605,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var auth_header = new Headers({
   'Authorization': 'Bearer ' + sessionStorage.access_token
 });
+
+var artist = new _artist2.default();
 
 var ArtistInfo = function () {
   function ArtistInfo() {
@@ -609,7 +618,6 @@ var ArtistInfo = function () {
 
     //TODO: memoize this method; see javascript ninja book
     value: function fetchArtistInfo() {
-      debugger;
       var artistname = arguments.length <= 1 ? undefined : arguments[1];
       var url = 'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + artistname + '&api_key=1f91c93293d618de5c30f8cfe2e9f5e9&format=json';
       var data = (0, _memoize.memoizeJSON)({ key: artistname + '_info',
@@ -626,9 +634,15 @@ var ArtistInfo = function () {
   }, {
     key: 'createInfoDOM',
     value: function createInfoDOM(data) {
-      console.log(data.data.artist.name);
-      var dom = (0, _ifTemplate.iff)(data.data.artist, (0, _createDom.escapeTemplate)(_templateObject, data.data.artist.name), '<p><strong>There are no artists related</strong</p>');
-      (0, _createDom.createDOM)({ html: dom, tag: 'container' });
+      //TODO: move this into it's own helper (add-modal or something like that)
+      // that when you import and call the createDom function creates a modal outlet
+
+      var modalDom = (0, _createDom.escapeTemplate)(_templateObject, data.data.artist.name);
+
+      var infoDom = (0, _ifTemplate.iff)(data.data.artist.bio.summary, (0, _createDom.escapeTemplate)(_templateObject2, data.data.artist.image[2]['#text'], data.data.artist.name, data.data.artist.bio.summary), '<p><strong>There are no artists related</strong</p>');
+
+      (0, _createDom.createDOM)({ html: modalDom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: infoDom, tag: 'modal-container', clear: true });
     }
   }]);
 
@@ -636,7 +650,7 @@ var ArtistInfo = function () {
 }();
 
 exports.default = ArtistInfo;
-},{"../helpers/add-to-storage":2,"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/if-template":6,"../helpers/memoize":7}],11:[function(require,module,exports){
+},{"../helpers/add-to-storage":2,"../helpers/create-dom":3,"../helpers/each-template":5,"../helpers/if-template":6,"../helpers/memoize":7,"./artist":11}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -762,10 +776,18 @@ var Artist = function () {
     key: 'createArtistDom',
     value: function createArtistDom(data) {
       //, params) {
-      $('#artists').remove();
+      var resolvedData = void 0;
+
+      if (data.data) {
+        resolvedData = data.data;
+      } else {
+        resolvedData = data;
+      }
+
+      //$('#artists').remove();
       //const action = params.action;
       var dom = (0, _createDom.escapeTemplate)(_templateObject, (0, _eachTemplate.each)({
-        data: data.artists.items,
+        data: resolvedData.artists.items,
         tag: 'li',
         txt: '<div>\n                  <h4><a href="#/artist/info/{{name}}">{{name}}</a></h4>\n                </div>\n                <ul class="options">\n                  <li>\n                    <a href="#/related/{{id}}">\n                      Related Musicians\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/top/{{id}}">\n                      Top Tracks\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/albums/{{id}}">\n                      Albums\n                    </a>\n                  </li>\n                  <li>\n                    <a href="#/recommendations/{{id}}">\n                      Create Radio Station\n                    </a>\n                  <li>\n                  <li>\n                    <a>\n                      Other musicians from {{location}}\n                    </a>\n                  </li>\n                </ul>\n                ',
         attrs: {
@@ -1084,6 +1106,7 @@ var routeMap = {
       hash: 'info',
       className: artistInfo,
       parentClass: 'artist',
+      //parentClassProp: 'artist'
       fetch: 'fetchArtistInfo',
       dom: 'createInfoDOM'
     }]
@@ -1158,17 +1181,31 @@ var Router = function () {
   }, {
     key: 'hashToData',
     value: function hashToData(route, id, name) {
+      var _this = this;
+
       var className = void 0,
-          prop = void 0;
+          prop = void 0,
+          parentClass = void 0,
+          parentClassProp = void 0;
 
       if (route.isSubRoute) {
         className = route.route.className;
         prop = route.route;
+        parentClass = routeMap[route.route.parentClass].className;
+        parentClassProp = routeMap[route.route.parentClass];
+        //parentClassProp = route.route.
+        return this._fetchData(parentClass, parentClassProp, name).then(function () {
+          return _this._fetchData(className, prop, id, name);
+        });
       } else {
         className = routeMap[route.hash].className;
         prop = routeMap[route.hash];
+        return this._fetchData(className, prop, id, name);
       }
-
+    }
+  }, {
+    key: '_fetchData',
+    value: function _fetchData(className, prop, id, name) {
       return className[prop.fetch](id, name).then(function (data) {
         if (!data.error) {
           if (name) {
