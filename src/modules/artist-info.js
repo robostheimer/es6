@@ -6,6 +6,7 @@ import { iff } from '../helpers/if-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 import Artist from './artist';
+import Modal from './create-modal';
 
 
 const auth_header =  new Headers({
@@ -13,7 +14,7 @@ const auth_header =  new Headers({
 });
 
 const artist = new Artist();
-
+const modal = new Modal();
 
 export default class ArtistInfo {
   //TODO: memoize this method; see javascript ninja book
@@ -36,14 +37,15 @@ export default class ArtistInfo {
     //TODO: move this into it's own helper (add-modal or something like that)
     // that when you import and call the createDom function creates a modal outlet
 
-    const modalDom = escapeTemplate `
-    <section id="modalDom">
-      <header>
-        <h4>Info about ${data.data.artist.name}</h4>
-      </header>
-      <div id="modal-container"></div>
-    </section>
-    `;
+    // const modalDom = escapeTemplate `
+    // <section id="modalDom">
+    //   <header>
+    //     <h4>Info about ${data.data.artist.name}</h4>
+    //   </header>
+    //   <div id="modal-container"></div>
+    // </section>
+    //`;
+    modal.createModal({ title: data.data.artist.name });
 
     const infoDom = iff(data.data.artist.bio.summary ,
     escapeTemplate`
@@ -53,7 +55,7 @@ export default class ArtistInfo {
       `,
       `<p><strong>There are no artists related</strong</p>`);
 
-    createDOM({ html: modalDom, tag: 'container' });
+    // createDOM({ html: modalDom, tag: 'container' });
     createDOM({ html: infoDom, tag: 'modal-container', clear: true });
   }
 }

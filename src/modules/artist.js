@@ -15,7 +15,6 @@ const auth_header =  new Headers({
   'Authorization': `Bearer ${sessionStorage.access_token}`
 })
 
-//TODO: Need to add album and track class/components to support linking.
 export default class Artist {
   fetchArtists(name) {
     const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`;
