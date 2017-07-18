@@ -34,23 +34,16 @@ export default class ArtistInfo {
   }
 
   createInfoDOM(data) {
-    //TODO: move this into it's own helper (add-modal or something like that)
-    // that when you import and call the createDom function creates a modal outlet
-
-    // const modalDom = escapeTemplate `
-    // <section id="modalDom">
-    //   <header>
-    //     <h4>Info about ${data.data.artist.name}</h4>
-    //   </header>
-    //   <div id="modal-container"></div>
-    // </section>
-    //`;
     modal.createModal({ title: data.data.artist.name });
 
     const infoDom = iff(data.data.artist.bio.summary ,
     escapeTemplate`
-      <img src="${data.data.artist.image[2]['#text']}" alt="${data.data.artist.name}"/>
-      <p>${data.data.artist.bio.summary}</p>
+      <div>
+        <img src="${data.data.artist.image[2]['#text']}" alt="${data.data.artist.name}"/>
+      </div>
+      <div>
+        <p>${data.data.artist.bio.summary}</p>
+      </div>
 
       `,
       `<p><strong>There are no artists related</strong</p>`);

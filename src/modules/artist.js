@@ -82,6 +82,7 @@ export default class Artist {
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
   createArtistDom(data) {//, params) {
+    $('#modal').remove();
     let resolvedData;
 
     if(data.data) {

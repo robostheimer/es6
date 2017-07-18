@@ -62,7 +62,6 @@ const routeMap = {
 }
 
 export default class Router {
-
   logHash() {
     console.log(hash);
   }
@@ -75,6 +74,10 @@ export default class Router {
 
   getHash(str) {
     return window.location.hash;
+  }
+
+  goBack() {
+    window.history.back()
   }
 
   getParamsFromHash(str) {

@@ -90,11 +90,7 @@ function addToStorage(key, val) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _templateObject = _taggedTemplateLiteral(['<section id="modalDom">\n    <header>\n      <h4>Info about ', '</h4>\n    </header>\n    <div id="modal-container"></div>\n  </section>'], ['<section id="modalDom">\n    <header>\n      <h4>Info about ', '</h4>\n    </header>\n    <div id="modal-container"></div>\n  </section>']);
-
 exports.createDOM = createDOM;
-exports.createModal = createModal;
 exports.addAjaxAction = addAjaxAction;
 exports.escapeTemplate = escapeTemplate;
 
@@ -107,8 +103,6 @@ var _eachTemplate = require('./each-template');
 var _eachTemplate2 = _interopRequireDefault(_eachTemplate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
 function createDOM(options) {
@@ -130,12 +124,6 @@ function createDOM(options) {
   // const html = document.createTextNode(options.html);
   //   debugger;
   // tag.innerHTML+=(html);
-}
-// creates a Modal Container that can be added to any route
-function createModal(title) {
-  var modalDom = escapeTemplate(_templateObject, title);
-
-  createDOM({ html: modalDom, tag: 'container' });
 }
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes
@@ -589,7 +577,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['\n      <img src="', '" alt="', '"/>\n      <p>', '</p>\n\n      '], ['\n      <img src="', '" alt="', '"/>\n      <p>', '</p>\n\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      <div>\n        <img src="', '" alt="', '"/>\n      </div>\n      <div>\n        <p>', '</p>\n      </div>\n\n      '], ['\n      <div>\n        <img src="', '" alt="', '"/>\n      </div>\n      <div>\n        <p>', '</p>\n      </div>\n\n      ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -648,17 +636,6 @@ var ArtistInfo = function () {
   }, {
     key: 'createInfoDOM',
     value: function createInfoDOM(data) {
-      //TODO: move this into it's own helper (add-modal or something like that)
-      // that when you import and call the createDom function creates a modal outlet
-
-      // const modalDom = escapeTemplate `
-      // <section id="modalDom">
-      //   <header>
-      //     <h4>Info about ${data.data.artist.name}</h4>
-      //   </header>
-      //   <div id="modal-container"></div>
-      // </section>
-      //`;
       modal.createModal({ title: data.data.artist.name });
 
       var infoDom = (0, _ifTemplate.iff)(data.data.artist.bio.summary, (0, _createDom.escapeTemplate)(_templateObject, data.data.artist.image[2]['#text'], data.data.artist.name, data.data.artist.bio.summary), '<p><strong>There are no artists related</strong</p>');
@@ -796,6 +773,7 @@ var Artist = function () {
     key: 'createArtistDom',
     value: function createArtistDom(data) {
       //, params) {
+      $('#modal').remove();
       var resolvedData = void 0;
 
       if (data.data) {
@@ -886,7 +864,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['<section id="modalDom">\n      <header>\n        <h4>Info about ', '</h4>\n      </header>\n      <div id="modal-container"></div>\n    </section>'], ['<section id="modalDom">\n      <header>\n        <h4>Info about ', '</h4>\n      </header>\n      <div id="modal-container"></div>\n    </section>']);
+var _templateObject = _taggedTemplateLiteral(['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4>Info about ', '</h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" style="display: none;"></div>\n        </div>\n    </section>'], ['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4>Info about ', '</h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" style="display: none;"></div>\n        </div>\n    </section>']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -909,7 +887,12 @@ var CreateModal = function () {
 
       var modalDom = (0, _createDom.escapeTemplate)(_templateObject, args[0].title);
 
-      (0, _createDom.createDOM)({ html: modalDom, tag: 'container' });
+      (0, _createDom.createDOM)({ html: modalDom, tag: 'body' });
+
+      //adds click event to close button;
+      document.querySelector('.close').addEventListener('click', function (event) {
+        window.history.back(); // should be added to router
+      });
     }
   }]);
 
@@ -1224,6 +1207,11 @@ var Router = function () {
     key: 'getHash',
     value: function getHash(str) {
       return window.location.hash;
+    }
+  }, {
+    key: 'goBack',
+    value: function goBack() {
+      window.history.back();
     }
   }, {
     key: 'getParamsFromHash',

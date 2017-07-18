@@ -25,18 +25,6 @@ export  function createDOM(options) {
   // tag.innerHTML+=(html);
 
 }
-// creates a Modal Container that can be added to any route
-export function createModal(title) {
-  const modalDom = escapeTemplate
-  `<section id="modalDom">
-    <header>
-      <h4>Info about ${title}</h4>
-    </header>
-    <div id="modal-container"></div>
-  </section>`
-
-  createDOM({ html: modalDom, tag: 'container' });
-}
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes
 // Typical use case would be to ceate a component and then add an ajax action to that component
