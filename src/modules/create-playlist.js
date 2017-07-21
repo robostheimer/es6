@@ -4,15 +4,18 @@ import { createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
+import SpotifyPlayer from './spotify-player';
 
 
 const auth_header =  new Headers({
   'Authorization': `Bearer ${sessionStorage.access_token}`
-})
+});
 
 const post_header = new Headers({
   'Content-Type': 'application/json'
-})
+});
+
+const player = new SpotifyPlayer();
 
 export default class CreatePlaylist {
   //TODO: memoize this method; see javascript ninja book
@@ -47,7 +50,7 @@ export default class CreatePlaylist {
             method: 'POST',
             headers: auth_header,
           }).then(() => {
-            createSpotifyPlayerDOM(id, username);
+            player.createSpotifyPlayerDOM(id, username);
           })
 
         })
@@ -64,7 +67,7 @@ export default class CreatePlaylist {
         });
       }
     });
-    console.log(data);
+
     return data;
   }
 
@@ -101,13 +104,4 @@ export default class CreatePlaylist {
       document.getElementById(tracks.toString()).disabled = true;
     });
   }
-}
-
-//Creates spotify iframe player in app
-function createSpotifyPlayerDOM(id, username) {
-  const url = `https://open.spotify.com/embed?uri=spotify:user:${username}:playlist:${id}`
-  const playerDOM = escapeTemplate`
-    <iframe src=${url} width="300" height="100" frameborder="0" allowtransparency="true"></iframe>
-  `;
-  createDOM({ html: playerDOM, tag: 'spotify-player', clear: true });
 }
