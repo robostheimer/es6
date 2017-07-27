@@ -50,6 +50,7 @@ export default class CreatePlaylist {
             method: 'POST',
             headers: auth_header,
           }).then(() => {
+            //After playlist is created; create a music player and display it to user
             player.createSpotifyPlayerDOM(id, username);
           })
 

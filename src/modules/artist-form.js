@@ -36,7 +36,7 @@ export default class ArtistForm {
       if(event.preventDefault) {
         event.preventDefault();
       }
-      this._getPramsFromHash();
+      this._getParamsFromHash();
     });
 
     //adds onEnter to the input

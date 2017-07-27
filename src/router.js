@@ -4,13 +4,15 @@ import Artist from './modules/artist';
 import RelatedArtists from './modules/related-artists';
 import Album from './modules/albums';
 import ArtistInfo from './modules/artist-info';
+import Geolocation from './modules/geolocation';
+//import Modal from './modules/create-modal';
 
 const hash = window.location.hash.replace('#', '');
 const artist = new Artist();
 const related = new RelatedArtists();
 const album = new Album();
-const artistInfo = new ArtistInfo()
-
+const artistInfo = new ArtistInfo();
+const geolocation = new Geolocation();
 
 const routeMap = {
   artist: {
@@ -58,10 +60,16 @@ const routeMap = {
     hash: 'recommendations',
     fetch: 'fetchRecommendations',
     dom: 'createRecsDOM'
+  },
+  geolocation: {
+    className: geolocation,
+    hash: 'geolocation',
+    fetch: 'getGeolocation',
+    dom: 'buildMap',
   }
 }
 
-export default class Router {
+class Router {
   logHash() {
     console.log(hash);
   }
@@ -162,3 +170,5 @@ export default class Router {
     return { id: id, route: route, name: name };
   }
 }
+
+export default Router;

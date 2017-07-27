@@ -6,7 +6,7 @@ import { iff } from '../helpers/if-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 import Artist from './artist';
-import Modal from './create-modal';
+import Modal from './modal-create';
 
 
 const auth_header =  new Headers({

@@ -124,7 +124,7 @@ export default class Artist {
                   <li>
                   <li>
                     <a>
-                      Other musicians from {{location}}
+                      Other musicians from the same place
                     </a>
                   </li>
                 </ul>

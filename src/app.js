@@ -1,12 +1,14 @@
 'use strict'
 
+import Router from './router';
 import Artist from './modules/artist';
 import ArtistForm from './modules/artist-form';
-import Router from './router';
+import Geolocation from './modules/geolocation';
 
 const artist = new Artist();
 const form = new ArtistForm();
 const router = new Router();
+const geolocation = new Geolocation();
 const client_id = '1b7c83fc02404e08892183b94c0986a9';
 const scope = 'playlist-modify-private playlist-modify-public';
 
@@ -42,7 +44,7 @@ export  default function init() {
 }
 
 function startApp() {
-  form.createArtistFormDom();
+  //router.setHash('#/geolocation')
 
   const hash = router.getHash()
 
@@ -57,6 +59,7 @@ function startApp() {
       router.getParamsFromHash(hash);
     }
   });
+  form.createArtistFormDom();
 }
 
 

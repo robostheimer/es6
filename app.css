@@ -204,7 +204,7 @@ li h4 {
 }
 
 #modal-container {
-  display: flex;
+  /*display: flex;*/
 }
 #modal-container img {
   padding-right: 15px;

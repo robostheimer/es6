@@ -26,6 +26,10 @@ export  function createDOM(options) {
 
 }
 
+export function clearDOM(tag) {
+  $(`#${tag}`).remove();
+}
+
 // Pattern that adds ajax actions to dom elements that are attached to specific classes
 // Typical use case would be to ceate a component and then add an ajax action to that component
 // If ajax action requires the DOM to change that the methods array should contain more than one
