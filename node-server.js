@@ -1,12 +1,41 @@
-var http = require("http"), fs = require("fs"),express = require("express")
-methods = Object.create(null);
+// var http = require("http"),
+//   https = require("https"),
+//   fs = require("fs"),express = require("express"),
+//   methods = Object.create(null);
+//   var options = {
+//     key: fs.readFileSync('key.pem'),
+//     cert: fs.readFileSync('cert.pem')
+//   };
 
+var fs = require('fs');
+var https = require('https');
+var app = require('express')();
+var methods = Object.create(null);
+var options = {
+   key  : fs.readFileSync('server.key'),
+   cert : fs.readFileSync('server.crt')
+};
 
-http.createServer(function(request, response) {
-  /*Looks for the index.html file; if it finds it 
-  thats what it shows if the request url ends with 
+app.get('/', function (req, res) {
+   res.send('Hello World!');
+});
+
+// https.createServer(options, app).listen(3000, function () {
+//    console.log('Started https!');
+// });
+
+    // https.createServer(options, function (req, res) {
+    //   res.writeHead(200);
+    //   res.end("hello world\n");
+    //   console.log('running');
+    // }).listen(8000);
+
+//
+https.createServer(options, function(request, response) {
+  /*Looks for the index.html file; if it finds it
+  thats what it shows if the request url ends with
   a slash*/
-  
+
   function respond(code, body, type) {
     if (!type) type = "text/plain";
     response.writeHead(code, {"Content-Type": type});
@@ -24,8 +53,14 @@ http.createServer(function(request, response) {
   else
     respond(405, "Method " + request.method +
             " not allowed.");
-}).listen(8082);
-console.log('listening on 8082')
+}).listen(8082, function() {
+    console.log('listening on 8082')
+});
+
+
+
+
+
 
 function urlToPath(url) {
   var path = require("url").parse(url).pathname;
@@ -72,7 +107,7 @@ methods.GET = function(path, respond) {
              indexStr+= '<a href="'+item+'">'+item+'</a><br>';
           })
             respond(200, indexStr, 'text/html');
-           }   
+           }
       });
     else
       respond(200, fs.createReadStream(path),
@@ -92,23 +127,23 @@ methods.DELETE = function(path, respond) {
       fs.unlink(path, respondErrorOrNothing(respond));
   });
 };
-
-function respondErrorOrNothing(respond) {
-  return function(error) {
-    if (error)
-      respond(500, error.toString());
-    else
-      respond(204);
-  };
-}
-
-methods.PUT = function(path, respond, request) {
-  var outStream = fs.createWriteStream(path);
-  outStream.on("error", function(error) {
-    respond(500, error.toString());
-  });
-  outStream.on("finish", function() {
-    respond(204);
-  });
-  request.pipe(outStream);
-};
+//
+// function respondErrorOrNothing(respond) {
+//   return function(error) {
+//     if (error)
+//       respond(500, error.toString());
+//     else
+//       respond(204);
+//   };
+// }
+//
+// methods.PUT = function(path, respond, request) {
+//   var outStream = fs.createWriteStream(path);
+//   outStream.on("error", function(error) {
+//     respond(500, error.toString());
+//   });
+//   outStream.on("finish", function() {
+//     respond(204);
+//   });
+//   request.pipe(outStream);
+// };

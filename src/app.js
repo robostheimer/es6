@@ -25,9 +25,9 @@ export  default function init() {
 
     if(window.location.hostname === 'localhost')
     {
-      http = 'http://localhost:8082/index.html';
+      http = 'https://localhost:8082/index.html';
     } else {
-      http = 'http://es6-spotify-app.s3-website-us-west-2.amazonaws.com'
+      http = 'https://d2v5wkcovtgl6u.cloudfront.net'
     }
 
     const authorization_url = `https://accounts.spotify.com/en/authorize?response_type=token&client_id=${client_id}&scope=${encodeURIComponent(scope)}&redirect_uri=${http}`;
