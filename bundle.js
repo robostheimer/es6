@@ -22,6 +22,8 @@ var _geolocation = require('./modules/geolocation');
 
 var _geolocation2 = _interopRequireDefault(_geolocation);
 
+var _addToStorage = require('./helpers/add-to-storage');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var artist = new _artist2.default();
@@ -42,16 +44,16 @@ function init() {
     var http = void 0;
 
     if (window.location.hostname === 'localhost') {
-      http = 'http://localhost:8082/index.html';
+      http = 'https://localhost:8082/index.html';
     } else {
-      http = 'http://es6-spotify-app.s3-website-us-west-2.amazonaws.com';
+      http = 'https://d2v5wkcovtgl6u.cloudfront.net';
     }
 
     var authorization_url = 'https://accounts.spotify.com/en/authorize?response_type=token&client_id=' + client_id + '&scope=' + encodeURIComponent(scope) + '&redirect_uri=' + http;
 
     window.open(authorization_url, '_self');
   } else {
-    if (sessionStorage.hash.indexOf('/') === 0) {} else {
+    if (sessionStorage.hash && sessionStorage.hash.indexOf('/') === 0) {} else {
       sessionStorage.setItem('hash', '/' + sessionStorage.hash);
     }
     router.setHash(sessionStorage.hash);
@@ -60,7 +62,12 @@ function init() {
 }
 
 function startApp() {
-  //router.setHash('#/geolocation')
+  var withGeolocationAsked = sessionStorage.getItem('geolocationAsked') === 'false';
+  //&& router.getHash() === '#/';
+
+  if (withGeolocationAsked) {
+    promptGeolocationModal();
+  }
 
   var hash = router.getHash();
 
@@ -78,8 +85,16 @@ function startApp() {
   form.createArtistFormDom();
 }
 
+function promptGeolocationModal() {
+  sessionStorage.setItem('geolocationAsked', true);
+
+  return geolocation.getGeolocation().then(function (options) {
+    return geolocation.buildMap(options);
+  });
+}
+
 $(document).ready(init);
-},{"./modules/artist":11,"./modules/artist-form":9,"./modules/geolocation":13,"./router":18}],2:[function(require,module,exports){
+},{"./helpers/add-to-storage":2,"./modules/artist":11,"./modules/artist-form":9,"./modules/geolocation":13,"./router":18}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -351,7 +366,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.iff = iff;
 function iff(condition, option1, option2) {
-  return condition ? option1 : option2;
+  if (condition, option1, option2) {
+    return condition ? option1 : option2;
+  }
+  return;
 }
 },{}],7:[function(require,module,exports){
 'use strict';
@@ -640,7 +658,6 @@ var ArtistInfo = function () {
           });
         }
       });
-      (0, _addToStorage.addToStorage)('hash', 'artist/info/' + artistname);
 
       return data;
     }
@@ -784,7 +801,6 @@ var Artist = function () {
     key: 'createArtistDom',
     value: function createArtistDom(data) {
       //, params) {
-      $('#modal').remove();
       var resolvedData = void 0;
 
       if (data.data) {
@@ -1008,7 +1024,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _templateObject = _taggedTemplateLiteral(['\n        <div class="loader" id="loader">\n        LOADING...\n        </div>'], ['\n        <div class="loader" id="loader">\n        LOADING...\n        </div>']),
-    _templateObject2 = _taggedTemplateLiteral(['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>'], ['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>']);
+    _templateObject2 = _taggedTemplateLiteral(['\n      TEST\n    '], ['\n      TEST\n    ']),
+    _templateObject3 = _taggedTemplateLiteral(['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>'], ['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -1049,14 +1066,13 @@ var Geolocation = function () {
       // If it is is runs the handle_geolocation_query or the handle Gelocation.handle)errors function if access to the Geolocation API is denied by the user
       var geolocation = function geolocation() {
         var loaderDom = (0, _createDom.escapeTemplate)(_templateObject); //make this a dom component that can be added
-
-        (0, _createDom.createDOM)({ html: loaderDom, tag: 'container', clear: false });
+        modal.createModal();
+        (0, _createDom.createDOM)({ html: loaderDom, tag: 'modal-container' });
         return new Promise(function (resolve, reject) {
           navigator.geolocation.getCurrentPosition(function (position) {
-            console.log(position.coords);
             resolve({ position: position.coords, location: 'test', tag: 'modal-container' });
           }, function (error) {
-            console.log(error);
+            alert('There was an error!');
           });
         });
       };
@@ -1072,10 +1088,11 @@ var Geolocation = function () {
     key: 'buildMap',
     value: function buildMap(options) {
       (0, _createDom.clearDOM)('loader');
-      modal.createModal({ title: options.location });
       map.buildMap(options.position.latitude, options.position.longitude, options.location, options.tag);
-      var ctaDom = (0, _createDom.escapeTemplate)(_templateObject2);
+      var titleDom = (0, _createDom.escapeTemplate)(_templateObject2);
+      var ctaDom = (0, _createDom.escapeTemplate)(_templateObject3);
 
+      (0, _createDom.createDOM)({ html: titleDom, tag: 'modal-headline', clear: true });
       (0, _createDom.createDOM)({ html: ctaDom, tag: 'modal-footer', clear: false });
 
       modal.createButtons([{
@@ -1085,7 +1102,6 @@ var Geolocation = function () {
         id: 'no',
         value: 'No thanks',
         route: function route() {} }]);
-      (0, _addToStorage.addToStorage)('hash', 'geolocation');
     }
   }, {
     key: '_getArtistsFromLocation',
@@ -1357,20 +1373,24 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4>', '</h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" id="modal-footer"></div>\n        </div>\n    </section>'], ['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4>', '</h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" id="modal-footer"></div>\n        </div>\n    </section>']),
+var _templateObject = _taggedTemplateLiteral(['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4 id="modal-headline">\n              ', '\n            </h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" id="modal-footer"></div>\n        </div>\n    </section>'], ['<section id="modal">\n        <div class="modal-dialog" role="document">\n          <header class="modal-header">\n            <h4 id="modal-headline">\n              ', '\n            </h4>\n            <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n            <span aria-hidden="true">\xD7</span>\n          </button>\n          </header>\n          <div id="modal-container" class="modal-body"></div>\n          <div class="modal-footer" id="modal-footer"></div>\n        </div>\n    </section>']),
     _templateObject2 = _taggedTemplateLiteral(['\n        <button id="', '">', '</button>\n       '], ['\n        <button id="', '">', '</button>\n       ']);
 
 var _createDom = require('../helpers/create-dom');
 
 var _ifTemplate = require('../helpers/if-template');
 
+var _router = require('../router');
+
+var _router2 = _interopRequireDefault(_router);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-//import Router from '../router';
-
-//const router = new Router();
+// const router = new Router();
 
 // creates a Modal Container that can be added to any route
 //TODO: add css to make this fade in to the dom
@@ -1386,13 +1406,14 @@ var ModalCreate = function () {
         args[_key] = arguments[_key];
       }
 
-      var modalDom = (0, _createDom.escapeTemplate)(_templateObject, args[0].title);
+      var modalDom = (0, _createDom.escapeTemplate)(_templateObject, args[0] ? args[0].title : '');
 
       (0, _createDom.createDOM)({ html: modalDom, tag: 'body' });
 
       //adds click event to close button;
       document.querySelector('.close').addEventListener('click', function () {
-        window.history.back(); // should be added to router
+
+        window.location.hash = sessionStorage.hash; // should be added to router
         (0, _createDom.clearDOM)('modal');
       });
     }
@@ -1411,7 +1432,7 @@ var ModalCreate = function () {
 }();
 
 exports.default = ModalCreate;
-},{"../helpers/create-dom":3,"../helpers/if-template":6}],16:[function(require,module,exports){
+},{"../helpers/create-dom":3,"../helpers/if-template":6,"../router":18}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

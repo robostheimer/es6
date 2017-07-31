@@ -20,15 +20,14 @@ export default class Geolocation {
         <div class="loader" id="loader">
         LOADING...
         </div>`//make this a dom component that can be added
-
-      createDOM({ html: loaderDom, tag:'container', clear: false });
+      modal.createModal()
+      createDOM({ html: loaderDom, tag:'modal-container' });
       return new Promise ((resolve, reject) => {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position.coords)
           resolve({ position: position.coords, location: 'test', tag: 'modal-container' });
         },
         (error) => {
-          console.log(error);
+          alert('There was an error!')
         }
     );
     });
@@ -43,13 +42,16 @@ export default class Geolocation {
 
   buildMap(options) {
     clearDOM('loader');
-    modal.createModal({ title: options.location })
     map.buildMap(options.position.latitude, options.position.longitude, options.location, options.tag);
+    const titleDom = escapeTemplate `
+      TEST
+    `;
     const ctaDom = escapeTemplate `
       <div>
         Would you like to learn about musicians from your current location?
-      </div>`
+      </div>`;
 
+    createDOM({ html: titleDom, tag:'modal-headline', clear: true });
     createDOM({ html: ctaDom, tag:'modal-footer', clear: false });
 
     modal.createButtons([
@@ -63,7 +65,6 @@ export default class Geolocation {
         route: () => {}, //eventually will use router.getHash()
       }
     ]);
-      addToStorage('hash', 'geolocation');
   }
 
 

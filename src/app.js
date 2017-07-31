@@ -4,6 +4,7 @@ import Router from './router';
 import Artist from './modules/artist';
 import ArtistForm from './modules/artist-form';
 import Geolocation from './modules/geolocation';
+import { addToStorage } from './helpers/add-to-storage';
 
 const artist = new Artist();
 const form = new ArtistForm();
@@ -34,7 +35,7 @@ export  default function init() {
 
     window.open(authorization_url, '_self');
   } else {
-    if(sessionStorage.hash.indexOf('/') === 0) {
+    if(sessionStorage.hash  && sessionStorage.hash.indexOf('/') === 0) {
     } else {
       sessionStorage.setItem('hash', `/${sessionStorage.hash}`);
     }
@@ -44,7 +45,14 @@ export  default function init() {
 }
 
 function startApp() {
-  //router.setHash('#/geolocation')
+  const withGeolocationAsked =
+    sessionStorage.getItem('geolocationAsked') === 'false'
+    //&& router.getHash() === '#/';
+
+  if(withGeolocationAsked) {
+    promptGeolocationModal();
+  }
+
 
   const hash = router.getHash()
 
@@ -62,6 +70,14 @@ function startApp() {
   form.createArtistFormDom();
 }
 
+
+function promptGeolocationModal() {
+  sessionStorage.setItem('geolocationAsked', true);
+
+  return geolocation.getGeolocation().then((options) => {
+     return geolocation.buildMap(options);
+  })
+}
 
 
 

@@ -28,7 +28,6 @@ export default class ArtistInfo {
         });
       }
     });
-    addToStorage('hash', `artist/info/${artistname}`);
 
     return data;
   }

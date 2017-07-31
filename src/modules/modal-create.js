@@ -2,9 +2,9 @@
 
 import { createDOM, escapeTemplate, clearDOM } from '../helpers/create-dom';
 import { iff } from '../helpers/if-template';
-//import Router from '../router';
+import Router from '../router';
 
-//const router = new Router();
+// const router = new Router();
 
 // creates a Modal Container that can be added to any route
 //TODO: add css to make this fade in to the dom
@@ -14,7 +14,9 @@ export default class ModalCreate {
     `<section id="modal">
         <div class="modal-dialog" role="document">
           <header class="modal-header">
-            <h4>${args[0].title}</h4>
+            <h4 id="modal-headline">
+              ${args[0] ? args[0].title : ''}
+            </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
@@ -28,7 +30,8 @@ export default class ModalCreate {
 
     //adds click event to close button;
     document.querySelector('.close').addEventListener('click', () => {
-      window.history.back(); // should be added to router
+
+      window.location.hash = sessionStorage.hash; // should be added to router
       clearDOM('modal');
     });
   }
