@@ -46,8 +46,8 @@ export  default function init() {
 
 function startApp() {
   const withGeolocationAsked =
-    sessionStorage.getItem('geolocationAsked') === 'false'
-    //&& router.getHash() === '#/';
+    !sessionStorage.getItem('geolocationAsked')
+    || sessionStorage.getItem('geolocationAsked') === "false"
 
   if(withGeolocationAsked) {
     promptGeolocationModal();

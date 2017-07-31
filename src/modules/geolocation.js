@@ -24,7 +24,7 @@ export default class Geolocation {
       createDOM({ html: loaderDom, tag:'modal-container' });
       return new Promise ((resolve, reject) => {
         navigator.geolocation.getCurrentPosition((position) => {
-          resolve({ position: position.coords, location: 'test', tag: 'modal-container' });
+          resolve({ position: position.coords, tag: 'modal-container' });
         },
         (error) => {
           alert('There was an error!')
@@ -41,42 +41,53 @@ export default class Geolocation {
   }
 
   buildMap(options) {
-    clearDOM('loader');
-    map.buildMap(options.position.latitude, options.position.longitude, options.location, options.tag);
-    const titleDom = escapeTemplate `
-      TEST
-    `;
-    const ctaDom = escapeTemplate `
-      <div>
-        Would you like to learn about musicians from your current location?
-      </div>`;
+    const lat = options.position.latitude;
+    const lng = options.position.longitude;
+    const ratio = .05;
+    const tag = options.tag
 
-    createDOM({ html: titleDom, tag:'modal-headline', clear: true });
-    createDOM({ html: ctaDom, tag:'modal-footer', clear: false });
+    this.fetchCity(lat, lng, ratio).then((data) => {
+      const location = data.rows[0].join(', ');
+      const city = data.rows[0][0];
+      const titleDom = escapeTemplate `
+        You are in ${location}
+      `;
 
-    modal.createButtons([
-      {
-        id: 'yes',
-        value: 'Yes please',
-        route: () => {}, //eventually will use router.getHash()
-      }, {
-        id: 'no',
-        value: 'No thanks',
-        route: () => {}, //eventually will use router.getHash()
-      }
-    ]);
+
+      createDOM({ html: titleDom, tag:'modal-headline', clear: true });
+      modal.createButtons([
+        {
+          id: 'yes',
+          value: `See Musicians from ${city}`,
+          route: () => {}, //eventually will use router.getHash()
+        }, {
+          id: 'no',
+          value: 'No thanks',
+          route: () => {}, //eventually will use router.getHash()
+        }
+      ]);
+      map.buildMap(lat, lng, tag);
+    })
+
+
+
   }
 
+  fetchCity(lat, lng, ratio) {
+    const url = `https://www.googleapis.com/fusiontables/v1/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+%3C=${lat+ratio}+AND+Lat%3E=${lat - ratio}+AND+Long%3C=${lng + ratio}+AND+Long%3E=${lng - ratio}&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0`;
+    if(lat && lng && ratio) {
+      var data =  memoizeJSON({key: `geolocation_${lat}_${lng}`,
+        fn() {
+          return fetch(url);
+        }
+      });
 
-  _getArtistsFromLocation(lat, lng, ratio) {
-    const request = `https://www.googleapis.com/fusiontables/v1/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+<="${(lat+ratio)}"+AND+Lat>=${(lat - ratio)}"+AND+Long<=${(lng+ratio)}+AND+Long>=${(lng -ratio)}&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0,`;
-    var data =  memoizeJSON({key: `geolocation_${lat_lng}`,
-      fn() {
-        return fetch(request);
-      }
-    });
+      return data;
+    }
+  }
 
-    return data;
+  fetchArtistsFromLocation() {
+    
   }
 
   // fetchTopTracks(id) {

@@ -9,7 +9,7 @@ import { memoizeJSON, memoized } from '../helpers/memoize';
 //TODO: Need to add album and track class/components to support linking.
 export default class Map {
 
-  buildMap(lat, lng, place, container) {
+  buildMap(lat, lng, container) {
     const mapDom = escapeTemplate`
       <div id="map" style="height: 200px;">
       </div>`

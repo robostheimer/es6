@@ -62,8 +62,7 @@ function init() {
 }
 
 function startApp() {
-  var withGeolocationAsked = sessionStorage.getItem('geolocationAsked') === 'false';
-  //&& router.getHash() === '#/';
+  var withGeolocationAsked = !sessionStorage.getItem('geolocationAsked') || sessionStorage.getItem('geolocationAsked') === "false";
 
   if (withGeolocationAsked) {
     promptGeolocationModal();
@@ -1024,8 +1023,7 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _templateObject = _taggedTemplateLiteral(['\n        <div class="loader" id="loader">\n        LOADING...\n        </div>'], ['\n        <div class="loader" id="loader">\n        LOADING...\n        </div>']),
-    _templateObject2 = _taggedTemplateLiteral(['\n      TEST\n    '], ['\n      TEST\n    ']),
-    _templateObject3 = _taggedTemplateLiteral(['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>'], ['\n      <div>\n        Would you like to learn about musicians from your current location?\n      </div>']);
+    _templateObject2 = _taggedTemplateLiteral(['\n        You are in ', '\n      '], ['\n        You are in ', '\n      ']);
 
 var _createDom = require('../helpers/create-dom');
 
@@ -1070,7 +1068,7 @@ var Geolocation = function () {
         (0, _createDom.createDOM)({ html: loaderDom, tag: 'modal-container' });
         return new Promise(function (resolve, reject) {
           navigator.geolocation.getCurrentPosition(function (position) {
-            resolve({ position: position.coords, location: 'test', tag: 'modal-container' });
+            resolve({ position: position.coords, tag: 'modal-container' });
           }, function (error) {
             alert('There was an error!');
           });
@@ -1087,33 +1085,40 @@ var Geolocation = function () {
   }, {
     key: 'buildMap',
     value: function buildMap(options) {
-      (0, _createDom.clearDOM)('loader');
-      map.buildMap(options.position.latitude, options.position.longitude, options.location, options.tag);
-      var titleDom = (0, _createDom.escapeTemplate)(_templateObject2);
-      var ctaDom = (0, _createDom.escapeTemplate)(_templateObject3);
+      var lat = options.position.latitude;
+      var lng = options.position.longitude;
+      var ratio = .05;
+      var tag = options.tag;
 
-      (0, _createDom.createDOM)({ html: titleDom, tag: 'modal-headline', clear: true });
-      (0, _createDom.createDOM)({ html: ctaDom, tag: 'modal-footer', clear: false });
+      this.fetchCity(lat, lng, ratio).then(function (data) {
+        var location = data.rows[0].join(', ');
+        var city = data.rows[0][0];
+        var titleDom = (0, _createDom.escapeTemplate)(_templateObject2, location);
 
-      modal.createButtons([{
-        id: 'yes',
-        value: 'Yes please',
-        route: function route() {} }, {
-        id: 'no',
-        value: 'No thanks',
-        route: function route() {} }]);
+        (0, _createDom.createDOM)({ html: titleDom, tag: 'modal-headline', clear: true });
+        modal.createButtons([{
+          id: 'yes',
+          value: 'See Musicians from ' + city,
+          route: function route() {} }, {
+          id: 'no',
+          value: 'No thanks',
+          route: function route() {} }]);
+        map.buildMap(lat, lng, tag);
+      });
     }
   }, {
-    key: '_getArtistsFromLocation',
-    value: function _getArtistsFromLocation(lat, lng, ratio) {
-      var request = 'https://www.googleapis.com/fusiontables/v1/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+<="' + (lat + ratio) + '"+AND+Lat>=' + (lat - ratio) + '"+AND+Long<=' + (lng + ratio) + '+AND+Long>=' + (lng - ratio) + '&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0,';
-      var data = (0, _memoize.memoizeJSON)({ key: 'geolocation_' + lat_lng,
-        fn: function fn() {
-          return fetch(request);
-        }
-      });
+    key: 'fetchCity',
+    value: function fetchCity(lat, lng, ratio) {
+      var url = 'https://www.googleapis.com/fusiontables/v1/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+%3C=' + (lat + ratio) + '+AND+Lat%3E=' + (lat - ratio) + '+AND+Long%3C=' + (lng + ratio) + '+AND+Long%3E=' + (lng - ratio) + '&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
+      if (lat && lng && ratio) {
+        var data = (0, _memoize.memoizeJSON)({ key: 'geolocation_' + lat + '_' + lng,
+          fn: function fn() {
+            return fetch(url);
+          }
+        });
 
-      return data;
+        return data;
+      }
     }
 
     // fetchTopTracks(id) {
@@ -1336,7 +1341,7 @@ var Map = function () {
 
   _createClass(Map, [{
     key: 'buildMap',
-    value: function buildMap(lat, lng, place, container) {
+    value: function buildMap(lat, lng, container) {
       var mapDom = (0, _createDom.escapeTemplate)(_templateObject);
 
       (0, _createDom.createDOM)({ html: mapDom, tag: container, clear: true });
