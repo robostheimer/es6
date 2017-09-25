@@ -5,6 +5,7 @@ import RelatedArtists from './modules/related-artists';
 import Album from './modules/albums';
 import ArtistInfo from './modules/artist-info';
 import Geolocation from './modules/geolocation';
+import Location from './modules/location'
 //import Modal from './modules/create-modal';
 
 const hash = window.location.hash.replace('#', '');
@@ -13,6 +14,7 @@ const related = new RelatedArtists();
 const album = new Album();
 const artistInfo = new ArtistInfo();
 const geolocation = new Geolocation();
+const location = new Location();
 
 const routeMap = {
   artist: {
@@ -66,6 +68,12 @@ const routeMap = {
     hash: 'geolocation',
     fetch: 'getGeolocation',
     dom: 'buildMap',
+  },
+  city: {
+    className: location,
+    hash: 'city',
+    fetch: 'fetchCityArtists',
+    dom: 'fetchArtistsFromSpotify'
   }
 }
 

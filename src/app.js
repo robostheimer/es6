@@ -47,7 +47,7 @@ export  default function init() {
 function startApp() {
   const withGeolocationAsked =
     !sessionStorage.getItem('geolocationAsked')
-    || sessionStorage.getItem('geolocationAsked') === "false"
+    || sessionStorage.getItem('geolocationAsked') === "false";
 
   if(withGeolocationAsked) {
     promptGeolocationModal();

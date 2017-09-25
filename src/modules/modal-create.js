@@ -34,16 +34,29 @@ export default class ModalCreate {
       window.location.hash = sessionStorage.hash; // should be added to router
       clearDOM('modal');
     });
+
+
   }
 
  createButtons(...args) {
    const params = args[0];
    params.forEach((arg) => {
      let dom = escapeTemplate
-       `
-        <button id="${arg.id}">${arg.value}</button>
+       `<button id="${arg.id}">
+          <a href="#${arg.hash}">${arg.value}</a>
+        </button>
        `
      createDOM({ html: dom, tag: 'modal-footer' });
+
+   });
+   document.getElementById('no').addEventListener('click', () => {
+
+     clearDOM('modal');
+   });
+
+   document.getElementById('yes').addEventListener('click', () => {
+
+     clearDOM('modal');
    });
  }
 }

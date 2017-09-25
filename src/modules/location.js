@@ -4,93 +4,69 @@ import { createDOM, addAjaxAction, escapeTemplate, clearDOM } from '../helpers/c
 import { each } from '../helpers/each-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
-import Map from '../modules/map'
-import Modal from './modal-create';
+import Artist from './artist';
 
-const map = new Map();
-const modal = new Modal();
+const artist = new Artist
 
 //TODO: Need to add album and track class/components to support linking.
-export default class Geolocation {
-  getGeolocation() {
-    // Checks if Geolocation is available;
-    // If it is is runs the handle_geolocation_query or the handle Gelocation.handle)errors function if access to the Geolocation API is denied by the user
-    var geolocation = () => {
-      const loaderDom = escapeTemplate `
-        <div class="loader" id="loader">
-        LOADING...
-        </div>`//make this a dom component that can be added
-      modal.createModal()
-      createDOM({ html: loaderDom, tag:'modal-container' });
-      return new Promise ((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition((position) => {
-          resolve({ position: position.coords, tag: 'modal-container' });
-        },
-        (error) => {
-          alert('There was an error!');
-          console.log(error);
-        }
-    );
-    });
+export default class Location {
+  fetchCityArtists(lat_lng_ratio) {
+      if(lat_lng_ratio) {
+        const splitter = lat_lng_ratio.split(',')
+        const lat = splitter[0].slice(0, 5);
+        const lng = splitter[1].slice(0, 5);
+        const ratio = 0.5
+        const min_lat = parseFloat(lat) - ratio;
+        const max_lat = parseFloat(lat) + ratio;
+        const min_lng = parseFloat(lng) - ratio;
+        const max_lng = parseFloat(lng) + ratio;
+        const url = `https://www.googleapis.com/fusiontables/v2/query?sql=SELECT+City%2C+Name%2C+ArtistId%2CHotness+FROM+15UlsGab9-IJ7Hq4ypRYiQMWd2QkGaywgs2WMUuTJ+WHERE+Lat+<=${max_lat}+AND+Lat>=${min_lat}+AND+Lng<=${max_lng}+AND+Lng>=${min_lng}+ORDER+BY+%27Hotness%27+DESC+Limit+50&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0`;
+
+        const data =  memoizeJSON({key: lat_lng_ratio,
+          fn() {
+            return fetch(url);
+          }
+        });
+        addToStorage('hash', `/city/${lat_lng_ratio}`);
+        return data;
+      }
   }
 
-    return geolocation();
+  createCityArtistsDOM(data) {
+   this.fetchArtistsFromSpotify(data);
+   //artist.createArtistDom('test');
   }
 
-  _handleErrors(error) {
-    alert(error)
-  }
-
-  buildMap(options) {
-    const lat = options.position.latitude;
-    const lng = options.position.longitude;
-    const ratio = .05;
-    const tag = options.tag
-
-    this.fetchCity(lat, lng, ratio).then((data) => {
-      const location = data.rows[0].join(', ');
-      const city = data.rows[0][0];
-      const state = data.rows[0][1];
-      const titleDom = escapeTemplate `
-        You are in ${location}
-      `;
-
-
-      createDOM({ html: titleDom, tag:'modal-headline', clear: true });
-      modal.createButtons([
-        {
-          id: 'yes',
-          value: `See Musicians from ${city}`,
-          hash: `/city/${lat},${lng}`, //eventually will use router.getHash()
-        }, {
-          id: 'no',
-          value: 'No thanks',
-          hash: sessionStorage.hash //eventually will use router.getHash()
-        }
-      ]);
-      map.buildMap(lat, lng, tag);
-    })
-
-
-
-  }
-
-  fetchCity(lat, lng, ratio) {
-    const url = `https://www.googleapis.com/fusiontables/v2/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+%3C=${lat+ratio}+AND+Lat%3E=${lat - ratio}+AND+Long%3C=${lng + ratio}+AND+Long%3E=${lng - ratio}&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0`;
-    if(lat && lng && ratio) {
-      var data =  memoizeJSON({key: `geolocation_${lat}_${lng}`,
-        fn() {
-          return fetch(url);
-        }
-      });
-
-      return data;
+  fetchArtistsFromSpotify(data) {
+    console.log(data.rows)
+    if(data.rows) {
+      let artists = data.rows.reduce((artistsArr, artist) => {
+        artistsArr.push({
+          location: artist[0],
+          artist: artist[1],
+          id: artist[2],
+          hotness: artist[3],
+        });
+        return artistsArr;
+      }, []);
+      console.log(artists)
     }
   }
+  // fetchCity(lat, lng, ratio) {
+  //   const url = `https://www.googleapis.com/fusiontables/v1/query?sql=SELECT+CityName%2C+Region%2C+CountryID+FROM+1B8NpmfiAc414JhWeVZcSqiz4coLc_OeIh7umUDGs+WHERE+Lat+%3C=${lat+ratio}+AND+Lat%3E=${lat - ratio}+AND+Long%3C=${lng + ratio}+AND+Long%3E=${lng - ratio}&key=AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0&sortby=Hotttness`;
+  //   if(lat && lng && ratio) {
+  //     var data =  memoizeJSON({key: `geolocation_${lat}_${lng}`,
+  //       fn() {
+  //         return fetch(url);
+  //       }
+  //     });
+  //     return data;
+  //   }
+  // }
 
-  fetchArtistsFromLocation() {
+  // fetchArtistsFromLocation() {
 
-  }
+  // }
 
   // fetchTopTracks(id) {
   //   const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`
