@@ -21,6 +21,7 @@ const routeMap = {
     className: artist,
     hash: 'artist',
     fetch: 'fetchArtists',
+    fetchSpotify: 'fetchArtistsSpotify',
     dom: 'createArtistDom',
     subRoutes: [
       {
@@ -37,19 +38,22 @@ const routeMap = {
     className: related,
     hash: 'related',
     fetch: 'fetchRelatedArtists',
-    dom: 'createRelatedArtistsDom'
+    fetchSpotify: 'fetchRelatedArtistsSpotify',
+    dom: 'createRelatedArtistsDom',
   },
   top: {
     className: artist,
     hash: 'top',
     fetch: 'fetchTopTracks',
-    dom: 'createTopTracksDOM'
+    fetchSpotify: 'fetchTopTracksSpotify', //need to add this method
+    dom: 'createTopTracksDOM',
   },
   albums: {
     className: album,
     hash: 'albums',
     fetch: 'fetchAllAlbums',
-    dom: 'createAlbumsDOM'
+    fetchSpotify: 'fetchAllAlbumsSpotify',
+    dom: 'createAlbumsDOM',
   },
   album: {
     className: album,
@@ -69,11 +73,17 @@ const routeMap = {
     fetch: 'getGeolocation',
     dom: 'buildMap',
   },
+  location: {
+    className: location,
+    hash: 'location',
+    fetch: 'fetchLocationArtists',
+    dom: 'createCityArtistsDOM'
+  },
   city: {
     className: location,
     hash: 'city',
     fetch: 'fetchCityArtists',
-    dom: 'fetchArtistsFromSpotify'
+    dom: 'createCityArtistsDOM'
   }
 }
 
@@ -97,7 +107,7 @@ class Router {
   }
 
   getParamsFromHash(str) {
-    const hash = str.replace(/#\//g, '').replace('#', ''),
+    const hash = decodeURIComponent(str.replace(/#\//g, '').replace('#', '')),
      hashObj = this._createHashArgs(hash);
 
     let routeForData;
@@ -114,7 +124,9 @@ class Router {
     let className,
       prop,
       parentClass,
-      parentClassProp;
+      parentClassProp,
+      parentOptions,
+      options = {};
 
     if(route.isSubRoute) {
       className = route.route.className;
@@ -122,25 +134,51 @@ class Router {
       parentClass = routeMap[route.route.parentClass].className;
       parentClassProp = routeMap[route.route.parentClass]
 
-      return this._fetchData(parentClass, parentClassProp, name).then(() =>  {
-        return this._fetchData(className, prop, id, name);
+      parentOptions = {
+        parentClass,
+        parentClassProp,
+        name,
+      }
+
+      options = {
+        className,
+        prop,
+        id,
+        name,
+      }
+
+      return this._fetchData(parentOptions).then(() =>  {
+        return this._fetchData(options);
       });
     } else {
       className = routeMap[route.hash].className;
       prop = routeMap[route.hash];
-
-      return this._fetchData(className, prop, id, name);
+      options = {
+        className,
+        prop,
+        id,
+        name,
+      }
+      return this._fetchData(options);
     }
   }
 
-  _fetchData(className, prop, id, name) {
-    return className[prop.fetch](id, name).then((data) => {
+  _fetchData(options) {
+    const property = options.hasSpotifyBackup ? options.prop.fetchSpotify : options.prop.fetch;
+
+    return options.className[property](options.id, options.name).then((data) => {
       if(!data.error) {
-        if(name) {
-          return className[prop.dom]({ data, name });
+        if(options.name) {
+          const name = options.name;
+          return options.className[options.prop.dom](data,  name );
         } else {
-          return className[prop.dom](data);
+          return options.className[options.prop.dom](data);
         }
+      }
+      // if problem with fusion tables, use spotify as a backup
+      else if (data.error.code === 400 && options.className.hasBackup()) {
+        options.hasSpotifyBackup = true;
+        this._fetchData(options);
       }
       //reloads in case of auth error to get user back into auth flow
       else if(data.error.status === 401) {
@@ -170,7 +208,7 @@ class Router {
       id,
       name;
 
-    hashArr = hash.split('/'),
+    hashArr = hash.split('/') || hash.split('_'),
     route = hashArr[0],
     id = hashArr[1],
     name = hashArr[2];

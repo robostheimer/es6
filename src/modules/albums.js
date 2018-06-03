@@ -1,10 +1,11 @@
 'use strict'
 
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
-import { each } from '../helpers/each-template';
-import { memoizeJSON, memoized } from '../helpers/memoize';
+import { createArrayFromFusionData, each } from '../helpers/each-template';
+import { memoizeJSON, memoized, normalizeFusionResponse } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 import  CreatePlaylist from './create-playlist';
+import { buildFusionUrl } from '../helpers/urls';
 
 
 const SCOPE = 'playlist-modify-private playlist-modify-public';
@@ -16,6 +17,10 @@ const createPlaylist = new CreatePlaylist();
 
 //TODO: Some problems with memoization -- NEED TO FIX
 export default class Album {
+  hasBackup() {
+    return true;
+  }
+
   fetchAlbum(id, name) {
     const url = `https://api.spotify.com/v1/albums/${id}/tracks`;
     if(id) {
@@ -35,17 +40,51 @@ export default class Album {
     }
   }
 
-  fetchAllAlbums(artist_id) {
+  fetchAllAlbums(artist_id, name) {
+    const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
+    const selectedCols = '*';
+    const matchType = 'CONTAINS IGNORING CASE';
+    const sortBy = '';
+    const fusionId = '1rKOhgBT3w70yHl2eR4hc66Zxxyw06CK3ZlPolNie'//e;
+    const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
+    const where = 'Sid';
+    const whereQuery = artist_id;
+    const options = {
+      baseUrl,
+      fusionId,
+      selectedCols,
+      key,
+      matchType,
+      sortBy,
+      where,
+      whereQuery,
+    };
+
+    const url = buildFusionUrl(options)
+    if (artist_id) {
+      var data = memoizeJSON({
+        key: `albums_${artist_id}`,
+        fn() {
+          return fetch(url);
+        }
+      });
+      addToStorage('hash', `/albums/${artist_id}/${name}`);
+      return data;
+    }
+  }
+
+  fetchAllAlbumsSpotify(artist_id, name) {
     const url = `https://api.spotify.com/v1/artists/${artist_id}/albums`;
-    if(artist_id) {
-      var data =  memoizeJSON({key: `albums_${artist_id}`,
+    if (artist_id) {
+      var data = memoizeJSON({
+        key: `albums_${artist_id}`,
         fn() {
           return fetch(url, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `/albums/${artist_id}`);
+      addToStorage('hash', `/albums/${artist_id}/${name}`);
       return data;
     }
   }
@@ -73,22 +112,31 @@ export default class Album {
     createDOM({ html: dom, tag: 'container', clear: true });
   }
 
-  createAlbumsDOM(data) {
+  createAlbumsDOM(data, name) {
+    let resolvedData;
+    if (data.data) {
+      //fusion table data
+      resolvedData = createArrayFromFusionData(data.data, 'related', 30);
+    } else {
+      //spotify data
+      resolvedData = data.spotify;
+    }
+  
     const dom = escapeTemplate`
-    <h2>Albums by: ${data.items[0].artists[0].name}</h2>
+    <h2>Albums by: ${name}</h2>
       <ul id="top-tracks" class="cards">
         ${each({
-          data: data.items,
+          data: resolvedData,
           tag: 'li',
           txt: `<div>
-                  <strong><a href="#/album/{{id}}/{{name}}">{{name}}</a></strong>
+                  <strong><a href="#/album/{{albumsId}}/{{albumsName}}">{{albumsName}}</a></strong>
                 </div>
                 `,
           attrs: {
             class:'artist',
             title: null,
             id: null,
-            style: 'background-image:url({{images[0].url}})',
+            style: 'background-image:url({{albumsImagesUrl}})',
           }
         })}
       </ul>

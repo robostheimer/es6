@@ -18,7 +18,7 @@ export default class Geolocation {
     var geolocation = () => {
       const loaderDom = escapeTemplate `
         <div class="loader" id="loader">
-        LOADING...
+          LOADING...
         </div>`//make this a dom component that can be added
       modal.createModal()
       createDOM({ html: loaderDom, tag:'modal-container' });

@@ -3,23 +3,62 @@
 import relatedArtists from './related-artists';
 import  CreatePlaylist from './create-playlist';
 import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
-import { each } from '../helpers/each-template';
-import { memoizeJSON, memoized } from '../helpers/memoize';
+import { createArrayFromFusionData, each } from '../helpers/each-template';
+import { memoizeJSON, memoized, normalizeFusionResponse } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
+import { buildFusionUrl } from '../helpers/urls';
 
 const related = new relatedArtists();
 const createPlaylist = new CreatePlaylist();
-const SCOPE = 'playlist-modify-private playlist-modify-public';
-const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
-const auth_header =  new Headers({
+const auth_header = new Headers({
   'Authorization': `Bearer ${sessionStorage.access_token}`
-})
+});
+
 
 export default class Artist {
+  hasBackup() {
+    return true;
+  }
+
   fetchArtists(name) {
-    const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`;
+    const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
+    const selectedCols = '*'
+    const matchType = 'CONTAINS IGNORING CASE';
+    const sortBy = 'ORDER%20BY+spotifyPopularity+DESC';
+    const fusionId = '1g-yJYLrmTDGBDTPp1o2hFdBmFhC4z2pvjE0vlEXv';
+    const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
+    const  where = 'Name';
+    const whereQuery = name;
+
+    const options = {
+      baseUrl,
+      fusionId,
+      selectedCols,
+      key,
+      matchType,
+      sortBy,
+      where,
+      whereQuery,
+    };
+
+    const url = buildFusionUrl(options)
+
     if(name) {
       const data =  memoizeJSON({key: name,
+        fn() {
+          return fetch(url);
+        }
+      });
+      addToStorage('hash', `/artist/${name}`);
+      return data;
+    }
+  }
+
+  fetchArtistsSpotify(name) {
+    const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`;
+    if (name) {
+      const data = memoizeJSON({
+        key: name,
         fn() {
           return fetch(url, {
             headers: auth_header
@@ -32,36 +71,56 @@ export default class Artist {
   }
 
   fetchTopTracks(id) {
-    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`
+    const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
+    const selectedCols = '*';
+    const matchType = 'CONTAINS IGNORING CASE';
+    const sortBy = '';
+    const fusionId = '1kd1mthytuNgg6v1uzMRRfEfBkX8qzZ2loRgAfePE';
+    const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
+    const where = 'Sid';
+    const whereQuery = id;
+
+    const options = {
+      baseUrl,
+      fusionId,
+      selectedCols,
+      key,
+      matchType,
+      sortBy,
+      where,
+      whereQuery,
+    };
+   
+    const url = buildFusionUrl(options)
 
     if(id) {
       var data =  memoizeJSON({key: `top_${id}`,
         fn() {
-          return fetch(request, {
-            headers: auth_header
-          });
+          return fetch(url);
         }
       });
-      addToStorage('hash', `/top/${id}`);
+      addToStorage('hash', `/top/${id}/${name}`);
       return data;
     }
   }
 
-  fetchAlbums(id) {
-    const request = `https://api.spotify.com/v1/artists/${id}/albums`;
+  fetchTopTracksSpotify(id) {
+    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`
 
-    if(id) {
-      var data =  memoizeJSON({key: `albums_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `top_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `/albums/${id}`);
+      addToStorage('hash', `/top/${id}/${name}`);
       return data;
     }
   }
+
 
   fetchRecommendations(id) {
     const request = `https://api.spotify.com/v1/recommendations?seed_artists=${id}&limit=50`;
@@ -85,9 +144,11 @@ export default class Artist {
     let resolvedData;
 
     if(data.data) {
+      //fusion table data
       resolvedData = data.data;
     } else {
-      resolvedData = data;
+      //spotify data
+      resolvedData = data.spotify;
     }
 
     //$('#artists').remove();
@@ -95,35 +156,35 @@ export default class Artist {
     const dom = escapeTemplate`
       <ul id="artists" class="cards">
         ${each({
-          data: resolvedData.artists.items,
+          data: resolvedData,
           tag: 'li',
           txt: `<div>
-                  <h4><a href="#/artist/info/{{name}}">{{name}}</a></h4>
+                  <h4><a href="#/artist/info/{{Name}}">{{Name}}</a></h4>
                 </div>
                 <ul class="options">
                   <li>
-                    <a href="#/related/{{id}}">
+                    <a href="#/related/{{Sid}}/{{Name}}">
                       Related Musicians
                     </a>
                   </li>
                   <li>
-                    <a href="#/top/{{id}}">
+                    <a href="#/top/{{Sid}}/{{Name}}">
                       Top Tracks
                     </a>
                   </li>
                   <li>
-                    <a href="#/albums/{{id}}">
+                    <a href="#/albums/{{Sid}}/{{Name}}">
                       Albums
                     </a>
                   </li>
                   <li>
-                    <a href="#/recommendations/{{id}}">
+                    <a href="#/recommendations/{{Sid}}">
                       Create Radio Station
                     </a>
                   <li>
                   <li>
-                    <a>
-                      Other musicians from the same place
+                    <a href="#/location/{{Lat}},{{Lng}}">
+                      Other musicians from {{City}}
                     </a>
                   </li>
                 </ul>
@@ -132,7 +193,7 @@ export default class Artist {
             class:'artist',
             title: null,
             id: null,
-            style: 'background-image:url({{images[0].url}})',
+            style: 'background-image:url({{spotifyImageUrl}})',
           }
         })}
       </ul>
@@ -142,54 +203,41 @@ export default class Artist {
   }
 
 
-  createTopTracksDOM(data) {
+  createTopTracksDOM(data, name) {
+    let resolvedData;
+
+    if (data.data) {
+      //fusion table data
+      resolvedData = createArrayFromFusionData(data.data, 'related', 20); 
+    } else {
+      //spotify data
+      resolvedData = data.spotify;
+    }
+
     const dom = escapeTemplate`
-      <h2>Top Tracks for ${data.tracks[0].artists[0].name}</h2>
+      <h2>Top Tracks for ${name}</h2>
       <ul id="top-tracks" class="cards">
         ${each({
-          data: data.tracks,
+          data: resolvedData,
           tag: 'li',
           txt: `<div>
-                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
+                  <strong><a href="{{topTracksId}}" target="_blank">{{topTracksName}}</a></strong>
                 </div>
                 <p>
-                  from: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>
+                  from: <a href="#/album/{{topTracksAlbumId}}/{{topTracksAlbumName}}">{{topTracksAlbumName}}</a>
                 </p>
                 `,
           attrs: {
             class:'artist card',
             title: null,
             id: null,
-            style: 'background-image:url({{album.images[0].url}})',
+            style: 'background-image:url({{topTracksAlbumImagesUrl}})',
           }
         })}
       </ul>
       `;
-    createPlaylist.createSaveButtonDOM(data.tracks, 'topSongs');
-    createDOM({ html: dom, tag: 'container', clear: true });
-  }
-
-  createAlbumsDOM(data) {
-    const dom = escapeTemplate`
-    <h2>Albums by: ${data.items[0].artists[0].name}</h2>
-      <ul id="top-tracks" class="cards">
-        ${each({
-          data: data.items,
-          tag: 'li',
-          txt: `<div>
-                  <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
-                </div>
-                `,
-          attrs: {
-            class:'album card',
-            title: null,
-            id: null,
-            style: 'background-image:url({{images[0].url}})',
-          }
-        })}
-      </ul>
-      `;
-
+    // Need to update create playlist functionality to play nice with new data structure  
+    //createPlaylist.createSaveButtonDOM(normalizedData, 'topSongs');
     createDOM({ html: dom, tag: 'container', clear: true });
   }
 
