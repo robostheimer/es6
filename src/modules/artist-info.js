@@ -1,6 +1,6 @@
 'use strict'
 
-import { createDOM, escapeTemplate } from '../helpers/create-dom';
+import { clearDOM, createDOM, escapeTemplate } from '../helpers/create-dom';
 import { each } from '../helpers/each-template';
 import { iff } from '../helpers/if-template';
 import { memoizeJSON, memoized } from '../helpers/memoize';
@@ -28,21 +28,23 @@ export default class ArtistInfo {
   }
 
   createInfoDOM(data) {
-    modal.createModal({ title: data.data.artist.name });
+    clearDOM('.artist-modal');
+    modal.createModal({ title:data.artist.name });
 
-    const infoDom = iff(data.data.artist.bio.summary ,
+    const infoDom = iff(data.artist.bio.summary ,
     escapeTemplate`
       <div>
-        <img src="${data.data.artist.image[2]['#text']}" alt="${data.data.artist.name}"/>
+        <img src="${data.artist.image[2]['#text']}" alt="${data.artist.name}"/>
       </div>
       <div>
-        <p>${data.data.artist.bio.summary}</p>
+        <p>${data.artist.bio.summary}</p>
       </div>
 
       `,
       `<p><strong>There are no artists related</strong</p>`);
 
     // createDOM({ html: modalDom, tag: 'container' });
+    addToStorage('hash', `/artist/info/${name}`);
     createDOM({ html: infoDom, tag: 'modal-container', clear: true });
   }
 }

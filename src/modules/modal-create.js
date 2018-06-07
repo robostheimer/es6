@@ -2,6 +2,7 @@
 
 import { createDOM, escapeTemplate, clearDOM } from '../helpers/create-dom';
 import { iff } from '../helpers/if-template';
+import { addToStorage } from '../helpers/add-to-storage';
 import Router from '../router';
 
 // const router = new Router();
@@ -11,7 +12,7 @@ import Router from '../router';
 export default class ModalCreate {
   createModal(...args) {
     const modalDom = escapeTemplate
-    `<section id="modal">
+    `<section id="modal" class="artist-modal">
         <div class="modal-dialog" role="document">
           <header class="modal-header">
             <h4 id="modal-headline">
@@ -30,9 +31,9 @@ export default class ModalCreate {
 
     //adds click event to close button;
     document.querySelector('.close').addEventListener('click', () => {
-
+      addToStorage('hash', `/artist/${arguments[0].title}`);
       window.location.hash = sessionStorage.hash; // should be added to router
-      clearDOM('modal');
+      clearDOM('.artist-modal');
     });
 
 

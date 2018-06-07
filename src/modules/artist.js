@@ -2,7 +2,7 @@
 
 import relatedArtists from './related-artists';
 import  CreatePlaylist from './create-playlist';
-import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
+import { clearDOM, createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { createArrayFromFusionData, each } from '../helpers/each-template';
 import { memoizeJSON, memoized, normalizeFusionResponse } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
@@ -42,7 +42,7 @@ export default class Artist {
     };
 
     const url = buildFusionUrl(options)
-
+    console.log(url)
     if(name) {
       const data =  memoizeJSON({key: name,
         fn() {
@@ -141,6 +141,7 @@ export default class Artist {
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
   createArtistDom(data) {//, params) {
+    clearDOM('.artist-modal');
     let resolvedData;
 
     if(data.data) {
@@ -183,8 +184,13 @@ export default class Artist {
                     </a>
                   <li>
                   <li>
-                    <a href="#/location/{{Lat}},{{Lng}}">
+                    <a href="#/location/{{Lat}},{{Lng}}/artists">
                       Other musicians from {{City}}
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#/location/{{Lat}},{{Lng}}/tracks">
+                      Hottest Tracks from {{City}}
                     </a>
                   </li>
                 </ul>

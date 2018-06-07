@@ -4,7 +4,8 @@ const cache = {};
 export function memoized(key) {
   return cache[key] !== undefined;
 }
-
+// TODO: this function is now doing too much.  It should not massage the data, but just return it.
+// This needs to be done in each specific class (if possible)
 export function memoizeJSON() {
   let args = arguments;
   let key = args[0].key;
@@ -16,8 +17,12 @@ export function memoizeJSON() {
           if(data.rows) {
             return {rows: data.rows, columns: data.columns, data: normalizeFusionResponse(data)};
           }
-          else if(!data.error) {
+          // spotify backups
+          else if(data.artists || data.tracks || data.items) {
             return { spotify: normalizeSpotifyResponse(data) }
+          }
+          else if (data) {
+            return data;
           }
           // if error remove key from the cache;
           else {

@@ -27,7 +27,10 @@ export  function createDOM(options) {
 }
 
 export function clearDOM(tag) {
-  $(`#${tag}`).remove();
+  var elem = document.querySelector(tag);
+  if(elem) {
+    elem.parentNode.removeChild(elem);
+  }
 }
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes

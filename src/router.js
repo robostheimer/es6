@@ -77,7 +77,17 @@ const routeMap = {
     className: location,
     hash: 'location',
     fetch: 'fetchLocationArtists',
-    dom: 'createCityArtistsDOM'
+    dom: 'createCityArtistsDOM',
+    subRoutes: [
+      {
+        hash: 'tracks',
+        className: location,
+        parentClass: 'location',
+        //parentClassProp: 'artist'
+        fetch: 'fetchTopTracksFromLocation',
+        dom: 'createCityTracksDOM',
+      }
+    ]
   },
   city: {
     className: location,
@@ -127,7 +137,7 @@ class Router {
       parentClassProp,
       parentOptions,
       options = {};
-
+   
     if(route.isSubRoute) {
       className = route.route.className;
       prop = route.route;
@@ -145,11 +155,11 @@ class Router {
         prop,
         id,
         name,
-      }
+      } 
 
-      return this._fetchData(parentOptions).then(() =>  {
+      // return this._fetchData(parentOptions).then(() =>  {
         return this._fetchData(options);
-      });
+      // });
     } else {
       className = routeMap[route.hash].className;
       prop = routeMap[route.hash];

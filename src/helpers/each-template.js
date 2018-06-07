@@ -1,6 +1,6 @@
 'use strict'
 import { deepFind } from './deep-find';
-import { removeNumbers, getNumber } from './strings';
+import { hasNumber, removeNumbers, getNumber } from './strings';
 
 export function each(options) {
   const data = options.data;
@@ -20,22 +20,25 @@ export function each(options) {
   return dom;
 }
 
-export function createArrayFromFusionData(data, key, numOfItems) {
+export function createArrayFromFusionData(data, key, numOfItems, optionalProps) {
   let arr = [];
- 
-  for (var x=0; x<numOfItems; x++) {
+  let newData = data[0] || data;
+
+  for (var x = 0; x < numOfItems; x++) {
     let obj = {}
-    for(key in data[0]) {
-      if (parseInt(getNumber(key)) === x && data[0][key] !== '')  {
-        obj[removeNumbers(key)] = data[0][key];
+    for (key in newData) {
+      if (parseInt(getNumber(key)) === x && newData[key] !== '') {
+        obj[removeNumbers(key)] = newData[key];
       }
     }
     // pull in all data and create array of objects.
-   if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
+    if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
+      optionalProps.forEach((prop) => {
+        obj[prop] = newData[prop];
+      })
       arr.push(obj)
     }
   }
-  
   return arr;
 }
 
