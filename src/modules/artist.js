@@ -190,6 +190,7 @@ export default class Artist {
                   </li>
                   <li>
                     <a href="#/city/{{City}}/tracks/genres=">
+
                       Hottest Tracks from {{City}}
                     </a>
                   </li>
