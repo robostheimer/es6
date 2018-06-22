@@ -27,15 +27,19 @@ export function createArrayFromFusionData(data, key, numOfItems, optionalProps) 
   for (var x = 0; x < numOfItems; x++) {
     let obj = {}
     for (key in newData) {
-      if (parseInt(getNumber(key)) === x && newData[key] !== '') {
+      if (parseInt(getNumber(key)) === x && newData[key] !== '' && newData[key] !== NaN && newData[key] !== "NaN") {
         obj[removeNumbers(key)] = newData[key];
       }
     }
     // pull in all data and create array of objects.
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
-      optionalProps.forEach((prop) => {
-        obj[prop] = newData[prop];
-      })
+      if(optionalProps) {
+        optionalProps.forEach((prop) => {
+          if(newData[prop]) {
+            obj[prop] = newData[prop];
+          } 
+        })
+      }
       arr.push(obj)
     }
   }

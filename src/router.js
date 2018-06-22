@@ -28,7 +28,6 @@ const routeMap = {
         hash: 'info',
         className: artistInfo,
         parentClass: 'artist',
-        //parentClassProp: 'artist'
         fetch: 'fetchArtistInfo',
         dom: 'createInfoDOM',
       }
@@ -83,7 +82,6 @@ const routeMap = {
         hash: 'tracks',
         className: location,
         parentClass: 'location',
-        //parentClassProp: 'artist'
         fetch: 'fetchTopTracksFromLocation',
         dom: 'createCityTracksDOM',
       }
@@ -93,8 +91,26 @@ const routeMap = {
     className: location,
     hash: 'city',
     fetch: 'fetchCityArtists',
-    dom: 'createCityArtistsDOM'
-  }
+    dom: 'createCityArtistsDOM',
+    subRoutes: [
+      {
+        hash: 'tracks',
+        className: location,
+        parentClass: 'location',
+        fetch: 'fetchTopTracksFromCity',
+        dom: 'createCityTracksDOM',
+      },
+      {
+        hash: 'tracks/:genres',
+        className: location,
+        parentClass: 'location',
+        fetch: 'fetchTopTracksFromCity',
+        dom: 'createCityTracksDOM',
+      }
+
+    ]
+  },
+  
 }
 
 class Router {
@@ -119,68 +135,45 @@ class Router {
   getParamsFromHash(str) {
     const hash = decodeURIComponent(str.replace(/#\//g, '').replace('#', '')),
      hashObj = this._createHashArgs(hash);
-
+    
     let routeForData;
     if(hashObj.route) {
       routeMap[hashObj.route]['subRoutes']
         ? routeForData = this._checkSubRoute(routeMap[hashObj.route], hash)
         : routeForData = routeMap[hashObj.route];
 
-      this.hashToData(routeForData, hashObj.id, hashObj.name);
+      this.hashToData(routeForData, hashObj.id, hashObj.name, hashObj.params);
     }
   }
 
-  hashToData(route, id, name) {
+  hashToData(route, id, name, params) {
     let className,
       prop,
-      parentClass,
-      parentClassProp,
-      parentOptions,
       options = {};
-   
-    if(route.isSubRoute) {
-      className = route.route.className;
-      prop = route.route;
-      parentClass = routeMap[route.route.parentClass].className;
-      parentClassProp = routeMap[route.route.parentClass]
 
-      parentOptions = {
-        parentClass,
-        parentClassProp,
-        name,
-      }
-
+      className = route.route ? route.route.className :  route.className;
+      route.isSubRoute ? className = route.route.className : routeMap[route.hash].className;
+      route.isSubRoute? prop = route.route : prop = routeMap[route.hash];
+     
       options = {
         className,
         prop,
         id,
         name,
+        params,
       } 
 
-      // return this._fetchData(parentOptions).then(() =>  {
-        return this._fetchData(options);
-      // });
-    } else {
-      className = routeMap[route.hash].className;
-      prop = routeMap[route.hash];
-      options = {
-        className,
-        prop,
-        id,
-        name,
-      }
-      return this._fetchData(options);
-    }
+    return this._fetchData(options);
   }
 
   _fetchData(options) {
     const property = options.hasSpotifyBackup ? options.prop.fetchSpotify : options.prop.fetch;
 
-    return options.className[property](options.id, options.name).then((data) => {
+    return options.className[property](options.id, options.params,).then((data) => {
       if(!data.error) {
-        if(options.name) {
-          const name = options.name;
-          return options.className[options.prop.dom](data,  name );
+        if(options.params) {
+          const params = options.params;
+          return options.className[options.prop.dom](data, params );
         } else {
           return options.className[options.prop.dom](data);
         }
@@ -216,14 +209,16 @@ class Router {
     let hashArr,
       route,
       id,
-      name;
+      name,
+      params;
 
     hashArr = hash.split('/') || hash.split('_'),
     route = hashArr[0],
     id = hashArr[1],
     name = hashArr[2];
+    params = hashArr[3];
 
-    return { id: id, route: route, name: name };
+    return { id, route, name, params };
   }
 }
 

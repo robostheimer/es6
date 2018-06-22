@@ -21,7 +21,6 @@ export  function createDOM(options) {
 
   // const tag = document.querySelector(options.tag) ? document.querySelector(options.tag) : document.getElementById(options.tag);
   // const html = document.createTextNode(options.html);
-  //   debugger;
   // tag.innerHTML+=(html);
 
 }
