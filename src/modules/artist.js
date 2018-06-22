@@ -4,7 +4,7 @@ import relatedArtists from './related-artists';
 import  CreatePlaylist from './create-playlist';
 import { clearDOM, createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
 import { createArrayFromFusionData, each } from '../helpers/each-template';
-import { memoizeJSON, memoized, normalizeFusionResponse } from '../helpers/memoize';
+import { memoizeJSON } from '../helpers/memoize';
 import { addToStorage } from '../helpers/add-to-storage';
 import { buildFusionUrl } from '../helpers/urls';
 
@@ -75,7 +75,7 @@ export default class Artist {
     const selectedCols = '*';
     const matchType = 'CONTAINS IGNORING CASE';
     const sortBy = '';
-    const fusionId = '1kd1mthytuNgg6v1uzMRRfEfBkX8qzZ2loRgAfePE';
+    const fusionId = '1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1';
     const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
     const where = 'Sid';
     const whereQuery = id;
@@ -184,12 +184,12 @@ export default class Artist {
                     </a>
                   <li>
                   <li>
-                    <a href="#/location/{{Lat}},{{Lng}}/artists">
+                    <a href="#/city/{{City}}/artists">
                       Other musicians from {{City}}
                     </a>
                   </li>
                   <li>
-                    <a href="#/location/{{Lat}},{{Lng}}/tracks">
+                    <a href="#/city/{{City}}/tracks/genres=">
                       Hottest Tracks from {{City}}
                     </a>
                   </li>
@@ -214,12 +214,11 @@ export default class Artist {
 
     if (data.data) {
       //fusion table data
-      resolvedData = createArrayFromFusionData(data.data, 'related', 20); 
+      resolvedData = createArrayFromFusionData(data.data, 'topTracks', 20); 
     } else {
       //spotify data
       resolvedData = data.spotify;
     }
-
     const dom = escapeTemplate`
       <h2>Top Tracks for ${name}</h2>
       <ul id="top-tracks" class="cards">

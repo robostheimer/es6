@@ -1,13 +1,14 @@
 'use strict'
 
-import { createDOM, addAjaxAction, escapeTemplate, clearDOM } from '../helpers/create-dom';
+import { createDOM, escapeTemplate } from '../helpers/create-dom';
+import { memoizeJSON } from '../helpers/memoize';
 import { createArrayFromFusionData, each } from '../helpers/each-template';
 import { flatten, sortObjDsc, removeDuplicatesArrObj } from '../helpers/arrays';
-import { memoizeJSON, memoized } from '../helpers/memoize';
+import { createArray, normalizeParams } from '../helpers/strings';
 import { iff } from '../helpers/if-template';
 import { addToStorage } from '../helpers/add-to-storage';
 import Artist from './artist';
-import { buildFusionUrl } from '../helpers/urls';
+import { buildFusionUrl, buildComplexQuery, buildComplexFusionUrl } from '../helpers/urls';
 
 const artist = new Artist
 
@@ -18,7 +19,7 @@ export default class Location {
         const splitter = lat_lng.split(',');
         const lat = splitter[0].slice(0, 5);
         const lng = splitter[1].slice(0, 5);
-        const ratio = 0.25
+        const ratio = 0.15
         const min_lat = parseFloat(lat) - ratio;
         const max_lat = parseFloat(lat) + ratio;
         const min_lng = parseFloat(lng) - ratio;
@@ -83,13 +84,13 @@ export default class Location {
       const splitter = lat_lng.split(',');
       const lat = splitter[0].slice(0, 5);
       const lng = splitter[1].slice(0, 5);
-      const ratio = 0.25
+      const ratio = 0.15
       const min_lat = parseFloat(lat) - ratio;
       const max_lat = parseFloat(lat) + ratio;
       const min_lng = parseFloat(lng) - ratio;
       const max_lng = parseFloat(lng) + ratio;
       const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
-      const fusionId = '1kd1mthytuNgg6v1uzMRRfEfBkX8qzZ2loRgAfePE'
+      const fusionId = '1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1'
       const sortBy ='+topTracksPopularity0+DESC';
       const key ='AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
       const limit = 100;
@@ -103,6 +104,41 @@ export default class Location {
         }
       });
       addToStorage('hash', `/location/${lat_lng}/tracks`);
+
+      return data;
+    }
+  }
+
+  fetchTopTracksFromCity(city, params) {
+    const paramsObj = normalizeParams(params, '&', 'Or');
+
+    paramsObj.city = [city];
+    if (city) {
+      const selectedCols = '*';
+      const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
+      const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
+      const query = buildComplexQuery(paramsObj);
+      const fusionId = '1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1'
+      const sortBy = 'Order By topTracksPopularity0+DESC';
+      const limit = 100;
+      const options = {
+        baseUrl,
+        fusionId,
+        selectedCols,
+        key,
+        sortBy,
+        query,
+        limit
+      };
+      const url = buildComplexFusionUrl(options);
+ 
+      const data = memoizeJSON({
+        key: params ? `tracks_${city}_${params}` :`tracks_${city}`,
+        fn() {
+          return fetch(url);
+        }
+      });
+      addToStorage('hash', `/city/${city}/tracks/${params || ''}`);
 
       return data;
     }
@@ -131,8 +167,8 @@ export default class Location {
 
   createCityTracksDOM(data) {
     let resolvedData = data.data.map(item => {
-      return createArrayFromFusionData(item, 'topTracks', 20, ['Name', 'Sid', 'Lat', 'Lng', 'City'])
-    });
+      return createArrayFromFusionData(item, 'topTracks', 20, ['Name', 'Sid', 'Lat', 'Lng', 'City','genres0', 'genres1', 'genres2', 'genres3', 'genres4'])
+    });//need to debug the createArrayFromFusionData method
     let flattenedArr = flatten(resolvedData);
     let sortedData = removeDuplicatesArrObj(sortObjDsc(flattenedArr, 'topTracksPopularity', 'str', true), 'topTracksId')
 
@@ -143,7 +179,7 @@ export default class Location {
           ${each({
           data: sortedData,
           tag: 'li',
-          txt: '<div><a href="{{topTracksName}}">{{topTracksName}}</a></div><div>By {{Name}}</div>',
+          txt: '<div><a href="{{topTracksName}}">{{topTracksName}}</a></div><div>By <a href="#/artist/{{Name}}">{{Name}}</a></div>',
           attrs: {
             class: 'related-artist',
             id: null,

@@ -116,7 +116,7 @@ export default class Album {
     let resolvedData;
     if (data.data) {
       //fusion table data
-      resolvedData = createArrayFromFusionData(data.data, 'related', 30);
+      resolvedData = createArrayFromFusionData(data.data, 'albums', 30);
     } else {
       //spotify data
       resolvedData = data.spotify;

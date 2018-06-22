@@ -111,7 +111,7 @@ iframe {
 a, p {
   color: rgba(69, 139, 202, .8);
   background: white;
-  padding: 3px;
+  padding: 1px;
   margin-top: 7px;
   background-blend-mode: luminosity;
 }

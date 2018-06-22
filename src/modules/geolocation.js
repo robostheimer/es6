@@ -61,7 +61,7 @@ export default class Geolocation {
         {
           id: 'yes',
           value: `See Musicians from ${city}`,
-          hash: `/city/${lat},${lng}`, //eventually will use router.getHash()
+          hash: `/location/${lat},${lng}/artists`, //eventually will use router.getHash()
         }, {
           id: 'no',
           value: 'No thanks',
