@@ -1,14 +1,14 @@
-"use strict"
+"use strict";
 
-import Artist from './modules/artist';
-import RelatedArtists from './modules/related-artists';
-import Album from './modules/albums';
-import ArtistInfo from './modules/artist-info';
-import Geolocation from './modules/geolocation';
-import Location from './modules/location'
+import Artist from "./modules/artist";
+import RelatedArtists from "./modules/related-artists";
+import Album from "./modules/albums";
+import ArtistInfo from "./modules/artist-info";
+import Geolocation from "./modules/geolocation";
+import Location from "./modules/location";
 //import Modal from './modules/create-modal';
 
-const hash = window.location.hash.replace('#', '');
+const hash = window.location.hash.replace("#", "");
 const artist = new Artist();
 const related = new RelatedArtists();
 const album = new Album();
@@ -19,99 +19,97 @@ const location = new Location();
 const routeMap = {
   artist: {
     className: artist,
-    hash: 'artist',
-    fetch: 'fetchArtists',
-    fetchSpotify: 'fetchArtistsSpotify',
-    dom: 'createArtistDom',
+    hash: "artist",
+    fetch: "fetchArtists",
+    fetchSpotify: "fetchArtistsSpotify",
+    dom: "createArtistDom",
     subRoutes: [
       {
-        hash: 'info',
+        hash: "info",
         className: artistInfo,
-        parentClass: 'artist',
-        fetch: 'fetchArtistInfo',
-        dom: 'createInfoDOM',
+        parentClass: "artist",
+        fetch: "fetchArtistInfo",
+        dom: "createInfoDOM"
       }
     ]
   },
   related: {
     className: related,
-    hash: 'related',
-    fetch: 'fetchRelatedArtists',
-    fetchSpotify: 'fetchRelatedArtistsSpotify',
-    dom: 'createRelatedArtistsDom',
+    hash: "related",
+    fetch: "fetchRelatedArtists",
+    fetchSpotify: "fetchRelatedArtistsSpotify",
+    dom: "createRelatedArtistsDom"
   },
   top: {
     className: artist,
-    hash: 'top',
-    fetch: 'fetchTopTracks',
-    fetchSpotify: 'fetchTopTracksSpotify', //need to add this method
-    dom: 'createTopTracksDOM',
+    hash: "top",
+    fetch: "fetchTopTracks",
+    fetchSpotify: "fetchTopTracksSpotify", //need to add this method
+    dom: "createTopTracksDOM"
   },
   albums: {
     className: album,
-    hash: 'albums',
-    fetch: 'fetchAllAlbums',
-    fetchSpotify: 'fetchAllAlbumsSpotify',
-    dom: 'createAlbumsDOM',
+    hash: "albums",
+    fetch: "fetchAllAlbums",
+    fetchSpotify: "fetchAllAlbumsSpotify",
+    dom: "createAlbumsDOM"
   },
   album: {
     className: album,
-    hash: 'album',
-    fetch: 'fetchAlbum',
-    dom: 'createAlbumDOM'
+    hash: "album",
+    fetch: "fetchAlbum",
+    dom: "createAlbumDOM"
   },
   recommendations: {
     className: artist,
-    hash: 'recommendations',
-    fetch: 'fetchRecommendations',
-    dom: 'createRecsDOM'
+    hash: "recommendations",
+    fetch: "fetchRecommendations",
+    dom: "createRecsDOM"
   },
   geolocation: {
     className: geolocation,
-    hash: 'geolocation',
-    fetch: 'getGeolocation',
-    dom: 'buildMap',
+    hash: "geolocation",
+    fetch: "getGeolocation",
+    dom: "buildMap"
   },
   location: {
     className: location,
-    hash: 'location',
-    fetch: 'fetchLocationArtists',
-    dom: 'createCityArtistsDOM',
+    hash: "location",
+    fetch: "fetchLocationArtists",
+    dom: "createCityArtistsDOM",
     subRoutes: [
       {
-        hash: 'tracks',
+        hash: "tracks",
         className: location,
-        parentClass: 'location',
-        fetch: 'fetchTopTracksFromLocation',
-        dom: 'createCityTracksDOM',
+        parentClass: "location",
+        fetch: "fetchTopTracksFromLocation",
+        dom: "createCityTracksDOM"
       }
     ]
   },
   city: {
     className: location,
-    hash: 'city',
-    fetch: 'fetchCityArtists',
-    dom: 'createCityArtistsDOM',
+    hash: "city",
+    fetch: "fetchCityArtists",
+    dom: "createCityArtistsDOM",
     subRoutes: [
       {
-        hash: 'tracks',
+        hash: "tracks",
         className: location,
-        parentClass: 'location',
-        fetch: 'fetchTopTracksFromCity',
-        dom: 'createCityTracksDOM',
+        parentClass: "location",
+        fetch: "fetchTopTracksFromCity",
+        dom: "createCityTracksDOM"
       },
       {
-        hash: 'tracks/:genres',
+        hash: "tracks/:genres",
         className: location,
-        parentClass: 'location',
-        fetch: 'fetchTopTracksFromCity',
-        dom: 'createCityTracksDOM',
+        parentClass: "location",
+        fetch: "fetchTopTracksFromCity",
+        dom: "createCityTracksDOM"
       }
-
     ]
-  },
-  
-}
+  }
+};
 
 class Router {
   logHash() {
@@ -121,7 +119,7 @@ class Router {
   setHash(str) {
     const regex = new RegExp(/\/#\//g);
 
-    window.location.hash = str.replace(regex, '/');
+    window.location.hash = str.replace(regex, "/");
   }
 
   getHash(str) {
@@ -129,18 +127,18 @@ class Router {
   }
 
   goBack() {
-    window.history.back()
+    window.history.back();
   }
 
   getParamsFromHash(str) {
-    const hash = decodeURIComponent(str.replace(/#\//g, '').replace('#', '')),
-     hashObj = this._createHashArgs(hash);
-    
+    const hash = decodeURIComponent(str.replace(/#\//g, "").replace("#", "")),
+      hashObj = this._createHashArgs(hash);
+
     let routeForData;
-    if(hashObj.route) {
-      routeMap[hashObj.route]['subRoutes']
-        ? routeForData = this._checkSubRoute(routeMap[hashObj.route], hash)
-        : routeForData = routeMap[hashObj.route];
+    if (hashObj.route) {
+      routeMap[hashObj.route]["subRoutes"]
+        ? (routeForData = this._checkSubRoute(routeMap[hashObj.route], hash))
+        : (routeForData = routeMap[hashObj.route]);
 
       this.hashToData(routeForData, hashObj.id, hashObj.name, hashObj.params);
     }
@@ -151,71 +149,73 @@ class Router {
       prop,
       options = {};
 
-      className = route.route ? route.route.className :  route.className;
-      route.isSubRoute ? className = route.route.className : routeMap[route.hash].className;
-      route.isSubRoute? prop = route.route : prop = routeMap[route.hash];
-     
-      options = {
-        className,
-        prop,
-        id,
-        name,
-        params,
-      } 
+    className = route.route ? route.route.className : route.className;
+    route.isSubRoute
+      ? (className = route.route.className)
+      : routeMap[route.hash].className;
+    route.isSubRoute ? (prop = route.route) : (prop = routeMap[route.hash]);
+
+    options = {
+      className,
+      prop,
+      id,
+      name,
+      params
+    };
 
     return this._fetchData(options);
   }
 
   _fetchData(options) {
-    const property = options.hasSpotifyBackup ? options.prop.fetchSpotify : options.prop.fetch;
+    const property = options.hasSpotifyBackup
+      ? options.prop.fetchSpotify
+      : options.prop.fetch;
 
-    return options.className[property](options.id, options.params,).then((data) => {
-      if(!data.error) {
-        if(options.params) {
-          const params = options.params;
-          return options.className[options.prop.dom](data, params );
+    return options.className[property](options.id, options.params).then(
+      data => {
+        if (!data.error) {
+          if (options.params) {
+            const params = options.params;
+            return options.className[options.prop.dom](data, params);
+          } else {
+            return options.className[options.prop.dom](data);
+          }
+        }
+        // if problem with fusion tables, use spotify as a backup
+        else if (data.error.code === 400 && options.className.hasBackup()) {
+          options.hasSpotifyBackup = true;
+          this._fetchData(options);
+        }
+        //reloads in case of auth error to get user back into auth flow
+        else if (data.error.status === 401) {
+          window.location.reload();
+          sessionStorage.clear();
         } else {
-          return options.className[options.prop.dom](data);
+          return "There was an error processing your request. Please try again.";
+          window.location.reload();
         }
       }
-      // if problem with fusion tables, use spotify as a backup
-      else if (data.error.code === 400 && options.className.hasBackup()) {
-        options.hasSpotifyBackup = true;
-        this._fetchData(options);
-      }
-      //reloads in case of auth error to get user back into auth flow
-      else if(data.error.status === 401) {
-        window.location.reload();
-        sessionStorage.clear();
-      } else {
-        return 'There was an error processing your request. Please try again.';
-        window.location.reload();
-      }
-    })
+    );
   }
 
   _checkSubRoute(route, hash) {
-    const subRoute = route['subRoutes'].filter((sroute) => {
+    const subRoute = route["subRoutes"].filter(sroute => {
       return hash.indexOf(sroute.hash) > -1;
     });
 
-    if(subRoute.length > 0) {
+    if (subRoute.length > 0) {
       return { route: subRoute[0], hash: subRoute[0].hash, isSubRoute: true };
     }
     return { route: route, hash: route.hash, isSubRoute: false };
   }
 
   _createHashArgs(hash) {
-    let hashArr,
-      route,
-      id,
-      name,
-      params;
+    let hashArr, route, id, name, params;
 
-    hashArr = hash.split('/') || hash.split('_'),
-    route = hashArr[0],
-    id = hashArr[1],
-    name = hashArr[2];
+    (hashArr = hash.split("/") || hash.split("_")),
+      (route = hashArr[0]),
+      (id = hashArr[1]),
+      (name = hashArr[2]);
     params = hashArr[3];
 
     return { id, route, name, params };

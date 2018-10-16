@@ -1,8 +1,12 @@
-'use strict'
+"use strict";
 
-import { createDOM, escapeTemplate, addAjaxAction } from '../helpers/create-dom';
-import { addToStorage } from '../helpers/add-to-storage';
-import Router from '../router';
+import {
+  createDOM,
+  escapeTemplate,
+  addAjaxAction
+} from "../helpers/create-dom";
+import { addToStorage } from "../helpers/add-to-storage";
+import Router from "../router";
 
 const router = new Router();
 
@@ -15,7 +19,7 @@ export default class ArtistForm {
       <div id="spotify-player"></div>
     `;
 
-    createDOM({ html: formDom, tag: 'body' });
+    createDOM({ html: formDom, tag: "body" });
 
     const buttonDOM = escapeTemplate`
       <button id="search_artists">
@@ -23,35 +27,39 @@ export default class ArtistForm {
       </button>
     `;
 
-    createDOM({ html: buttonDOM, tag: 'search' });
+    createDOM({ html: buttonDOM, tag: "search" });
 
-    const containerDOM = escapeTemplate `
+    const containerDOM = escapeTemplate`
       <section id="container"></section>
-    `
+    `;
 
-    createDOM({ html: containerDOM, tag: 'body' });
+    createDOM({ html: containerDOM, tag: "body" });
 
     //adds click event to button;
-    document.getElementById('search_artists').addEventListener('click', (event) => {
-      if(event.preventDefault) {
-        event.preventDefault();
-      }
-      this._getParamsFromHash();
-    });
+    document
+      .getElementById("search_artists")
+      .addEventListener("click", event => {
+        if (event.preventDefault) {
+          event.preventDefault();
+        }
+        this._getParamsFromHash();
+      });
 
     //adds onEnter to the input
-    document.getElementById('find-artist').addEventListener('keypress', (event) => {
-      if(event.keyCode === 13) {
-        event.preventDefault();
-        this._getParamsFromHash()
-      }
-    });
+    document
+      .getElementById("find-artist")
+      .addEventListener("keypress", event => {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          this._getParamsFromHash();
+        }
+      });
   }
 
   _getParamsFromHash() {
-    const val = document.getElementById('find-artist').value;
+    const val = document.getElementById("find-artist").value;
     router.setHash(`/artist/${val}`);
     router.getParamsFromHash(router.getHash());
-    addToStorage('hash', `/artist/${val}`)
+    addToStorage("hash", `/artist/${val}`);
   }
 }

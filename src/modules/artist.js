@@ -1,19 +1,25 @@
-'use strict'
+"use strict";
 
-import relatedArtists from './related-artists';
-import  CreatePlaylist from './create-playlist';
-import { clearDOM, createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
-import { createArrayFromFusionData, each } from '../helpers/each-template';
-import { memoizeJSON } from '../helpers/memoize';
-import { addToStorage } from '../helpers/add-to-storage';
-import { buildFusionUrl } from '../helpers/urls';
+import relatedArtists from "./related-artists";
+import CreatePlaylist from "./create-playlist";
+import {
+  clearDOM,
+  createDOM,
+  addAjaxAction,
+  escapeTemplate
+} from "../helpers/create-dom";
+import { createArrayFromFusionData, each } from "../helpers/each-template";
+import { memoizeJSON } from "../helpers/memoize";
+import { addToStorage } from "../helpers/add-to-storage";
+import { buildFusionUrl } from "../helpers/urls";
 
 const related = new relatedArtists();
 const createPlaylist = new CreatePlaylist();
 const auth_header = new Headers({
-  'Authorization': `Bearer ${sessionStorage.access_token}`
+  Authorization: `Bearer ${sessionStorage.access_token}`
 });
 
+const baseUrl = "https://api.musicwhereyour.com";
 
 export default class Artist {
   hasBackup() {
@@ -21,35 +27,17 @@ export default class Artist {
   }
 
   fetchArtists(name) {
-    const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
-    const selectedCols = '*'
-    const matchType = 'CONTAINS IGNORING CASE';
-    const sortBy = 'ORDER%20BY+spotifyPopularity+DESC';
-    const fusionId = '1g-yJYLrmTDGBDTPp1o2hFdBmFhC4z2pvjE0vlEXv';
-    const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
-    const  where = 'Name';
-    const whereQuery = name;
+    const route = "artistsMatch";
+    const url = `${baseUrl}/${route}/${name}`;
 
-    const options = {
-      baseUrl,
-      fusionId,
-      selectedCols,
-      key,
-      matchType,
-      sortBy,
-      where,
-      whereQuery,
-    };
-
-    const url = buildFusionUrl(options)
-    console.log(url)
-    if(name) {
-      const data =  memoizeJSON({key: name,
+    if (name) {
+      const data = memoizeJSON({
+        key: name,
         fn() {
           return fetch(url);
         }
       });
-      addToStorage('hash', `/artist/${name}`);
+      addToStorage("hash", `/artist/${name}`);
       return data;
     }
   }
@@ -65,47 +53,29 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `/artist/${name}`);
+      addToStorage("hash", `/artist/${name}`);
       return data;
     }
   }
 
   fetchTopTracks(id) {
-    const baseUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=SELECT';
-    const selectedCols = '*';
-    const matchType = 'CONTAINS IGNORING CASE';
-    const sortBy = '';
-    const fusionId = '1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1';
-    const key = 'AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0';
-    const where = 'Sid';
-    const whereQuery = id;
+    const route = "topTracksMultiple/and~Sid:";
+    const url = `${baseUrl}/${route}${id}`;
 
-    const options = {
-      baseUrl,
-      fusionId,
-      selectedCols,
-      key,
-      matchType,
-      sortBy,
-      where,
-      whereQuery,
-    };
-   
-    const url = buildFusionUrl(options)
-
-    if(id) {
-      var data =  memoizeJSON({key: `top_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `top_${id}`,
         fn() {
           return fetch(url);
         }
       });
-      addToStorage('hash', `/top/${id}/${name}`);
+      addToStorage("hash", `/top/${id}`);
       return data;
     }
   }
 
   fetchTopTracksSpotify(id) {
-    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`
+    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`;
 
     if (id) {
       var data = memoizeJSON({
@@ -116,60 +86,62 @@ export default class Artist {
           });
         }
       });
-      addToStorage('hash', `/top/${id}/${name}`);
+      addToStorage("hash", `/top/${id}/${name}`);
       return data;
     }
   }
 
-
   fetchRecommendations(id) {
     const request = `https://api.spotify.com/v1/recommendations?seed_artists=${id}&limit=50`;
 
-    if(id) {
-      var data =  memoizeJSON({key: `recs_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `recs_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `/recommendations/${id}`);
+      addToStorage("hash", `/recommendations/${id}`);
       return data;
     }
   }
 
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
-  createArtistDom(data) {//, params) {
-    clearDOM('.artist-modal');
+  createArtistDom(data) {
+    //, params) {
+    clearDOM(".artist-modal");
     let resolvedData;
 
-    if(data.data) {
+    if (data.data) {
       //fusion table data
       resolvedData = data.data;
-    } else {
+    } else if (data.spotify) {
       //spotify data
       resolvedData = data.spotify;
+    } else {
+      resolvedData = data;
     }
-
     //$('#artists').remove();
     //const action = params.action;
     const dom = escapeTemplate`
       <ul id="artists" class="cards">
         ${each({
           data: resolvedData,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <h4><a href="#/artist/info/{{Name}}">{{Name}}</a></h4>
                 </div>
                 <ul class="options">
                   <li>
-                    <a href="#/related/{{Sid}}/{{Name}}">
+                    <a href="#/related/{{Sid}}/">
                       Related Musicians
                     </a>
                   </li>
                   <li>
-                    <a href="#/top/{{Sid}}/{{Name}}">
+                    <a href="#/top/{{Sid}}">
                       Top Tracks
                     </a>
                   </li>
@@ -197,54 +169,54 @@ export default class Artist {
                 </ul>
                 `,
           attrs: {
-            class:'artist',
+            class: "artist",
             title: null,
             id: null,
-            style: 'background-image:url({{spotifyImageUrl}})',
+            style: "background-image:url({{spotify.images[0.url}})"
           }
         })}
       </ul>
     `;
 
-    createDOM({ html: dom, tag: 'container', clear: true });
+    createDOM({ html: dom, tag: "container", clear: true });
   }
-
 
   createTopTracksDOM(data, name) {
     let resolvedData;
 
     if (data.data) {
       //fusion table data
-      resolvedData = createArrayFromFusionData(data.data, 'topTracks', 20); 
+      resolvedData = createArrayFromFusionData(data.data, "topTracks", 20);
     } else {
       //spotify data
-      resolvedData = data.spotify;
+      resolvedData = data.topTracks;
     }
+
     const dom = escapeTemplate`
-      <h2>Top Tracks for ${name}</h2>
+      <h2>Top Tracks for ${data.Name}</h2>
       <ul id="top-tracks" class="cards">
         ${each({
           data: resolvedData,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
-                  <strong><a href="{{topTracksId}}" target="_blank">{{topTracksName}}</a></strong>
+                  <strong><a href="{{id}}" target="_blank">{{name}}</a></strong>
                 </div>
                 <p>
-                  from: <a href="#/album/{{topTracksAlbumId}}/{{topTracksAlbumName}}">{{topTracksAlbumName}}</a>
+                  from: <a href="#/album/{{album.id}}/{{album.name}}">{{album.name}}</a>
                 </p>
                 `,
           attrs: {
-            class:'artist card',
+            class: "artist card",
             title: null,
             id: null,
-            style: 'background-image:url({{topTracksAlbumImagesUrl}})',
+            style: "background-image:url({{album.images[0].url}})"
           }
         })}
       </ul>
       `;
-    // Need to update create playlist functionality to play nice with new data structure  
+    // Need to update create playlist functionality to play nice with new data structure
     //createPlaylist.createSaveButtonDOM(normalizedData, 'topSongs');
-    createDOM({ html: dom, tag: 'container', clear: true });
+    createDOM({ html: dom, tag: "container", clear: true });
   }
 
   createRecsDOM(data) {
@@ -253,7 +225,7 @@ export default class Artist {
       <ul id="radio" class="cards">
         ${each({
           data: data.tracks,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
@@ -263,15 +235,15 @@ export default class Artist {
                 <p>By: <a href="#/artist/{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
           attrs: {
-            class:'playlist card',
+            class: "playlist card",
             title: null,
             id: null,
-            style: 'background-image:url({{album.images[0].url}})',
+            style: "background-image:url({{album.images[0].url}})"
           }
         })}
       </ul>
       `;
-      createPlaylist.createSaveButtonDOM(data.tracks, 'radio');
-      createDOM({ html: dom, tag: 'container', clear: true });
+    createPlaylist.createSaveButtonDOM(data.tracks, "radio");
+    createDOM({ html: dom, tag: "container", clear: true });
   }
 }

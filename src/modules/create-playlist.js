@@ -1,18 +1,17 @@
-'use strict'
+"use strict";
 
-import { createDOM, escapeTemplate } from '../helpers/create-dom';
-import { each } from '../helpers/each-template';
-import { iff } from '../helpers/if-template';
-import { memoizeJSON, memoized } from '../helpers/memoize';
-import SpotifyPlayer from './spotify-player';
+import { createDOM, escapeTemplate } from "../helpers/create-dom";
+import { each } from "../helpers/each-template";
+import { iff } from "../helpers/if-template";
+import { memoizeJSON, memoized } from "../helpers/memoize";
+import SpotifyPlayer from "./spotify-player";
 
-
-const auth_header =  new Headers({
-  'Authorization': `Bearer ${sessionStorage.access_token}`
+const auth_header = new Headers({
+  Authorization: `Bearer ${sessionStorage.access_token}`
 });
 
 const post_header = new Headers({
-  'Content-Type': 'application/json'
+  "Content-Type": "application/json"
 });
 
 const player = new SpotifyPlayer();
@@ -20,48 +19,48 @@ const player = new SpotifyPlayer();
 export default class CreatePlaylist {
   //TODO: memoize this method; see javascript ninja book
   fetchSpotifyProfile(name, tracks) {
-    const url = 'https://api.spotify.com/v1/me'
+    const url = "https://api.spotify.com/v1/me";
 
     return fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: auth_header
-      })
-      .then((response) => {
+    })
+      .then(response => {
         return response.json();
       })
-      .then(function(data){
-        const username = data.id
+      .then(function(data) {
+        const username = data.id;
         const user_url = `https://api.spotify.com/v1/users/${username}/playlists`;
         fetch(user_url, {
-            headers: auth_header,
-            method: 'POST',
-            body: JSON.stringify({
-              name: `${name} from ES6 app`,
-              public: false
-            })
+          headers: auth_header,
+          method: "POST",
+          body: JSON.stringify({
+            name: `${name} from ES6 app`,
+            public: false
           })
-          .then((json) => {
+        })
+          .then(json => {
             return json.json();
-        })
-        .then((json) => {
-          const id = json.id;
-          const playlist_url = `${user_url}/${id}/tracks?position=0&uris=${tracks}`;
-          return fetch(playlist_url, {
-            method: 'POST',
-            headers: auth_header,
-          }).then(() => {
-            //After playlist is created; create a music player and display it to user
-            player.createSpotifyPlayerDOM(id, username);
           })
-
-        })
-      })
+          .then(json => {
+            const id = json.id;
+            const playlist_url = `${user_url}/${id}/tracks?position=0&uris=${tracks}`;
+            return fetch(playlist_url, {
+              method: "POST",
+              headers: auth_header
+            }).then(() => {
+              //After playlist is created; create a music player and display it to user
+              player.createSpotifyPlayerDOM(id, username);
+            });
+          });
+      });
   }
 
   createSpotifyPlaylist(id) {
-    const url = 'https://api.spotify.com/v1/me'
+    const url = "https://api.spotify.com/v1/me";
 
-    const data = memoizeJSON({ key: id,
+    const data = memoizeJSON({
+      key: id,
       fn() {
         return fetch(url, {
           headers: auth_header
@@ -78,9 +77,9 @@ export default class CreatePlaylist {
       topSongs: `Top Songs by ${data[0].artists[0].name}`,
       radio: `Songs inspired by ${data[0].artists[0].name}`,
       songsFromAlbum: `${name} by ${data[0].artists[0].name}`
-    }
+    };
 
-    data.forEach((track) => {
+    data.forEach(track => {
       tracks.push(`spotify%3Atrack%3A${track.id}`);
     });
 
@@ -93,16 +92,18 @@ export default class CreatePlaylist {
       </div>
     `;
 
-    createDOM({ html: buttonDOM, tag: 'spotify-player', clear: true });
+    createDOM({ html: buttonDOM, tag: "spotify-player", clear: true });
 
     //adds click event to button;
-    document.getElementById(tracks.toString()).addEventListener('click', (event) => {
-      if(event.preventDefault) {
-        event.preventDefault();
-      }
+    document
+      .getElementById(tracks.toString())
+      .addEventListener("click", event => {
+        if (event.preventDefault) {
+          event.preventDefault();
+        }
 
-      this.fetchSpotifyProfile(typeMap[type], event.target.id);
-      document.getElementById(tracks.toString()).disabled = true;
-    });
+        this.fetchSpotifyProfile(typeMap[type], event.target.id);
+        document.getElementById(tracks.toString()).disabled = true;
+      });
   }
 }

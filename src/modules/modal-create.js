@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 
-import { createDOM, escapeTemplate, clearDOM } from '../helpers/create-dom';
-import { iff } from '../helpers/if-template';
-import { addToStorage } from '../helpers/add-to-storage';
-import Router from '../router';
+import { createDOM, escapeTemplate, clearDOM } from "../helpers/create-dom";
+import { iff } from "../helpers/if-template";
+import { addToStorage } from "../helpers/add-to-storage";
+import Router from "../router";
 
 // const router = new Router();
 
@@ -11,12 +11,11 @@ import Router from '../router';
 //TODO: add css to make this fade in to the dom
 export default class ModalCreate {
   createModal(...args) {
-    const modalDom = escapeTemplate
-    `<section id="modal" class="artist-modal">
+    const modalDom = escapeTemplate`<section id="modal" class="artist-modal">
         <div class="modal-dialog" role="document">
           <header class="modal-header">
             <h4 id="modal-headline">
-              ${args[0] ? args[0].title : ''}
+              ${args[0] ? args[0].title : ""}
             </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
@@ -25,39 +24,33 @@ export default class ModalCreate {
           <div id="modal-container" class="modal-body"></div>
           <div class="modal-footer" id="modal-footer"></div>
         </div>
-    </section>`
+    </section>`;
 
-    createDOM({ html: modalDom, tag: 'body' });
+    createDOM({ html: modalDom, tag: "body" });
 
     //adds click event to close button;
-    document.querySelector('.close').addEventListener('click', () => {
-      addToStorage('hash', `/artist/${arguments[0].title}`);
+    document.querySelector(".close").addEventListener("click", () => {
+      addToStorage("hash", `/artist/${arguments[0].title}`);
       window.location.hash = sessionStorage.hash; // should be added to router
-      clearDOM('.artist-modal');
+      clearDOM(".artist-modal");
     });
-
-
   }
 
- createButtons(...args) {
-   const params = args[0];
-   params.forEach((arg) => {
-     let dom = escapeTemplate
-       `<button id="${arg.id}">
+  createButtons(...args) {
+    const params = args[0];
+    params.forEach(arg => {
+      let dom = escapeTemplate`<button id="${arg.id}">
           <a href="#${arg.hash}">${arg.value}</a>
         </button>
-       `
-     createDOM({ html: dom, tag: 'modal-footer' });
+       `;
+      createDOM({ html: dom, tag: "modal-footer" });
+    });
+    document.getElementById("no").addEventListener("click", () => {
+      clearDOM("modal");
+    });
 
-   });
-   document.getElementById('no').addEventListener('click', () => {
-
-     clearDOM('modal');
-   });
-
-   document.getElementById('yes').addEventListener('click', () => {
-
-     clearDOM('modal');
-   });
- }
+    document.getElementById("yes").addEventListener("click", () => {
+      clearDOM("modal");
+    });
+  }
 }

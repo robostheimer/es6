@@ -1,11 +1,11 @@
-'use strict'
+"use strict";
 
-import $ from '../../node_modules/jquery/dist/jquery.min';
-import each from './each-template';
+import $ from "../../node_modules/jquery/dist/jquery.min";
+import each from "./each-template";
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
-export  function createDOM(options) {
-  const tag = options.tag === 'body' ? options.tag : `#${options.tag}`;
+export function createDOM(options) {
+  const tag = options.tag === "body" ? options.tag : `#${options.tag}`;
   const html = options.html;
   const clear = options.clear;
 
@@ -13,8 +13,8 @@ export  function createDOM(options) {
   // should be dealt with on the class level; i.e. the class should be smart enough
   // to know whether to show this or not
 
-  if(clear) {
-    $(tag).html('');
+  if (clear) {
+    $(tag).html("");
   }
 
   $(tag).append(html);
@@ -22,12 +22,11 @@ export  function createDOM(options) {
   // const tag = document.querySelector(options.tag) ? document.querySelector(options.tag) : document.getElementById(options.tag);
   // const html = document.createTextNode(options.html);
   // tag.innerHTML+=(html);
-
 }
 
 export function clearDOM(tag) {
   var elem = document.querySelector(tag);
-  if(elem) {
+  if (elem) {
     elem.parentNode.removeChild(elem);
   }
 }
@@ -50,64 +49,64 @@ export function addAjaxAction(options) {
   const type = options.type;
   const methods = options.methods; // includes method names and optional params object to be passed to the method
   const replace = options.replace;
-  document.getElementById(id).addEventListener(action, (e) => {
+  document.getElementById(id).addEventListener(action, e => {
     const targetId = _findId(e.target, id);
 
     const title = e.target.title;
-    if(methods && type) {
-      type[methods[0].method](targetId).then((data) => {
+    if (methods && type) {
+      type[methods[0].method](targetId).then(data => {
         if (addDom && methods[1]) {
-          if(data.artists.items) {
+          if (data.artists.items) {
             data.artists = data.artists.items;
           }
           methods[1].params.id = targetId;
           methods[1].params.title = title;
           type[methods[1].method](data.artists, methods[1].params);
         }
-      })
+      });
     }
-  })
+  });
 }
 
 export function escapeTemplate(literalSections, ...substs) {
-    // Use raw literal sections: we don’t want
-    // backslashes (\n etc.) to be interpreted
-    let raw = literalSections.raw;
+  // Use raw literal sections: we don’t want
+  // backslashes (\n etc.) to be interpreted
+  let raw = literalSections.raw;
 
-    let result = '';
+  let result = "";
 
-    substs.forEach((subst, i) => {
-        // Retrieve the literal section preceding
-        // the current substitution
-        let lit = raw[i];
+  substs.forEach((subst, i) => {
+    // Retrieve the literal section preceding
+    // the current substitution
+    let lit = raw[i];
 
-        // In the example, map() returns an array:
-        // If substitution is an array (and not a string),
-        // we turn it into a string
-        if (Array.isArray(subst)) {
-            subst = subst.join('');
-        }
+    // In the example, map() returns an array:
+    // If substitution is an array (and not a string),
+    // we turn it into a string
+    if (Array.isArray(subst)) {
+      subst = subst.join("");
+    }
 
-        // If the substitution is preceded by a dollar sign,
-        // we escape special characters in it
-        if (lit.endsWith('$')) {
-            subst = htmlEscape(subst);
-            lit = lit.slice(0, -1);
-        }
-        result += lit;
-        result += subst;
-    });
-    // Take care of last literal section
-    // (Never fails, because an empty template string
-    // produces one literal section, an empty string)
-    result += raw[raw.length-1]; // (A)
+    // If the substitution is preceded by a dollar sign,
+    // we escape special characters in it
+    if (lit.endsWith("$")) {
+      subst = htmlEscape(subst);
+      lit = lit.slice(0, -1);
+    }
+    result += lit;
+    result += subst;
+  });
+  // Take care of last literal section
+  // (Never fails, because an empty template string
+  // produces one literal section, an empty string)
+  result += raw[raw.length - 1]; // (A)
 
-    return result;
+  return result;
 }
 
 function _findId(target) {
-  if(target.id) {
+  if (target.id) {
     return target.id;
   }
-  return $(target.closest('[id]')).attr('id');
+  return $(target.closest("[id]")).attr("id");
 }

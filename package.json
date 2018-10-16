@@ -14,7 +14,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "ls": " cd lib/modules && ls",
-    "build": "node_modules/babel-cli/bin/babel.js src -d lib && browserify lib/app.js -o bundle.js"
+    "build": "node_modules/babel-cli/bin/babel.js src -d lib && browserify lib/app.js -o bundle.js",
+    "dev": "nodemon node-server.js"
   },
   "author": "",
   "license": "ISC"

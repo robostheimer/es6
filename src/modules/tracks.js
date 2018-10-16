@@ -1,47 +1,53 @@
-'use strict'
+"use strict";
 
-import relatedArtists from './related-artists';
-import { createDOM, addAjaxAction, escapeTemplate } from '../helpers/create-dom';
-import { each } from '../helpers/each-template';
-import { memoizeJSON, memoized } from '../helpers/memoize';
-import { addToStorage } from '../helpers/add-to-storage';
+import relatedArtists from "./related-artists";
+import {
+  createDOM,
+  addAjaxAction,
+  escapeTemplate
+} from "../helpers/create-dom";
+import { each } from "../helpers/each-template";
+import { memoizeJSON, memoized } from "../helpers/memoize";
+import { addToStorage } from "../helpers/add-to-storage";
 
 const related = new relatedArtists();
-const SCOPE = 'playlist-modify-private playlist-modify-public';
-const CLIENT_ID = '6e385b2a58fa42f6832a3a0bc3152c23';
-const auth_header =  new Headers({
-  'Authorization': `Bearer ${sessionStorage.access_token}`
-})
+const SCOPE = "playlist-modify-private playlist-modify-public";
+const CLIENT_ID = "6e385b2a58fa42f6832a3a0bc3152c23";
+const auth_header = new Headers({
+  Authorization: `Bearer ${sessionStorage.access_token}`
+});
 
 //TODO: Need to add album and track class/components to support linking.
 export default class Artist {
   fetchArtists(name) {
     const url = `https://api.spotify.com/v1/search?q=${name}&type=artist`;
-    if(name) {
-      var data =  memoizeJSON({key: name,
+    if (name) {
+      var data = memoizeJSON({
+        key: name,
         fn() {
           return fetch(url, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `/artist_${name}`);
+      addToStorage("hash", `/artist_${name}`);
       return data;
     }
   }
 
   fetchTopTracks(id) {
-    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`
+    const request = `https://api.spotify.com/v1/artists/${id}/top-tracks?country=US`;
 
-    if(id) {
-      var data =  memoizeJSON({key: `top_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `top_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `top_${id}`);
+      addToStorage("hash", `top_${id}`);
       return data;
     }
   }
@@ -49,15 +55,16 @@ export default class Artist {
   fetchAlbums(id) {
     const request = `https://api.spotify.com/v1/artists/${id}/albums`;
 
-    if(id) {
-      var data =  memoizeJSON({key: `/albums_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `/albums_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `albums_${id}`);
+      addToStorage("hash", `albums_${id}`);
       return data;
     }
   }
@@ -65,29 +72,31 @@ export default class Artist {
   fetchRecommendations(id) {
     const request = `https://api.spotify.com/v1/recommendations?seed_artists=${id}&limit=50`;
 
-    if(id) {
-      var data =  memoizeJSON({key: `recs_${id}`,
+    if (id) {
+      var data = memoizeJSON({
+        key: `recs_${id}`,
         fn() {
           return fetch(request, {
             headers: auth_header
           });
         }
       });
-      addToStorage('hash', `/recommendations_${id}`);
+      addToStorage("hash", `/recommendations_${id}`);
       return data;
     }
   }
 
   //TODO: Try to think about how to abstract this to use for all situations of creating dom
   //perhaps a recursive function of
-  createArtistDom(data) {//, params) {
-    $('#/artists').remove();
+  createArtistDom(data) {
+    //, params) {
+    $("#/artists").remove();
     //const action = params.action;
     const dom = escapeTemplate`
       <ul id="artists" class="cards">
         ${each({
           data: data.artists.items,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <strong>{{name}}</strong>
                 </div>
@@ -120,16 +129,16 @@ export default class Artist {
                 </ul>
                 `,
           attrs: {
-            class:'artist',
+            class: "artist",
             title: null,
             id: null,
-            style: 'background-image:url({{images[0].url}})',
+            style: "background-image:url({{images[0].url}})"
           }
         })}
       </ul>
     `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: "container" });
   }
 
   createTopTracksDOM(data) {
@@ -138,7 +147,7 @@ export default class Artist {
       <ul id="top-tracks" class="cards">
         ${each({
           data: data.tracks,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
@@ -147,16 +156,16 @@ export default class Artist {
                 </p>
                 `,
           attrs: {
-            class:'artist',
+            class: "artist",
             title: null,
             id: null,
-            style: 'background-image:url({{album.images[0].url}})',
+            style: "background-image:url({{album.images[0].url}})"
           }
         })}
       </ul>
       `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: "container" });
   }
 
   createAlbumsDOM(data) {
@@ -165,32 +174,32 @@ export default class Artist {
       <ul id="top-tracks" class="cards">
         ${each({
           data: data.items,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
                 `,
           attrs: {
-            class:'artist',
+            class: "artist",
             title: null,
             id: null,
-            style: 'background-image:url({{images[0].url}})',
+            style: "background-image:url({{images[0].url}})"
           }
         })}
       </ul>
       `;
 
-    createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: "container" });
   }
 
   createRecsDOM(data) {
-    console.log(data)
+    console.log(data);
     const dom = escapeTemplate`
     <h2>Playlist Inspired by: TEST</h2>
       <ul id="radio" class="cards">
         ${each({
           data: data.tracks,
-          tag: 'li',
+          tag: "li",
           txt: `<div>
                   <strong><a href="{{external_urls.spotify}}" target="_blank">{{name}}</a></strong>
                 </div>
@@ -200,14 +209,14 @@ export default class Artist {
                 <p>By: <a href="#/artist_{{artists[0].name}}">{{artists[0].name}}</a>
                 `,
           attrs: {
-            class:'artist',
+            class: "artist",
             title: null,
             id: null,
-            style: 'background-image:url({{album.images[0].url}})',
+            style: "background-image:url({{album.images[0].url}})"
           }
         })}
       </ul>
       `;
-      createDOM({ html: dom, tag: 'container' });
+    createDOM({ html: dom, tag: "container" });
   }
 }
