@@ -4,8 +4,9 @@ import Artist from "./modules/artist";
 import RelatedArtists from "./modules/related-artists";
 import Album from "./modules/albums";
 import ArtistInfo from "./modules/artist-info";
-import Geolocation from "./modules/geolocation";
+// import Geolocation from "./modules/geolocation";
 import Location from "./modules/location";
+import Map from "./modules/map";
 //import Modal from './modules/create-modal';
 
 const hash = window.location.hash.replace("#", "");
@@ -13,10 +14,17 @@ const artist = new Artist();
 const related = new RelatedArtists();
 const album = new Album();
 const artistInfo = new ArtistInfo();
-const geolocation = new Geolocation();
+//const geolocation = new Geolocation();
 const location = new Location();
+const map = new Map();
 
 const routeMap = {
+  "": {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
+    dom: "buildMap"
+  },
   artist: {
     className: artist,
     hash: "artist",
@@ -66,12 +74,14 @@ const routeMap = {
     fetch: "fetchRecommendations",
     dom: "createRecsDOM"
   },
-  geolocation: {
-    className: geolocation,
-    hash: "geolocation",
-    fetch: "getGeolocation",
+
+  map: {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
     dom: "buildMap"
   },
+
   location: {
     className: location,
     hash: "location",
@@ -90,8 +100,8 @@ const routeMap = {
   city: {
     className: location,
     hash: "city",
-    fetch: "fetchCityArtists",
-    dom: "createCityArtistsDOM",
+    fetch: "fetchTopTracksFromCity",
+    dom: "createCityMapDOM",
     subRoutes: [
       {
         hash: "tracks",
@@ -106,12 +116,30 @@ const routeMap = {
         parentClass: "location",
         fetch: "fetchTopTracksFromCity",
         dom: "createCityTracksDOM"
+      },
+      {
+        hash: "artists",
+        className: location,
+        parentClass: "location",
+        fetch: "fetchCityArtists",
+        dom: "createCityArtistsDOM"
+      },
+      {
+        hash: "artists/:genres",
+        className: location,
+        parentClass: "location",
+        fetch: "fetchCityArtists",
+        dom: "createCityArtistsDOM"
       }
     ]
   }
 };
 
 class Router {
+  getBaseUrl() {
+    return window.location.host;
+  }
+
   logHash() {
     console.log(hash);
   }
@@ -170,10 +198,9 @@ class Router {
     const property = options.hasSpotifyBackup
       ? options.prop.fetchSpotify
       : options.prop.fetch;
-
     return options.className[property](options.id, options.params).then(
       data => {
-        if (!data.error) {
+        if (data && !data.error) {
           if (options.params) {
             const params = options.params;
             return options.className[options.prop.dom](data, params);
@@ -182,12 +209,17 @@ class Router {
           }
         }
         // if problem with fusion tables, use spotify as a backup
-        else if (data.error.code === 400 && options.className.hasBackup()) {
+        else if (
+          data &&
+          data.error &&
+          data.error.code === 400 &&
+          options.className.hasBackup()
+        ) {
           options.hasSpotifyBackup = true;
           this._fetchData(options);
         }
         //reloads in case of auth error to get user back into auth flow
-        else if (data.error.status === 401) {
+        else if (data && data.error && data.error.status === 401) {
           window.location.reload();
           sessionStorage.clear();
         } else {

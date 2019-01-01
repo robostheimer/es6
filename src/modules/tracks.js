@@ -138,7 +138,7 @@ export default class Artist {
       </ul>
     `;
 
-    createDOM({ html: dom, tag: "container" });
+    createDOM({ html: dom, tag: "#container" });
   }
 
   createTopTracksDOM(data) {
@@ -165,7 +165,7 @@ export default class Artist {
       </ul>
       `;
 
-    createDOM({ html: dom, tag: "container" });
+    createDOM({ html: dom, tag: "#container" });
   }
 
   createAlbumsDOM(data) {
@@ -189,11 +189,10 @@ export default class Artist {
       </ul>
       `;
 
-    createDOM({ html: dom, tag: "container" });
+    createDOM({ html: dom, tag: "#container" });
   }
 
   createRecsDOM(data) {
-    console.log(data);
     const dom = escapeTemplate`
     <h2>Playlist Inspired by: TEST</h2>
       <ul id="radio" class="cards">
@@ -217,6 +216,6 @@ export default class Artist {
         })}
       </ul>
       `;
-    createDOM({ html: dom, tag: "container" });
+    createDOM({ html: dom, tag: "#container" });
   }
 }

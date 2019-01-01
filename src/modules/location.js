@@ -5,7 +5,7 @@ import { memoizeJSON } from "../helpers/memoize";
 import { each } from "../helpers/each-template";
 import { iff } from "../helpers/if-template";
 import { addToStorage } from "../helpers/add-to-storage";
-import Artist from "./artist";
+import { baseUrl } from "../app";
 import {
   buildFusionUrl,
   buildComplexQuery,
@@ -14,8 +14,7 @@ import {
 
 import { normalizeParams } from "../helpers/strings";
 
-const artist = new Artist();
-const baseUrl = "https://api.musicwhereyour.com";
+import { map } from "../app";
 
 //TODO: Need to add album and track class/components to support linking.
 export default class Location {
@@ -28,16 +27,6 @@ export default class Location {
       const splitter = lat_lng.split(",");
       const lat = splitter[0];
       const lng = splitter[1];
-      // const ratio = 0.15;
-      // const min_lat = parseFloat(lat) - ratio;
-      // const max_lat = parseFloat(lat) + ratio;
-      // const min_lng = parseFloat(lng) - ratio;
-      // const max_lng = parseFloat(lng) + ratio;
-      // const baseUrl =
-      //   "https://www.googleapis.com/fusiontables/v2/query?sql=SELECT";
-      // const fusionId = "1g-yJYLrmTDGBDTPp1o2hFdBmFhC4z2pvjE0vlEXv";
-      // const sortBy = "+spotifyPopularity+DESC";
-      // const key = "AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0";
 
       const url = paramsStr
         ? `${baseUrl}/artistsMultiple/and~Lat:${lat}_Lng:${lng}_${paramsStr}?limit=50`
@@ -47,7 +36,7 @@ export default class Location {
         ? `/location/${lat_lng}/artists_${paramsStr}`
         : `/location/${lat_lng}/artists`;
       const data = memoizeJSON({
-        key: `tracks_${lat_lng}`,
+        key: hash,
         fn() {
           return fetch(url);
         }
@@ -63,27 +52,7 @@ export default class Location {
     if (params) {
       paramsStr = normalizeParams(params, "_", "or", "spotify");
     }
-    // const baseUrl =
-    //   "https://www.googleapis.com/fusiontables/v2/query?sql=SELECT";
-    // const selectedCols = "*";
-    // const matchType = "CONTAINS IGNORING CASE";
-    // const sortBy = "Order By spotifyPopularity+DESC";
-    // const fusionId = "1g-yJYLrmTDGBDTPp1o2hFdBmFhC4z2pvjE0vlEXv";
-    // const key = "AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0";
-    // const where = "City";
-    // const whereQuery = city;
-    // const options = {
-    //   baseUrl,
-    //   fusionId,
-    //   selectedCols,
-    //   key,
-    //   matchType,
-    //   sortBy,
-    //   where,
-    //   whereQuery
-    // };
 
-    // const url = buildFusionUrl(options);
     const url = paramsStr
       ? `${baseUrl}/artistsMultiple/and~City:${city}_${paramsStr}?limit=50`
       : `${baseUrl}/artistsMultiple/and~City:${city}?limit=50`;
@@ -92,11 +61,12 @@ export default class Location {
       : `/city/${city}/artists`;
 
     const data = memoizeJSON({
-      key: city,
+      key: hash,
       fn() {
         return fetch(url);
       }
     });
+
     addToStorage("hash", hash);
 
     return data;
@@ -111,17 +81,6 @@ export default class Location {
       const splitter = lat_lng.split(",");
       const lat = splitter[0];
       const lng = splitter[1];
-      // const ratio = 0.15;
-      // const min_lat = parseFloat(lat) - ratio;
-      // const max_lat = parseFloat(lat) + ratio;
-      // const min_lng = parseFloat(lng) - ratio;
-      // const max_lng = parseFloat(lng) + ratio;
-      // const baseUrl =
-      //   "https://www.googleapis.com/fusiontables/v2/query?sql=SELECT";
-      // const fusionId = "1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1";
-      // const sortBy = "+topTracksPopularity0+DESC";
-      // const key = "AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0";
-      // const limit = 100;
 
       const url = paramsStr
         ? `${baseUrl}/topTracksMultiple/and~Lat:${lat}_Lng:${lng}/params?limit=50`
@@ -130,7 +89,7 @@ export default class Location {
         ? `/location/${lat_lng}/tracks/${params}`
         : `/location/${lat_lng}/tracks`;
       const data = memoizeJSON({
-        key: `tracks_${lat_lng}`,
+        key: hash,
         fn() {
           return fetch(url);
         }
@@ -146,26 +105,7 @@ export default class Location {
     if (params) {
       paramsStr = normalizeParams(params, "_", "or");
     }
-    // paramsObj.city = [city];
-    // if (city) {
-    //   const selectedCols = "*";
-    //   const baseUrl =
-    //     "https://www.googleapis.com/fusiontables/v2/query?sql=SELECT";
-    //   const key = "AIzaSyBBcCEirvYGEa2QoGas7w2uaWQweDF2pi0";
-    //   const query = buildComplexQuery(paramsObj);
-    //   const fusionId = "1b9_3oSaFIp_afMrbASc48DUTTyA2N4V2Xwg4TYC1";
-    //   const sortBy = "Order By topTracksPopularity0+DESC";
-    //   const limit = 100;
-    //   const options = {
-    //     baseUrl,
-    //     fusionId,
-    //     selectedCols,
-    //     key,
-    //     sortBy,
-    //     query,
-    //     limit
-    //   };
-    //const url = buildComplexFusionUrl(options);
+
     const url = paramsStr
       ? `${baseUrl}/topTracksMultiple/and~City:${city}_${paramsStr}?limit=50`
       : `${baseUrl}/topTracksMultiple/and~City:${city}?limit=50`;
@@ -173,7 +113,7 @@ export default class Location {
       ? `/city/${city}/tracks${params}`
       : `/city/${city}/tracks`;
     const data = memoizeJSON({
-      key: params ? `tracks_${city}_${paramsStr}` : `tracks_${city}`,
+      key: hash,
       fn() {
         return fetch(url);
       }
@@ -203,54 +143,60 @@ export default class Location {
       `,
       `<p><strong>There are no artists related</strong</p>`
     );
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
+  }
+  
+  createCityMapDOM(data) {
+    const mapData = { data, tag: "#container" };
+    map.buildMap(mapData, true);
   }
 
   createCityTracksDOM(data) {
-    // let resolvedData = data.data.map(item => {
-    //   return createArrayFromFusionData(item, "topTracks", 20, [
-    //     "Name",
-    //     "Sid",
-    //     "Lat",
-    //     "Lng",
-    //     "City",
-    //     "genres0",
-    //     "genres1",
-    //     "genres2",
-    //     "genres3",
-    //     "genres4"
-    //   ]);
-    // }); //need to debug the createArrayFromFusionData method
-    // let flattenedArr = flatten(resolvedData);
-    // let sortedData = removeDuplicatesArrObj(
-    //   sortObjDsc(flattenedArr, "topTracksPopularity", "str", true),
-    //   "topTracksId"
-    // );
-    //console.log(data);
     const filteredData = data.filter(item => {
       return item.topTracks[0] && item.topTracks[0].album;
     });
+
+    const mapData = { data, tag: "#container" };
+    map.buildMap(mapData, true);
     const dom = iff(
       data.length > 0,
       escapeTemplate`
-        <h4> Musicians from ${filteredData[0].City}
-        <ul id="related-artists" class="cards">
-          ${each({
-            data: filteredData,
-            tag: "li",
-            txt:
-              '<div><a href="{{topTracks[0].name}}">{{topTracks[0].name}}</a></div><div>By <a href="#/artist/{{Name}}">{{Name}}</a></div>',
-            attrs: {
-              class: "related-artist",
-              id: null,
-              style:
-                "background-image:url({{topTracks[0].album.images[0].url}})"
-            }
-          })}
-        </ul>
+        <div id="playlist">
+          <a href="#map/${filteredData[0].City}" class="close_link_info ng-click-active" aria-hidden="true" data-icon="P" style="font-size: 30px;"></a>
+          <section class="cards-header">
+            <h4> Musicians from ${filteredData[0].City}</h4>
+          </section>
+          <ul class="cards">
+            ${each({
+              data: filteredData,
+              tag: "li",
+              txt:
+                `<div class="info">
+                  <a href="{{topTracks[0].name}}">{{topTracks[0].name}}</a>
+                </div>
+                <div class="info">By 
+                  <a href="#/artist/{{Name}}">{{Name}}</a>
+                </div>
+                <a class="spotter" href="spotify:track:{{topTracks.id}}" >
+                  <div class="spot_link_spot" style="margin-left:5px;font-size:27px;" aria-hidden="true" data-icon="c"></div>
+                </a>
+                <a>
+                  <div class="icon iconfavorite2 spot_link favorite favorite_on"></div>
+                </a>
+                <a>
+                  <div class="icon iconfavorite spot_link favorite favorite_on"></div>
+                </a>`,
+              attrs: {
+                class: "gray card",
+                id: null,
+                //style: "background-image:url({{topTracks[0].album.images[0].url}})"
+              }
+            })}
+          </ul>
+        </div>
         `,
       `<p><strong>There are no artists related</strong</p>`
     );
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: false });
   }
 }

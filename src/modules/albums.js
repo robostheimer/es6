@@ -126,7 +126,7 @@ export default class Album {
     //   "songsFromAlbum",
     //   data.name
     // );
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 
   createAlbumsDOM(data, name) {
@@ -161,6 +161,6 @@ export default class Album {
       </ul>
       `;
 
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 }

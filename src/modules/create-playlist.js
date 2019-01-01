@@ -92,7 +92,7 @@ export default class CreatePlaylist {
       </div>
     `;
 
-    createDOM({ html: buttonDOM, tag: "spotify-player", clear: true });
+    createDOM({ html: buttonDOM, tag: "#spotify-player", clear: true });
 
     //adds click event to button;
     document

@@ -1,11 +1,6 @@
 "use strict";
 
 import { createDOM, escapeTemplate, clearDOM } from "../helpers/create-dom";
-import { iff } from "../helpers/if-template";
-import { addToStorage } from "../helpers/add-to-storage";
-import Router from "../router";
-
-// const router = new Router();
 
 // creates a Modal Container that can be added to any route
 //TODO: add css to make this fade in to the dom
@@ -30,7 +25,7 @@ export default class ModalCreate {
 
     //adds click event to close button;
     document.querySelector(".close").addEventListener("click", () => {
-      addToStorage("hash", `/artist/${arguments[0].title}`);
+      //addToStorage("hash", `/artist/${arguments[0].title}`);
       window.location.hash = sessionStorage.hash; // should be added to router
       clearDOM(".artist-modal");
     });
@@ -46,11 +41,11 @@ export default class ModalCreate {
       createDOM({ html: dom, tag: "modal-footer" });
     });
     document.getElementById("no").addEventListener("click", () => {
-      clearDOM("modal");
+      clearDOM(".artist-modal");
     });
 
     document.getElementById("yes").addEventListener("click", () => {
-      clearDOM("modal");
+      clearDOM(".artist-modal");
     });
   }
 }

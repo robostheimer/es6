@@ -17,6 +17,6 @@ export default class SpotifyPlayer {
     const playerDOM = escapeTemplate`
        <iframe src=${url} width="300" height="100" frameborder="0" allowtransparency="true"></iframe>
      `;
-    createDOM({ html: playerDOM, tag: "spotify-player", clear: true });
+    createDOM({ html: playerDOM, tag: "#spotify-player", clear: true });
   }
 }

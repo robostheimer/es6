@@ -1,30 +1,86 @@
 "use strict";
 
-import {
-  createDOM,
-  addAjaxAction,
-  escapeTemplate
-} from "../helpers/create-dom";
-//import { each } from '../helpers/each-template';
-import { iff } from "../helpers/if-template";
-import { memoizeJSON, memoized } from "../helpers/memoize";
-//import { addToStorage } from '../helpers/add-to-storage';
+import { createDOM, escapeTemplate } from "../helpers/create-dom";
+import Geolocation from "./geolocation";
+import Location from "./location";
+import { router } from "../app";
 
-//TODO: Need to add album and track class/components to support linking.
+const geolocation = new Geolocation();
+const location = new Location();
+
 export default class Map {
-  buildMap(lat, lng, container) {
+  fetchGeolocation() {
+    return geolocation.getGeolocation().then(options => {
+      if (options) {
+        return this.fetchTopTracksFromLocation(
+          `${options.latitude},${options.longitude}`
+        ).then(data => {
+          const mapMarkers = this.sortMarkers(data);
+          const options = { tag: "#container", data };
+          return options;
+        });
+      }
+      const position = {
+        position: { latitude: 51.506325, longitude: -0.127144 },
+        tag: "#container"
+      };
+
+      return this.fetchTopTracksFromLocation(
+        `${position.position.latitude},${position.position.longitude}`
+      ).then(data => {
+        const mapMarkers = this.sortMarkers(data);
+        const options = { tag: "#container", data };
+        return options;
+      });
+    });
+  }
+
+  fetchTopTracksFromLocation(position) {
+    return location.fetchTopTracksFromLocation(position).then(data => {
+      return data;
+    });
+  }
+
+  buildMap(data, clearMap = true) {
+    if (clearMap && markers) {
+      markers.forEach(function(item) {
+        map.removeLayer(item);
+      });
+    }
+
     const mapDom = escapeTemplate`
-      <div id="map" style="height: 200px;">
+      <div id="map" style="height: 90vh;">
       </div>`;
+    const lat = data.data[0].Lat;
+    const lng = data.data[0].Lng;
+    const container = data.tag;
+    const songs = data.data;
+    const markers = [];
+    let marker_content;
+    if (router.getHash().indexOf("map") > -1) {
+      router.setHash(`#/map/${songs[0].City}`);
+    }
 
-    createDOM({ html: mapDom, tag: container, clear: true });
-    const map = L.map("map").setView([lat, lng], 14);
-
+    createDOM({ html: mapDom, tag: container, clear: clearMap });
+    const map = L.map("map").setView([lat, lng], 10);
+    const icon = L.icon({
+      iconUrl: "/assets/genre_icons/marker_sm.svg"
+    });
     var circle = L.circle([lat, lng], 125, {
-      color: "#428bca",
-      fillColor: "#428bca",
+      color: "#c53526",
+      fillColor: "#c53526",
       fillOpacity: 0.15
     }).addTo(map);
+
+    let combinedLocations = this.sortMarkers(songs);
+    for (const p in combinedLocations) {
+      console.log(combinedLocations[p].songsStr);
+      L.marker([combinedLocations[p][0].Lat, combinedLocations[p][0].Lng], {
+        icon
+      })
+        .bindPopup(combinedLocations[p].songsStr)
+        .addTo(map);
+    }
 
     L.tileLayer(
       "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}",
@@ -39,5 +95,37 @@ export default class Map {
         ext: "png"
       }
     ).addTo(map);
+
+    map.scrollWheelZoom.disable();
+    map.zoomControl.options.position = "topright";
+  }
+
+  sortMarkers(data) {
+    return data.reduce((accum, song) => {
+      const latLng = `${song.Lat}_${song.Lng}`;
+      if (accum[latLng]) {
+        accum[latLng].push(song);
+        if (song.topTracks.length) {
+          accum[latLng].songsStr += `
+            <h4>${song.City}</h4>
+            <div class="popup-artist-name">${song.Name}</div>
+            <div class="popup-song-name">${song.topTracks[0].name}</div>
+          `;
+        }
+      } else {
+        accum[latLng] = [];
+        accum[latLng].songsStr = "";
+        if (song.topTracks.length) {
+          accum[latLng].songsStr += `
+          <h4>${song.City}</h4>
+          <div class="popup-artist-name">${song.Name}</div>
+          <div class="popup-song-name">${song.topTracks[0].name}</div>
+        `;
+        }
+
+        accum[latLng].push(song);
+      }
+      return accum;
+    }, {});
   }
 }

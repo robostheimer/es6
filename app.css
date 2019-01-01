@@ -1,15 +1,17 @@
 /* app.css */
 
-body{
+body {
   margin: 15px;
   width: calc(100% - 15px);
+  font-size: 16px;
 }
-button {
-  background: #428bca;
+
+button#search_artists {
+  background: #c53526;
   color: white;
   padding: 7px;
   border-radius: 10px;
-  margin: 15px 0  15px;
+  margin: 15px 0 15px;
   border: 1px solid #999;
 }
 
@@ -22,8 +24,7 @@ input {
 }
 
 ul {
-  padding:0;
-
+  padding: 0;
 }
 
 li {
@@ -38,9 +39,38 @@ li {
   display: block;
 }
 
- li.artist,
- li.related-artist
- li.playlist {
+#container {
+  position: relative;
+}
+
+.cards-header {
+  display: flex;
+}
+
+.cards {
+  display: flex;
+}
+
+#playlist {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  height: 100%;
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-top: 3px solid #c53526;
+}
+
+#playlist .card {
+  display: block;
+  width: 25%;
+  margin: 12px;
+}
+
+li.artist,
+li.related-artist li.playlist {
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -75,7 +105,7 @@ iframe {
 
 .related {
   justify-content: center;
-  align-items:flex-end;
+  align-items: flex-end;
 }
 
 .card {
@@ -100,7 +130,6 @@ iframe {
   background-blend-mode: luminosity;
   background-color: rgba(69, 139, 202, 1);
   background-size: cover;
-
 }
 
 #related-artists {
@@ -108,8 +137,9 @@ iframe {
   flex-flow: row wrap;
 }
 
-a, p {
-  color: rgba(69, 139, 202, .8);
+a,
+p {
+  color: rgba(69, 139, 202, 0.8);
   background: white;
   padding: 1px;
   margin-top: 7px;
@@ -118,23 +148,24 @@ a, p {
 
 li h4 {
   color: white;
-  background: rgba(69, 139, 202, .8);
+  background: rgba(69, 139, 202, 0.8);
   padding: 3px;
   margin-bottom: 10px;
   background-blend-mode: luminosity;
   line-height: 1.4;
 }
 
-
 .related-artist {
   min-height: 100px;
   min-width: 150px;
   margin: 10px;
   padding: 15px;
-
 }
 
-.related li, /*.cards div*/ {
+.related li,
+/*.cards div*/
+
+  {
   width: 100px;
   margin: 7px;
 }
@@ -142,12 +173,12 @@ li h4 {
 .cards div {
   margin-left: 0;
 }
+
 .card img {
   width: 100px;
   height: 100px;
   overflow: hidden;
   margin: 7px;
-
 }
 
 .related img {
@@ -155,11 +186,10 @@ li h4 {
 }
 
 .card .info {
-    padding: 15px;
-    width: 100%;
-    background-color: rgba(69, 139, 202, .75);
-    background-blend-mode: darken;
-
+  /* padding: 15px;
+width: 100%; */
+  /* background-color: rgba(69, 139, 202, .75);
+background-blend-mode: darken; */
 }
 
 .player_button {
@@ -173,15 +203,14 @@ li h4 {
 }
 
 #modal {
-
-    background-color: rgba(0, 0,0, .9);
-    width: 100%;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    position: absolute;
-    right: 0;
-    box-shadow: 5px -5px 100px 0px #070707;
+  background-color: rgba(0, 0, 0, 0.9);
+  width: 100%;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  right: 0;
+  box-shadow: 5px -5px 100px 0px #070707;
 }
 
 .modal-dialog {
@@ -206,6 +235,7 @@ li h4 {
 #modal-container {
   /*display: flex;*/
 }
+
 #modal-container img {
   padding-right: 15px;
 }

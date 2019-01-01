@@ -12,14 +12,13 @@ import { createArrayFromFusionData, each } from "../helpers/each-template";
 import { memoizeJSON } from "../helpers/memoize";
 import { addToStorage } from "../helpers/add-to-storage";
 import { buildFusionUrl } from "../helpers/urls";
+import { baseUrl } from "../app";
 
 const related = new relatedArtists();
 const createPlaylist = new CreatePlaylist();
 const auth_header = new Headers({
   Authorization: `Bearer ${sessionStorage.access_token}`
 });
-
-const baseUrl = "https://api.musicwhereyour.com";
 
 export default class Artist {
   hasBackup() {
@@ -178,7 +177,7 @@ export default class Artist {
       </ul>
     `;
 
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 
   createTopTracksDOM(data, name) {
@@ -189,7 +188,7 @@ export default class Artist {
       resolvedData = createArrayFromFusionData(data.data, "topTracks", 20);
     } else {
       //spotify data
-      resolvedData = data.topTracks;
+      resolvedData = data[0].topTracks;
     }
 
     const dom = escapeTemplate`
@@ -216,7 +215,7 @@ export default class Artist {
       `;
     // Need to update create playlist functionality to play nice with new data structure
     //createPlaylist.createSaveButtonDOM(normalizedData, 'topSongs');
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 
   createRecsDOM(data) {
@@ -244,6 +243,6 @@ export default class Artist {
       </ul>
       `;
     createPlaylist.createSaveButtonDOM(data.tracks, "radio");
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 }

@@ -45,6 +45,6 @@ export default class ArtistInfo {
 
     // createDOM({ html: modalDom, tag: 'container' });
     addToStorage("hash", `/artist/info/${name}`);
-    createDOM({ html: infoDom, tag: "modal-container", clear: true });
+    createDOM({ html: infoDom, tag: "#modal-container", clear: true });
   }
 }

@@ -1,11 +1,10 @@
 "use strict";
 
 import $ from "../../node_modules/jquery/dist/jquery.min";
-import each from "./each-template";
 
 // Accepts tag and html (template literal string) options and appends them to the DOM
 export function createDOM(options) {
-  const tag = options.tag === "body" ? options.tag : `#${options.tag}`;
+  const tag = options.tag === "body" ? options.tag : `${options.tag}`;
   const html = options.html;
   const clear = options.clear;
 
@@ -29,6 +28,10 @@ export function clearDOM(tag) {
   if (elem) {
     elem.parentNode.removeChild(elem);
   }
+}
+
+export function hasDOM(tag) {
+  return document.querySelector(tag);
 }
 
 // Pattern that adds ajax actions to dom elements that are attached to specific classes

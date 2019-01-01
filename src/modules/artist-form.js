@@ -27,7 +27,7 @@ export default class ArtistForm {
       </button>
     `;
 
-    createDOM({ html: buttonDOM, tag: "search" });
+    createDOM({ html: buttonDOM, tag: "#search" });
 
     const containerDOM = escapeTemplate`
       <section id="container"></section>

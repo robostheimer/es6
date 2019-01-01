@@ -10,6 +10,7 @@ import {
 } from "../helpers/memoize";
 import { addToStorage } from "../helpers/add-to-storage";
 import { buildFusionUrl } from "../helpers/urls";
+import { baseUrl } from "../app";
 
 const auth_header = new Headers({
   Authorization: `Bearer ${sessionStorage.access_token}`
@@ -45,7 +46,6 @@ export default class RelatedArtists {
 
     //const url = buildFusionUrl(options);
 
-    const baseUrl = "https://api.musicwhereyour.com";
     const route = "relatedMultiple/and~Sid:";
     const url = `${baseUrl}/${route}${id}`;
     if (id) {
@@ -106,6 +106,6 @@ export default class RelatedArtists {
       `,
       `<p><strong>There are no artists related</strong</p>`
     );
-    createDOM({ html: dom, tag: "container", clear: true });
+    createDOM({ html: dom, tag: "#container", clear: true });
   }
 }
