@@ -61,8 +61,8 @@ function startApp() {
   $(window).on("hashchange", function(e) {
     if (hash) {
       hash = router.getHash();
-      router.getParamsFromHash(hash);
       navigation.createNavigationDOM();
+      router.getParamsFromHash(hash);
     }
   });
   cityForm.createCityFormDom();

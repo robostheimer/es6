@@ -162,7 +162,6 @@ export default class Location {
       data.length > 0,
       escapeTemplate`
         <div id="playlist">
-          <a href="#map/${filteredData[0].City}" class="close_link_info ng-click-active" aria-hidden="true" data-icon="P" style="font-size: 30px;"></a>
           <section class="cards-header">
             <h4> Musicians from ${filteredData[0].City}</h4>
           </section>

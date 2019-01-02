@@ -4,17 +4,14 @@ import Artist from "./modules/artist";
 import RelatedArtists from "./modules/related-artists";
 import Album from "./modules/albums";
 import ArtistInfo from "./modules/artist-info";
-// import Geolocation from "./modules/geolocation";
 import Location from "./modules/location";
 import Map from "./modules/map";
-//import Modal from './modules/create-modal';
 
 const hash = window.location.hash.replace("#", "");
 const artist = new Artist();
 const related = new RelatedArtists();
 const album = new Album();
 const artistInfo = new ArtistInfo();
-//const geolocation = new Geolocation();
 const location = new Location();
 const map = new Map();
 
@@ -25,35 +22,11 @@ const routeMap = {
     fetch: "fetchGeolocation",
     dom: "buildMap"
   },
-  artist: {
-    className: artist,
-    hash: "artist",
-    fetch: "fetchArtists",
-    fetchSpotify: "fetchArtistsSpotify",
-    dom: "createArtistDom",
-    subRoutes: [
-      {
-        hash: "info",
-        className: artistInfo,
-        parentClass: "artist",
-        fetch: "fetchArtistInfo",
-        dom: "createInfoDOM"
-      }
-    ]
-  },
-  related: {
-    className: related,
-    hash: "related",
-    fetch: "fetchRelatedArtists",
-    fetchSpotify: "fetchRelatedArtistsSpotify",
-    dom: "createRelatedArtistsDom"
-  },
-  top: {
-    className: artist,
-    hash: "top",
-    fetch: "fetchTopTracks",
-    fetchSpotify: "fetchTopTracksSpotify", //need to add this method
-    dom: "createTopTracksDOM"
+  "#": {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
+    dom: "buildMap"
   },
   albums: {
     className: album,
@@ -68,32 +41,19 @@ const routeMap = {
     fetch: "fetchAlbum",
     dom: "createAlbumDOM"
   },
-  recommendations: {
+  artist: {
     className: artist,
-    hash: "recommendations",
-    fetch: "fetchRecommendations",
-    dom: "createRecsDOM"
-  },
-
-  map: {
-    className: map,
-    hash: "map",
-    fetch: "fetchGeolocation",
-    dom: "buildMap"
-  },
-
-  location: {
-    className: location,
-    hash: "location",
-    fetch: "fetchLocationArtists",
-    dom: "createCityArtistsDOM",
+    hash: "artist",
+    fetch: "fetchArtists",
+    fetchSpotify: "fetchArtistsSpotify",
+    dom: "createArtistDom",
     subRoutes: [
       {
-        hash: "tracks",
-        className: location,
-        parentClass: "location",
-        fetch: "fetchTopTracksFromLocation",
-        dom: "createCityTracksDOM"
+        hash: "info",
+        className: artistInfo,
+        parentClass: "artist",
+        fetch: "fetchArtistInfo",
+        dom: "createInfoDOM"
       }
     ]
   },
@@ -132,6 +92,47 @@ const routeMap = {
         dom: "createCityArtistsDOM"
       }
     ]
+  },
+  location: {
+    className: location,
+    hash: "location",
+    fetch: "fetchLocationArtists",
+    dom: "createCityArtistsDOM",
+    subRoutes: [
+      {
+        hash: "tracks",
+        className: location,
+        parentClass: "location",
+        fetch: "fetchTopTracksFromLocation",
+        dom: "createCityTracksDOM"
+      }
+    ]
+  },
+  map: {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
+    dom: "buildMap"
+  },
+  recommendations: {
+    className: artist,
+    hash: "recommendations",
+    fetch: "fetchRecommendations",
+    dom: "createRecsDOM"
+  },
+  related: {
+    className: related,
+    hash: "related",
+    fetch: "fetchRelatedArtists",
+    fetchSpotify: "fetchRelatedArtistsSpotify",
+    dom: "createRelatedArtistsDom"
+  },
+  top: {
+    className: artist,
+    hash: "top",
+    fetch: "fetchTopTracks",
+    fetchSpotify: "fetchTopTracksSpotify", //need to add this method
+    dom: "createTopTracksDOM"
   }
 };
 

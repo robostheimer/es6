@@ -12,7 +12,11 @@ export default class Navigation {
   }
   getCity() {
     const hash = this.getHash();
-    return hash.split("/")[2]
+    let city = hash.split("/")[2];
+    if(city === "" || undefined) {
+      city = sessionStorage.hash.split("/")[2];
+    }
+    return city;
   }
 
   getIcons() {
@@ -20,16 +24,18 @@ export default class Navigation {
     return [
       {
         icon: 'map',
+        type: 'link',
         activeClass: 'active-ma',
         txt: `<a href="#/city/${city}/" >
           <div class="open_div">
             <span
-              class="${iff(this.getHash().indexOf('tracks') > -1, "icon iconmap nav-icon active-ma", "icon iconmap nav-icon")}></span>
+              class="${iff(this.getHash().indexOf('city') > -1 && this.getHash().indexOf('tracks') === -1, "icon iconmap nav-icon active-ma", "icon iconmap nav-icon")}"></span>
           </div>
               </a >`
       },
       {
         icon: 'song',
+        type: 'link',
         activeClass: 'active-pl',
         txt: `<a href="#/city/${city}/tracks" >
           <div class="open_div">
@@ -40,6 +46,7 @@ export default class Navigation {
       },
       {
         icon: 'genres',
+        type: 'button',
         activeClass: 'active-ge',
         txt: `<button class= "open_div" >
             <span
@@ -48,16 +55,18 @@ export default class Navigation {
       },
       {
         icon: 'star',
+        type: 'link',
         activeClass: 'active-fa',
-        txt: `<a href="#/favorites" >
+        txt: `<a href="#/favorites/" >
           <div class="open_div">
             <span
-              class="icon iconfavorite nav-icon"></span>
+              class="${iff(this.getHash().indexOf('favorites') > -1, "icon iconfavorite nav-icon active-fa", "icon iconfavorite nav-icon")}"></span>
           </div>
               </a >`
       },
       {
         icon: 'information',
+        type: 'button',
         activeClass: 'active-in',
         txt: `<button class="open_div">
           <span
@@ -100,21 +109,25 @@ export default class Navigation {
     const type = options.type
     let nodes = document.querySelectorAll('.nav-icon');
   
-    // nodes.forEach((item,index) => {
-    //   let classes = item.getAttribute('class');
-    //   let classesArr = classes.split(' ');
-    //   if(classes.indexOf('active') > -1) {
-    //     const filteredClasses = classesArr.filter((item) => {
-    //       return item.indexOf('active') === -1;
-    //     })
-    //     classes = filteredClasses.join(' ');
-    //     item.setAttribute('class', classes);
-    //   }
-    //   if(icons[index].icon === options.type) {
-    //     classesArr.push(icons[index].activeClass);
-    //     classes = classesArr.join(' ');
-    //     item.setAttribute('class', classes);
-    //   }
-    // });
+    nodes.forEach((item,index) => {
+      let classes = item.getAttribute('class');
+      let classesArr = classes.split(' ') || [];
+      let toggledClasses = [];
+      const isActive = classes.indexOf('active') > -1;
+
+      if (icons[index].icon === type) {
+        if(isActive) {
+          toggledClasses = classesArr.filter((item) => {
+            return item.indexOf('active') === -1;
+          })
+        } else {
+          classesArr.push(icons[index].activeClass);
+          toggledClasses = classesArr;
+        }
+        
+        classes = toggledClasses.join(' ');
+        item.setAttribute('class', classes);
+      }
+    });
   }
 }

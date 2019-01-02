@@ -79,8 +79,8 @@ function startApp() {
   $(window).on("hashchange", function (e) {
     if (hash) {
       hash = router.getHash();
-      router.getParamsFromHash(hash);
       navigation.createNavigationDOM();
+      router.getParamsFromHash(hash);
     }
   });
   cityForm.createCityFormDom();
@@ -1436,7 +1436,7 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _templateObject = _taggedTemplateLiteral(["\n      <h4> Musicians from ", "\n      <ul id=\"related-artists\" class=\"cards\">\n        ", "\n      </ul>\n      "], ["\n      <h4> Musicians from ", "\n      <ul id=\"related-artists\" class=\"cards\">\n        ", "\n      </ul>\n      "]),
-    _templateObject2 = _taggedTemplateLiteral(["\n        <div id=\"playlist\">\n          <a href=\"#map/", "\" class=\"close_link_info ng-click-active\" aria-hidden=\"true\" data-icon=\"P\" style=\"font-size: 30px;\"></a>\n          <section class=\"cards-header\">\n            <h4> Musicians from ", "</h4>\n          </section>\n          <ul class=\"cards\">\n            ", "\n          </ul>\n        </div>\n        "], ["\n        <div id=\"playlist\">\n          <a href=\"#map/", "\" class=\"close_link_info ng-click-active\" aria-hidden=\"true\" data-icon=\"P\" style=\"font-size: 30px;\"></a>\n          <section class=\"cards-header\">\n            <h4> Musicians from ", "</h4>\n          </section>\n          <ul class=\"cards\">\n            ", "\n          </ul>\n        </div>\n        "]);
+    _templateObject2 = _taggedTemplateLiteral(["\n        <div id=\"playlist\">\n          <section class=\"cards-header\">\n            <h4> Musicians from ", "</h4>\n          </section>\n          <ul class=\"cards\">\n            ", "\n          </ul>\n        </div>\n        "], ["\n        <div id=\"playlist\">\n          <section class=\"cards-header\">\n            <h4> Musicians from ", "</h4>\n          </section>\n          <ul class=\"cards\">\n            ", "\n          </ul>\n        </div>\n        "]);
 
 var _createDom = require("../helpers/create-dom");
 
@@ -1587,7 +1587,7 @@ var Location = function () {
 
       var mapData = { data: data, tag: "#container" };
       _app.map.buildMap(mapData, true);
-      var dom = (0, _ifTemplate.iff)(data.length > 0, (0, _createDom.escapeTemplate)(_templateObject2, filteredData[0].City, filteredData[0].City, (0, _eachTemplate.each)({
+      var dom = (0, _ifTemplate.iff)(data.length > 0, (0, _createDom.escapeTemplate)(_templateObject2, filteredData[0].City, (0, _eachTemplate.each)({
         data: filteredData,
         tag: "li",
         txt: "<div class=\"info\">\n                  <a href=\"{{topTracks[0].name}}\">{{topTracks[0].name}}</a>\n                </div>\n                <div class=\"info\">By \n                  <a href=\"#/artist/{{Name}}\">{{Name}}</a>\n                </div>\n                <a class=\"spotter\" href=\"spotify:track:{{topTracks.id}}\" >\n                  <div class=\"spot_link_spot\" style=\"margin-left:5px;font-size:27px;\" aria-hidden=\"true\" data-icon=\"c\"></div>\n                </a>\n                <a>\n                  <div class=\"icon iconfavorite2 spot_link favorite favorite_on\"></div>\n                </a>\n                <a>\n                  <div class=\"icon iconfavorite spot_link favorite favorite_on\"></div>\n                </a>",
@@ -1859,7 +1859,11 @@ var Navigation = function () {
     key: "getCity",
     value: function getCity() {
       var hash = this.getHash();
-      return hash.split("/")[2];
+      var city = hash.split("/")[2];
+      if (city === "" || undefined) {
+        city = sessionStorage.hash.split("/")[2];
+      }
+      return city;
     }
   }, {
     key: "getIcons",
@@ -1867,22 +1871,27 @@ var Navigation = function () {
       var city = this.getCity();
       return [{
         icon: 'map',
+        type: 'link',
         activeClass: 'active-ma',
-        txt: "<a href=\"#/city/" + city + "/\" >\n          <div class=\"open_div\">\n            <span\n              class=\"" + (0, _ifTemplate.iff)(this.getHash().indexOf('tracks') > -1, "icon iconmap nav-icon active-ma", "icon iconmap nav-icon") + "></span>\n          </div>\n              </a >"
+        txt: "<a href=\"#/city/" + city + "/\" >\n          <div class=\"open_div\">\n            <span\n              class=\"" + (0, _ifTemplate.iff)(this.getHash().indexOf('city') > -1 && this.getHash().indexOf('tracks') === -1, "icon iconmap nav-icon active-ma", "icon iconmap nav-icon") + "\"></span>\n          </div>\n              </a >"
       }, {
         icon: 'song',
+        type: 'link',
         activeClass: 'active-pl',
         txt: "<a href=\"#/city/" + city + "/tracks\" >\n          <div class=\"open_div\">\n            <span\n              class=\"" + (0, _ifTemplate.iff)(this.getHash().indexOf('tracks') > -1, "icon iconsong nav-icon active-pl", "icon iconsong nav-icon") + "\"></span>\n          </div>\n              </a >"
       }, {
         icon: 'genres',
+        type: 'button',
         activeClass: 'active-ge',
         txt: "<button class= \"open_div\" >\n            <span\n            class=\"icon iconequalizer12 nav-icon\"></span>\n              </button >"
       }, {
         icon: 'star',
+        type: 'link',
         activeClass: 'active-fa',
-        txt: "<a href=\"#/favorites\" >\n          <div class=\"open_div\">\n            <span\n              class=\"icon iconfavorite nav-icon\"></span>\n          </div>\n              </a >"
+        txt: "<a href=\"#/favorites/\" >\n          <div class=\"open_div\">\n            <span\n              class=\"" + (0, _ifTemplate.iff)(this.getHash().indexOf('favorites') > -1, "icon iconfavorite nav-icon active-fa", "icon iconfavorite nav-icon") + "\"></span>\n          </div>\n              </a >"
       }, {
         icon: 'information',
+        type: 'button',
         activeClass: 'active-in',
         txt: "<button class=\"open_div\">\n          <span\n            class=\"icon iconinfo nav-icon\"></span>\n        </button>"
       }];
@@ -1917,22 +1926,26 @@ var Navigation = function () {
       var type = options.type;
       var nodes = document.querySelectorAll('.nav-icon');
 
-      // nodes.forEach((item,index) => {
-      //   let classes = item.getAttribute('class');
-      //   let classesArr = classes.split(' ');
-      //   if(classes.indexOf('active') > -1) {
-      //     const filteredClasses = classesArr.filter((item) => {
-      //       return item.indexOf('active') === -1;
-      //     })
-      //     classes = filteredClasses.join(' ');
-      //     item.setAttribute('class', classes);
-      //   }
-      //   if(icons[index].icon === options.type) {
-      //     classesArr.push(icons[index].activeClass);
-      //     classes = classesArr.join(' ');
-      //     item.setAttribute('class', classes);
-      //   }
-      // });
+      nodes.forEach(function (item, index) {
+        var classes = item.getAttribute('class');
+        var classesArr = classes.split(' ') || [];
+        var toggledClasses = [];
+        var isActive = classes.indexOf('active') > -1;
+
+        if (icons[index].icon === type) {
+          if (isActive) {
+            toggledClasses = classesArr.filter(function (item) {
+              return item.indexOf('active') === -1;
+            });
+          } else {
+            classesArr.push(icons[index].activeClass);
+            toggledClasses = classesArr;
+          }
+
+          classes = toggledClasses.join(' ');
+          item.setAttribute('class', classes);
+        }
+      });
     }
   }]);
 
@@ -2127,8 +2140,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// import Geolocation from "./modules/geolocation";
-
 
 var _artist = require("./modules/artist");
 
@@ -2158,14 +2169,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-//import Modal from './modules/create-modal';
-
 var hash = window.location.hash.replace("#", "");
 var artist = new _artist2.default();
 var related = new _relatedArtists2.default();
 var album = new _albums2.default();
 var artistInfo = new _artistInfo2.default();
-//const geolocation = new Geolocation();
 var location = new _location2.default();
 var map = new _map2.default();
 
@@ -2176,33 +2184,11 @@ var routeMap = {
     fetch: "fetchGeolocation",
     dom: "buildMap"
   },
-  artist: {
-    className: artist,
-    hash: "artist",
-    fetch: "fetchArtists",
-    fetchSpotify: "fetchArtistsSpotify",
-    dom: "createArtistDom",
-    subRoutes: [{
-      hash: "info",
-      className: artistInfo,
-      parentClass: "artist",
-      fetch: "fetchArtistInfo",
-      dom: "createInfoDOM"
-    }]
-  },
-  related: {
-    className: related,
-    hash: "related",
-    fetch: "fetchRelatedArtists",
-    fetchSpotify: "fetchRelatedArtistsSpotify",
-    dom: "createRelatedArtistsDom"
-  },
-  top: {
-    className: artist,
-    hash: "top",
-    fetch: "fetchTopTracks",
-    fetchSpotify: "fetchTopTracksSpotify", //need to add this method
-    dom: "createTopTracksDOM"
+  "#": {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
+    dom: "buildMap"
   },
   albums: {
     className: album,
@@ -2217,31 +2203,18 @@ var routeMap = {
     fetch: "fetchAlbum",
     dom: "createAlbumDOM"
   },
-  recommendations: {
+  artist: {
     className: artist,
-    hash: "recommendations",
-    fetch: "fetchRecommendations",
-    dom: "createRecsDOM"
-  },
-
-  map: {
-    className: map,
-    hash: "map",
-    fetch: "fetchGeolocation",
-    dom: "buildMap"
-  },
-
-  location: {
-    className: location,
-    hash: "location",
-    fetch: "fetchLocationArtists",
-    dom: "createCityArtistsDOM",
+    hash: "artist",
+    fetch: "fetchArtists",
+    fetchSpotify: "fetchArtistsSpotify",
+    dom: "createArtistDom",
     subRoutes: [{
-      hash: "tracks",
-      className: location,
-      parentClass: "location",
-      fetch: "fetchTopTracksFromLocation",
-      dom: "createCityTracksDOM"
+      hash: "info",
+      className: artistInfo,
+      parentClass: "artist",
+      fetch: "fetchArtistInfo",
+      dom: "createInfoDOM"
     }]
   },
   city: {
@@ -2274,6 +2247,45 @@ var routeMap = {
       fetch: "fetchCityArtists",
       dom: "createCityArtistsDOM"
     }]
+  },
+  location: {
+    className: location,
+    hash: "location",
+    fetch: "fetchLocationArtists",
+    dom: "createCityArtistsDOM",
+    subRoutes: [{
+      hash: "tracks",
+      className: location,
+      parentClass: "location",
+      fetch: "fetchTopTracksFromLocation",
+      dom: "createCityTracksDOM"
+    }]
+  },
+  map: {
+    className: map,
+    hash: "map",
+    fetch: "fetchGeolocation",
+    dom: "buildMap"
+  },
+  recommendations: {
+    className: artist,
+    hash: "recommendations",
+    fetch: "fetchRecommendations",
+    dom: "createRecsDOM"
+  },
+  related: {
+    className: related,
+    hash: "related",
+    fetch: "fetchRelatedArtists",
+    fetchSpotify: "fetchRelatedArtistsSpotify",
+    dom: "createRelatedArtistsDom"
+  },
+  top: {
+    className: artist,
+    hash: "top",
+    fetch: "fetchTopTracks",
+    fetchSpotify: "fetchTopTracksSpotify", //need to add this method
+    dom: "createTopTracksDOM"
   }
 };
 
