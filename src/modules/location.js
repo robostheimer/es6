@@ -6,15 +6,12 @@ import { each } from "../helpers/each-template";
 import { iff } from "../helpers/if-template";
 import { addToStorage } from "../helpers/add-to-storage";
 import { baseUrl } from "../app";
-import {
-  buildFusionUrl,
-  buildComplexQuery,
-  buildComplexFusionUrl
-} from "../helpers/urls";
-
+import { flattenArrayOfObjects, sortArrAsc } from "../helpers/arrays";
 import { normalizeParams } from "../helpers/strings";
 
 import { map } from "../app";
+let innerLimit = 0;
+let outerLimit = 50;
 
 //TODO: Need to add album and track class/components to support linking.
 export default class Location {
@@ -33,8 +30,8 @@ export default class Location {
         : `${baseUrl}/artistsMultiple/and~Lat:${lat}_Lng:${lng}?limit=50`;
 
       const hash = paramsStr
-        ? `/location/${lat_lng}/artists_${paramsStr}`
-        : `/location/${lat_lng}/artists`;
+        ? `/location/${lat_lng}/artists_${paramsStr}/`
+        : `/location/${lat_lng}/artists/`;
       const data = memoizeJSON({
         key: hash,
         fn() {
@@ -57,8 +54,8 @@ export default class Location {
       ? `${baseUrl}/artistsMultiple/and~City:${city}_${paramsStr}?limit=50`
       : `${baseUrl}/artistsMultiple/and~City:${city}?limit=50`;
     const hash = paramsStr
-      ? `/city/${city}/artists/${params}`
-      : `/city/${city}/artists`;
+      ? `/city/${city}/artists/${params}/`
+      : `/city/${city}/artists/`;
 
     const data = memoizeJSON({
       key: hash,
@@ -86,8 +83,8 @@ export default class Location {
         ? `${baseUrl}/topTracksMultiple/and~Lat:${lat}_Lng:${lng}/params?limit=50`
         : `${baseUrl}/topTracksMultiple/and~Lat:${lat}_Lng:${lng}?limit=50`;
       const hash = paramsStr
-        ? `/location/${lat_lng}/tracks/${params}`
-        : `/location/${lat_lng}/tracks`;
+        ? `/location/${lat_lng}/tracks/${params}/`
+        : `/location/${lat_lng}/tracks/`;
       const data = memoizeJSON({
         key: hash,
         fn() {
@@ -110,8 +107,8 @@ export default class Location {
       ? `${baseUrl}/topTracksMultiple/and~City:${city}_${paramsStr}?limit=50`
       : `${baseUrl}/topTracksMultiple/and~City:${city}?limit=50`;
     const hash = paramsStr
-      ? `/city/${city}/tracks${params}`
-      : `/city/${city}/tracks`;
+      ? `/city/${city}/tracks${params}/`
+      : `/city/${city}/tracks/`;
     const data = memoizeJSON({
       key: hash,
       fn() {
@@ -119,7 +116,7 @@ export default class Location {
       }
     });
     addToStorage("hash", hash);
-
+    // flatten topTracks from all artists into an array and sort via popularity
     return data;
   }
 
@@ -145,13 +142,21 @@ export default class Location {
     );
     createDOM({ html: dom, tag: "#container", clear: true });
   }
-  
+
   createCityMapDOM(data) {
     const mapData = { data, tag: "#container" };
     map.buildMap(mapData, true);
   }
 
   createCityTracksDOM(data) {
+    // take all top tracks and flatten into one big tracks array
+    // sort via popularity
+
+    const flattenedData = sortArrAsc(
+      flattenArrayOfObjects(data, "topTracks"),
+      "popularity"
+    );
+    const slicedArr = flattenedData.slice(innerLimit, outerLimit);
     const filteredData = data.filter(item => {
       return item.topTracks[0] && item.topTracks[0].album;
     });
@@ -167,16 +172,15 @@ export default class Location {
           </section>
           <ul class="cards">
             ${each({
-              data: filteredData,
+              data: slicedArr,
               tag: "li",
-              txt:
-                `<div class="info">
-                  <a href="{{topTracks[0].name}}">{{topTracks[0].name}}</a>
+              txt: `<div class="info">
+                  <a href="{{name}}">{{name}}</a>
                 </div>
                 <div class="info">By 
-                  <a href="#/artist/{{Name}}">{{Name}}</a>
+                  <a href="#/artist/{{artists[0].name}}">{{artists[0].name}}</a>
                 </div>
-                <a class="spotter" href="spotify:track:{{topTracks.id}}" >
+                <a class="spotter" href="spotify:track:{{\id}}" >
                   <div class="spot_link_spot" style="margin-left:5px;font-size:27px;" aria-hidden="true" data-icon="c"></div>
                 </a>
                 <a>
@@ -187,8 +191,8 @@ export default class Location {
                 </a>`,
               attrs: {
                 class: "gray card",
-                id: null,
-                //style: "background-image:url({{topTracks[0].album.images[0].url}})"
+                id: null
+                //style: "background-image:url({{album.images[0].url}})"
               }
             })}
           </ul>

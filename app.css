@@ -27,12 +27,12 @@ ul {
   padding: 0;
 }
 
-li {
+/* li {
   margin: 0;
   padding: 0;
   list-style: none;
   color: white;
-}
+} */
 
 .track {
   color: #999;
@@ -65,7 +65,7 @@ li {
 
 #playlist .card {
   display: block;
-  width: 25%;
+  flex: 0 0 calc(20% - 24px);
   margin: 12px;
 }
 
@@ -165,7 +165,7 @@ li h4 {
 .related li,
 /*.cards div*/
 
-  {
+ {
   width: 100px;
   margin: 7px;
 }
