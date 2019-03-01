@@ -143,16 +143,6 @@ export default class Navigation {
     const type = options.type;
     let nodes = document.querySelectorAll(".nav-icon");
 
-    // hacky way to get genres to work.  Revisit
-    const genreDOM = document.querySelector("#genres");
-    if (type === "genres") {
-      if (genreDOM.classList.contains("hide")) {
-        genreDOM.classList.remove("hide");
-      } else {
-        genreDOM.classList.add("hide");
-      }
-    }
-
     nodes.forEach((item, index) => {
       let classes = item.getAttribute("class");
       let classesArr = classes.split(" ") || [];

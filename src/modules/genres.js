@@ -61,9 +61,9 @@ export default class Navigation {
   createGenresDOM() {
     this.setHashedActiveGenres();
     const genresDOM = escapeTemplate`
-      <div
-      id="genre_holder">
-      <ul class="genre_ul">
+      <nav
+      class="navigation_holder">
+      <ul class="nav_ul">
         ${each({
           data: genreIcons,
           tag: "li",
@@ -78,7 +78,7 @@ export default class Navigation {
             </div>`
         })}
       </ul>
-    </div>`;
+    </nav>`;
     createDOM({ html: genresDOM, tag: "#genres", clear: true });
 
     genreIcons.forEach(item => {

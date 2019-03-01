@@ -1656,7 +1656,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(["\n      <div\n      id=\"genre_holder\">\n      <ul class=\"genre_ul\">\n        ", "\n      </ul>\n    </div>"], ["\n      <div\n      id=\"genre_holder\">\n      <ul class=\"genre_ul\">\n        ", "\n      </ul>\n    </div>"]);
+var _templateObject = _taggedTemplateLiteral(["\n      <nav\n      class=\"navigation_holder\">\n      <ul class=\"nav_ul\">\n        ", "\n      </ul>\n    </nav>"], ["\n      <nav\n      class=\"navigation_holder\">\n      <ul class=\"nav_ul\">\n        ", "\n      </ul>\n    </nav>"]);
 
 var _createDom = require("../helpers/create-dom");
 
@@ -1719,6 +1719,7 @@ var Navigation = function () {
           _genreIcons.genreIcons.forEach(function (genre) {
             //if (hashedGenres.indexOf(genre.genre.name.toLowerCase()) > -1) {
             if (genre.genre.similarGenres.indexOf(decodeURIComponent(hG)) > -1) {
+              debugger;
               genre.genre.checkedState = "checked";
               genre.genre.state = "on";
             }
@@ -2421,16 +2422,6 @@ var Navigation = function () {
       var icons = options.icons;
       var type = options.type;
       var nodes = document.querySelectorAll(".nav-icon");
-
-      // hacky way to get genres to work.  Revisit
-      var genreDOM = document.querySelector("#genres");
-      if (type === "genres") {
-        if (genreDOM.classList.contains("hide")) {
-          genreDOM.classList.remove("hide");
-        } else {
-          genreDOM.classList.add("hide");
-        }
-      }
 
       nodes.forEach(function (item, index) {
         var classes = item.getAttribute("class");
