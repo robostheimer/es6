@@ -989,8 +989,8 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 #genre_holder,
 #spot_holder,
 #fav_holder {
-  position: absolute;
-  top: 0;
+  position: fixed;
+  bottom: 50px;
   z-index: 1000;
   width: 100%;
   background-color: white;
@@ -1543,23 +1543,23 @@ nav li section span.item {}
 }
 
 .geomix {
-  background-image: url(genre_icons/Roadtrip_geomix_sm.png);
+  background-image: url(assets/genre_icons/Roadtrip_geomix_sm.png);
 }
 
 .musicwhereyouare {
-  background-image: url(genre_icons/music_where_you_are_sm.png);
+  background-image: url(assets/genre_icons/music_where_you_are_sm.png);
 }
 
 .folowwme {
-  background-image: url(genre_icons/follow_me_music_sm.png);
+  background-image: url(assets/genre_icons/follow_me_music_sm.png);
 }
 
 .addtospot {
-  background-image: url(genre_icons/add_to_spot_sm.png);
+  background-image: url(assets/genre_icons/add_to_spot_sm.png);
 }
 
-[class~=avant] {
-  background-image: url(genre_icons/avant_garde_rw_sm.png);
+[class~=avant_garde] {
+  background-image: url(assets/genre_icons/avant_garde_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1567,7 +1567,7 @@ nav li section span.item {}
 }
 
 [class~=blues] {
-  background-image: url(genre_icons/blues_rw_sm.png);
+  background-image: url(assets/genre_icons/blues_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1575,7 +1575,7 @@ nav li section span.item {}
 }
 
 [class~=classic_rock] {
-  background-image: url(genre_icons/classic_rock_rw_sm.png);
+  background-image: url(assets/genre_icons/classic_rock_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1583,7 +1583,7 @@ nav li section span.item {}
 }
 
 [class~=classical] {
-  background-image: url(genre_icons/classical_rw_sm.png);
+  background-image: url(assets/genre_icons/classical_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1591,7 +1591,7 @@ nav li section span.item {}
 }
 
 [class~=country] {
-  background-image: url(genre_icons/country_rw_sm.png);
+  background-image: url(assets/genre_icons/country_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1599,7 +1599,7 @@ nav li section span.item {}
 }
 
 [class~=drama] {
-  background-image: url(genre_icons/drama_rw_sm.png);
+  background-image: url(assets/genre_icons/drama_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1607,7 +1607,7 @@ nav li section span.item {}
 }
 
 [class~=electronic] {
-  background-image: url(genre_icons/electronica_rw_sm.png);
+  background-image: url(assets/genre_icons/electronica_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1615,15 +1615,15 @@ nav li section span.item {}
 }
 
 [class~=folk] {
-  background-image: url(genre_icons/folk_rw_sm.png);
+  background-image: url(assets/genre_icons/folk_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
   margin-top: 0px;
 }
 
-[class~=hip] {
-  background-image: url(genre_icons/hip-hop_rw_sm.png);
+[class~=hip_hop] {
+  background-image: url(assets/genre_icons/hip-hop_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1631,7 +1631,7 @@ nav li section span.item {}
 }
 
 [class~=drama] {
-  background-image: url(genre_icons/drama_rw_sm.png);
+  background-image: url(assets/genre_icons/drama_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1639,7 +1639,7 @@ nav li section span.item {}
 }
 
 [class~=holiday] {
-  background-image: url(genre_icons/holiday_rw_sm.png);
+  background-image: url(assets/genre_icons/holiday_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1647,7 +1647,7 @@ nav li section span.item {}
 }
 
 [class~=indie] {
-  background-image: url(genre_icons/indie_rw_sm.png);
+  background-image: url(assets/genre_icons/indie_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1655,7 +1655,7 @@ nav li section span.item {}
 }
 
 [class~=jazz] {
-  background-image: url(genre_icons/jazz_rw_sm.png);
+  background-image: url(assets/genre_icons/jazz_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1663,7 +1663,7 @@ nav li section span.item {}
 }
 
 [class~=kid] {
-  background-image: url(genre_icons/kids_rw_sm.png);
+  background-image: url(assets/genre_icons/kids_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1671,7 +1671,7 @@ nav li section span.item {}
 }
 
 [class~=latin] {
-  background-image: url(genre_icons/latin_rw_sm.png);
+  background-image: url(assets/genre_icons/latin_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1679,15 +1679,15 @@ nav li section span.item {}
 }
 
 [class~=comedy] {
-  background-image: url(genre_icons/mic_rw_sm.png);
+  background-image: url(assets/genre_icons/mic_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
   margin-top: 0px;
 }
 
-[class~=new] {
-  background-image: url(genre_icons/new_age_rw_sm.png);
+[class~=new_age] {
+  background-image: url(assets/genre_icons/new_age_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1695,7 +1695,7 @@ nav li section span.item {}
 }
 
 [class~=pop] {
-  background-image: url(genre_icons/pop_rw_sm.png);
+  background-image: url(assets/genre_icons/pop_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1703,7 +1703,7 @@ nav li section span.item {}
 }
 
 [class~=punk] {
-  background-image: url(genre_icons/punk_rw_sm.png);
+  background-image: url(assets/genre_icons/punk_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1711,7 +1711,7 @@ nav li section span.item {}
 }
 
 [class~=motown] {
-  background-image: url(genre_icons/r&b_rw_sm.png);
+  background-image: url(assets/genre_icons/r&b_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1719,7 +1719,7 @@ nav li section span.item {}
 }
 
 [class~=rock] {
-  background-image: url(genre_icons/rock_rw_sm.png);
+  background-image: url(assets/genre_icons/rock_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1727,7 +1727,7 @@ nav li section span.item {}
 }
 
 [class~=soft_rock] {
-  background-image: url(genre_icons/soft_rock_rw_sm.png);
+  background-image: url(assets/genre_icons/soft_rock_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1735,7 +1735,7 @@ nav li section span.item {}
 }
 
 [class~=world] {
-  background-image: url(genre_icons/world_rw_sm.png);
+  background-image: url(assets/genre_icons/world_rw_sm.png);
   width: 27px;
   height: 27px;
   margin: 5px;
@@ -1888,32 +1888,29 @@ h4,
   display: block
 }
 
-.on {
+div.checkbox.on {
   background-position: -27px 0px;
   background-color: #c53526;
   color: white;
 }
 
-.off {
+div.checkbox.off {
   background-position: 0px 0px;
-  background-color: #f3f3f3;
+  background-color: #ffffff;
   /*border: 1px solid #ececec;*/
 }
 
-#selector_genre div.checkbox,
-#selector_era div.checkbox,
-#selector_mood div.checkbox {
+div.checkbox {
   margin-bottom: 15px;
   margin-right: 10px;
   padding: 3px;
   border: 2px solid #c53526;
   border-radius: 10px;
   padding-bottom: 0px;
+  background: white;
 }
 
-#selector div.checkbox:hover,
-div.on {
-  background: #c53526;
+div.checkbox.on .genre_text {
   color: white
 }
 
@@ -1939,6 +1936,7 @@ input[class="check"]+label div {
   G height: 20px;
   vertical-align: middle;
   cursor: pointer;
+  text-transform: none;
 }
 
 input[type="checkbox"]:checked+label div,
@@ -1953,6 +1951,7 @@ div.checkbox label div.genre_text {
   margin-top: 3px;
   width: auto;
   height: auto;
+  color: #C53526;
 }
 
 #geolocation_alert {

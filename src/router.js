@@ -245,11 +245,11 @@ class Router {
   _createHashArgs(hash) {
     let hashArr, route, id, name, params;
 
-    (hashArr = hash.split("/") || hash.split("_")),
-      (route = hashArr[0]),
-      (id = hashArr[1]),
-      (name = hashArr[2]);
-    params = hashArr[3];
+    (hashArr = hash.split("/") || hash.split("_")), (route = hashArr[0]);
+    id = hashArr[1];
+    name = hashArr[2] && hashArr[2].indexOf(":") === -1 ? hashArr[2] : "";
+    params =
+      hashArr[2] && hashArr[2].indexOf(":") > -1 ? hashArr[2] : hashArr[3];
 
     return { id, route, name, params };
   }

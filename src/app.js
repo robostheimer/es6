@@ -4,12 +4,13 @@ import Router from "./router";
 import CityForm from "./modules/city-form";
 import Map from "./modules/map";
 import Navigation from "./modules/navigation";
-import { hasDOM } from "./helpers/create-dom";
+import Genres from "./modules/genres";
 
 const cityForm = new CityForm();
 export const router = new Router();
 export const map = new Map();
 const navigation = new Navigation();
+const genres = new Genres();
 
 const client_id = "1b7c83fc02404e08892183b94c0986a9";
 const scope = "playlist-modify-private playlist-modify-public";
@@ -62,11 +63,13 @@ function startApp() {
     if (hash) {
       hash = router.getHash();
       navigation.createNavigationDOM();
+      genres.createGenresDOM();
       router.getParamsFromHash(hash);
     }
   });
   cityForm.createCityFormDom();
   navigation.createNavigationDOM();
+  genres.createGenresDOM();
 }
 
 $(document).ready(init);

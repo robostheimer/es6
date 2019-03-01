@@ -1,9 +1,9 @@
 "use strict";
 
-export function flatten(arr) {
-  return arr.reduce(function(prev, curr) {
-    return prev.concat(curr);
-  });
+export function flattenArrayOfObjects(arr, prop) {
+  return arr.reduce((iterator, item) => {
+    return iterator.concat(item[prop]);
+  }, []);
 }
 // TODO: clean this up
 export function sortObjDsc(arr, property, num_or_str, checkDupProperty) {
@@ -18,8 +18,8 @@ export function sortArrAsc(arr, property, num_or_str, checkDupProperty) {
       return parseInt(a[property]) > parseInt(b[property])
         ? 1
         : parseInt(b[property]) > parseInt(a[property])
-          ? -1
-          : 0;
+        ? -1
+        : 0;
     });
 
     return arr;
