@@ -20,6 +20,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.active:before {
+  background: #c53526;
+  color: white;
+  width;
+  content: "\6a";
+  padding: 5px;
+  border: 1px dotted white;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 25px;
+}
+
 .active-ma:before {
   background: #c53526;
   color: white;

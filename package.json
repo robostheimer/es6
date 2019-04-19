@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "watch": {
+    "build": {
+      "patterns": [
+        "src",
+        "app.js",
+        "app.css",
+        "style.css",
+        "index.html"
+      ]
+    }
+  },
   "dependencies": {
     "babel-preset-env": "^1.4.0",
     "babel-cli": "^6.24.1"
@@ -15,7 +26,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "ls": " cd lib/modules && ls",
     "build": "node_modules/babel-cli/bin/babel.js src -d lib && browserify lib/app.js -o bundle.js",
-    "dev": "nodemon node-server.js"
+    "dev": "nodemon node-server.js & tsc -w",
+    "watch_app": "npm-watch build"
   },
   "author": "",
   "license": "ISC"

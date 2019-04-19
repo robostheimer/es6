@@ -280,7 +280,8 @@ h5 {
   margin-top: 5px;
 }
 
-.hider {
+.hider,
+.hide {
   display: none
 }
 
@@ -478,6 +479,7 @@ header {
 }
 
 ;
+
 .no_vis {
   opacity: 0
 }
@@ -990,14 +992,15 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 #spot_holder,
 #fav_holder {
   position: fixed;
-  bottom: 50px;
+  bottom: 60px;
   z-index: 1000;
   width: 100%;
   background-color: white;
   padding: 1%;
   padding-top: 0px;
-  margin: 1%;
   margin-top: 0;
+  border-top: 2px solid #c53526;
+  padding: 12px;
 }
 
 #spot_holder,
@@ -1259,6 +1262,8 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   color: #c53526;
   overflow: hidden;
   cursor: pointer;
+  background: none;
+  border: none;
 }
 
 .gray .spot_link:hover,
@@ -1910,12 +1915,8 @@ div.checkbox {
   background: white;
 }
 
-<<<<<<< HEAD
 div.checkbox.on .genre_text {
-=======
-div.on {
   background: #c53526;
->>>>>>> a1a0579b0217807bc267ac9b4df3a94de314ed5d
   color: white
 }
 
@@ -2163,6 +2164,7 @@ p.event_description {
   body {
     height: 93%
   }
+
   #map-area {
     height: 100%;
     width: 100%;
@@ -2173,6 +2175,7 @@ p.event_description {
   body {
     height: 93%
   }
+
   #map-area {
     height: 100%;
     width: 100%;
@@ -2183,6 +2186,7 @@ p.event_description {
   body {
     height: 92%
   }
+
   #map-area {
     height: 100%;
     width: 100%;
@@ -2193,6 +2197,7 @@ p.event_description {
   body {
     height: 90%
   }
+
   #map-area {
     height: 100%;
     width: 100%;
@@ -2204,9 +2209,11 @@ p.event_description {
     height: 100%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 7%
   }
+
   .from-top {
     height: 50%
   }
@@ -2217,9 +2224,11 @@ p.event_description {
     height: 100%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 9%
   }
+
   .from-top {
     height: 50%
   }
@@ -2230,9 +2239,11 @@ p.event_description {
     height: 100% %;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 7% %
   }
+
   .from-top {
     height: 35%
   }
@@ -2243,12 +2254,15 @@ p.event_description {
     height: 95%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 9.5%
   }
+
   .from-top {
     height: 39%
   }
+
   #map {
     margin-top: 5px
   }
@@ -2259,18 +2273,23 @@ p.event_description {
     height: 90.5%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 11.25%;
   }
+
   .from-top {
     height: 41%
   }
+
   #whereyouat {
     width: 75%
   }
+
   #search {
     width: 80%
   }
+
   #map {
     margin-top: 5px;
   }
@@ -2281,12 +2300,15 @@ p.event_description {
     height: 85%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 15%
   }
+
   .from-top {
     height: 42%
   }
+
   #map {
     margin-top: 5px;
   }
@@ -2297,12 +2319,15 @@ p.event_description {
     height: 72%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 20%
   }
+
   .from-top {
     height: 61%
   }
+
   #map {
     margin-top: 5px;
   }
@@ -2313,12 +2338,15 @@ p.event_description {
     height: 73%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 20%
   }
+
   .from-top {
     height: 89%
   }
+
   #map {
     margin-top: 5px;
   }
@@ -2329,12 +2357,15 @@ p.event_description {
     height: 68%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 21%
   }
+
   .from-top {
     height: 89%
   }
+
   #map {
     margin-top: 5px;
   }
@@ -2345,15 +2376,19 @@ p.event_description {
     height: 28%;
     width: 100%;
   }
+
   #icon_holder {
     bottom: 21%
   }
+
   .from-top {
     height: 90%
   }
+
   #map {
     margin-top: 5px;
   }
+
   #artist_info ul {
     font-family: 'Bitter', san-serif;
     margin: 0;
@@ -2362,6 +2397,7 @@ p.event_description {
     margin-bottom: 15px;
     font: Arial, Helvetica, sans-serif
   }
+
   #artist_info ul li,
   #artist_info ul li .off {
     display: inline;
@@ -2370,23 +2406,27 @@ p.event_description {
     padding-bottom: 6px;
     padding-top: 6px;
   }
+
   #artist_info ul li.on,
   #artist_info ul li:hover {
     background-color: #c53526;
     border: 1px solid #ffffff;
     color: #ffffff;
   }
+
   #artist_info ul li a:hover,
   #artist_info ul li:hover a,
   #artist_info ul li.on a {
     color: white;
   }
+
   #artist_loader {
     background: url(/MusicWhereYouAre/loading.gif) width:100px;
   }
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1280px) {
+
   .gray,
   .red:hover {
     width: 23%;
@@ -2397,16 +2437,19 @@ p.event_description {
   #artist_info ul {
     font-size: 1em
   }
+
   #info-area .intro-image {
     float: left;
     margin-right: 15px;
     max-width: 200px;
     overflow: hidden
   }
+
   #info-area p.intro img {
     border: 1px solid #ccc;
     height: 200px;
   }
+
   #info-area p.intro {
     float: right;
     padding: 15px;
@@ -2415,18 +2458,21 @@ p.event_description {
     border: 1px solid #ccc;
     padding-bottom: 10px;
   }
+
   #info-area .intro-image_ang {
     float: left;
     margin-right: 15px;
     max-width: 300px;
     overflow: hidden
   }
+
   #info-area p.intro_ang img {
     border: 1px solid #ccc;
     max-height: 200px;
     padding: 15px;
     max-width: 200px;
   }
+
   #info-area p.intro_ang {
     float: right;
     padding: 15px;
@@ -2435,35 +2481,43 @@ p.event_description {
     padding-bottom: 10px;
     width: 220px
   }
+
   #info-area .spot_iframe {
     margin-left: 15px;
     clear: both;
     max-width: 300px;
     margin-right: 15px;
   }
+
   #info-area iframe.spot {
     width: 220px;
     height: 300px;
   }
+
   #info-area .spot_iframe div {
     width: 300px;
   }
+
   #info-area #videosbox div iframe {
     width: 200px;
   }
+
   #search {
     width: 75%;
     margin-bottom: 0px;
   }
+
   .gray,
   .red:hover {
     width: 31%;
   }
+
   #country_form,
   .ng-scope.alert {
     left: 25%;
     top: 30%;
   }
+
   #info-area #artist_holder {
     height: 93%
   }
@@ -2473,9 +2527,11 @@ p.event_description {
   #info-area #videosbox div iframe {
     width: 200px;
   }
+
   #artist_info ul {
     font-size: .95em
   }
+
   #info-area .intro-image {
     float: left;
     margin-right: 15px;
@@ -2483,10 +2539,12 @@ p.event_description {
     height: auto;
     overflow: hidden
   }
+
   #info-area p.intro img {
     border: 1px solid #ccc;
     height: 150px;
   }
+
   #info-area p.intro {
     float: right;
     padding: 13px;
@@ -2495,29 +2553,36 @@ p.event_description {
     border: 1px solid #ccc;
     padding-bottom: 8px;
   }
+
   #info-area #artist_holder {
     width: 97%;
     overflow-y: scroll
   }
+
   #info-area img.gallery {
     border: 1px solid #ccc;
     height: 120px;
   }
+
   #search {
     width: 75% %;
     margin-bottom: 0px;
   }
+
   .event_description {
     width: 75%
   }
+
   #country_form,
   .ng-scope.alert {
     left: 25%;
     top: 20%;
   }
+
   #info-area #artist_holder {
     height: 90%
   }
+
   .gray,
   .red:hover {
     width: 47%;
@@ -2535,29 +2600,35 @@ p.event_description {
     margin-right: 15px;
     border-right: 1px dotted #ccc;
   }
+
   #artist_info ul li,
   #artist_info ul li .off {
     display: block;
     border: none;
     margin-right: 5px;
   }
+
   #info-area {
     padding-top: 2.5%;
     padding-bottom: 10%
   }
+
   #info-area .intro-image {
     float: left;
     margin-right: 15px;
     max-width: 300px;
     overflow: hidden
   }
+
   #info-area p.intro img {
     border: 1px solid #ccc;
     height: 150px;
   }
+
   #info-area .spot {
     display: none
   }
+
   .hint {
     margin-top: 3;
     margin-left: 10px;
@@ -2565,17 +2636,21 @@ p.event_description {
     max-height: 300px;
     overflow-y: scroll
   }
+
   #search {
     width: 80%;
     margin-bottom: 0px;
   }
+
   .gray,
   .red:hover {
     width: 95%;
   }
+
   #info-area #artist_holder {
     height: 93%
   }
+
   #info-area p.intro {
     float: right;
     padding: 10px;
@@ -2584,50 +2659,62 @@ p.event_description {
     border: 1px solid #ccc;
     padding-bottom: 5px;
   }
+
   #info-area #artist_holder {
     width: 97%;
     overflow-y: scroll
   }
+
   #info-area img.gallery {
     border: 1px solid #ccc;
   }
+
   #info-area p.intro_ang img {
     width: 100;
     max-width: 100px;
   }
+
   #info-area .images_sim img {
     height: 90px;
     cursor: pointer
   }
+
   #info-area .images_sim {
     max-width: 90px;
   }
+
   #info-area #videosbox div iframe {
     width: 140px;
   }
+
   #info-area div .sim_holder,
   #info-area .img_holder {
     margin: 7px;
     min-width: 100px;
   }
+
   #info-area div.images img {
     width: 126px;
     height;
     126px;
     border: 1px solid #ccc;
   }
+
   #info-area div.images {
     max-width: 127px;
   }
+
   #info-area div.images .name {
     background: #c53526;
     margin-top: -7px;
     padding: 3px;
   }
+
   #info-area div.images a.artistlink {
     color: white;
     font-size: .9em;
   }
+
   #info-area .button_icon {
     float: none;
     font-size: 30px;
@@ -2636,26 +2723,33 @@ p.event_description {
     margin-right: auto;
     margin-top: 5px;
   }
+
   #info-area .button_txt {
     display: none
   }
+
   #spot_holder .cards,
   #fav_holder .cards {
     margin-top: 100px;
   }
+
   #spot_holder .cards {
     margin-top: 125px;
   }
+
   #spot_holder .about_section {
     margin-top: 160px;
   }
+
   #fav_holder .cards {
     margin-top: 85px;
   }
+
   #search {
     width: 75%;
     margin-bottom: 0px;
   }
+
   #country_form,
   .ng-scope.alert {
     left: 25%;
@@ -2666,37 +2760,45 @@ p.event_description {
 /*Look at TAS for how to reset the boxes so the items are vertical;*/
 
 @media screen and (max-width: 480px) {
+
   .gray,
   .red:hover {
     width: 96%
   }
+
   header {
     width: 0px;
     padding: 21px;
     height: 10px;
   }
+
   #info-area {
     padding-top: 2.5%;
     padding-bottom: 14%
   }
+
   header {
     float: left;
     margin-left: 15px;
   }
+
   .menu {
     margin-top: 0px;
   }
+
   #info-area .intro-image_ang {
     float: none;
     max-width: 300px;
     overflow: hidden
   }
+
   #info-area p.intro_ang img {
     border: 1px solid #ccc;
     max-height: 300px;
     padding: 7px;
     max-width: 300px;
   }
+
   #info-area p.intro_ang {
     float: right;
     padding: 0px;
@@ -2704,19 +2806,23 @@ p.event_description {
     margin-top: 0px;
     padding-bottom: 10px;
   }
+
   #info-area .spot_iframe {
     margin-left: 15px;
     clear: both;
     max-width: 300px;
     margin-right: 15px;
   }
+
   #info-area iframe.spot {
     width: 80px;
     height: 80px;
   }
+
   #info-area .spot_iframe div {
     width: 300px;
   }
+
   #artist_info ul {
     font-size: .75em;
     font-weight: bold;
@@ -2728,6 +2834,7 @@ p.event_description {
     border-right: 1px dotted #ccc;
     margin-top: 0px;
   }
+
   #artist_info ul li,
   #artist_info ul li .off {
     display: block;
@@ -2736,6 +2843,7 @@ p.event_description {
     padding-top: 8px;
     padding-bottom: 8px;
   }
+
   #info-area .intro-image {
     float: none;
     margin-right: 15px;
@@ -2744,11 +2852,13 @@ p.event_description {
     margin: auto;
     overflow: hidden
   }
+
   #info-area p.intro img {
     border: 1px solid #ccc;
     height: auto;
     width: 297px;
   }
+
   #info-area p.intro {
     float: none;
     padding: 10px;
@@ -2760,31 +2870,39 @@ p.event_description {
     width: 300px;
     overflow: hidden;
   }
+
   #info-area #artist_holder {
     width: 97%;
     overflow-y: scroll
   }
+
   #info-area img.gallery {
     border: 1px solid #ccc;
     ;
   }
+
   #info-area p.intro_ang img {
     width: 125px;
     max-width: 125pxpx;
   }
+
   .spot_title {
     display: none
   }
+
   #info-area .images_sim img {
     height: ;
     cursor: pointer
   }
+
   #info-area .images_sim {
     max-width: 90px;
   }
+
   #info-area #videosbox div iframe {
     width: 125px;
   }
+
   #info-area div .sim_holder,
   #info-area .img_holder margin: 7px;
   min-width: 85px;
@@ -2846,13 +2964,16 @@ p.event_description {
     font-size: 1.0em;
     overflow: hidden;
   }
+
   #findmusic {
     font-size: 13px;
     padding: 5px;
   }
+
   input {
     font-size: 20px;
   }
+
   .search {
     float: left;
     background: #c53526;
@@ -2863,6 +2984,7 @@ p.event_description {
     border: 1px solid #ececec;
     padding-top: 7px;
   }
+
   .spacer {
     font-size: 15px;
     float: left;
@@ -2877,14 +2999,17 @@ p.event_description {
     font-size: 13px;
     padding: 6px;
   }
+
   input {
     font-size: 20px;
   }
+
   #search {
     width: 77%;
     margin-bottom: 0px;
     min-height: 34px;
   }
+
   .search {
     font-size: 15px;
     float: left;
@@ -2896,6 +3021,7 @@ p.event_description {
     cursor: pointer;
     border: 1px solid #ececec;
   }
+
   .spacer {
     font-size: 15px;
     float: left;
